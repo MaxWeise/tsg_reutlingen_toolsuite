@@ -1,0 +1,19 @@
+[project]
+name = "referee_list_generator"
+version = "0.0.1"
+authors = [
+    "Max Weise",
+    "fencingmax21@gmail.com",
+]
+maintainers = [
+    "Max Weise",
+    "fencingmax21@gmail.com",
+]
+requires-python = ">=3.10"
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
