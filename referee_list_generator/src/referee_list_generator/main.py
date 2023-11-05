@@ -17,6 +17,9 @@ def read_csv_file(csv_file: pathlib.Path):
 
     Returns:
         Any: The contents of the csv file.
+
+    Raises:
+        UnicodeDecodeError: When a file is not in UTF-8 encoding.
     """
     with open(csv_file, "r", newline="") as file_contents:
         csv_reader = csv.reader(file_contents, delimiter=";")

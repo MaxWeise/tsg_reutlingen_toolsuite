@@ -34,9 +34,8 @@ def test_read_csv_file(test_file_utf8):
     assert return_value[1] == _FIRST_ROW
 
 
-@pytest.mark.skip()
 def test_read_csv_file_wrong_file_encoding(test_file_utf16):
     """Given a file with wrong encoding, an error should be thrown."""
-    return_value = read_csv_file(test_file_utf16)
-
+    with pytest.raises(UnicodeDecodeError):
+        return_value = read_csv_file(test_file_utf16)
 
