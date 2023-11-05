@@ -26,7 +26,7 @@ def read_csv_file(csv_file: pathlib.Path):
         return [tuple(item) for item in csv_reader]
 
 
-def clean_data(data_table: Any) -> Any:
+def prepare_data(data_set):
     """Remove unused data columns from the csv data.
 
     Args:
@@ -35,6 +35,16 @@ def clean_data(data_table: Any) -> Any:
     Returns:
         Any: The cleaned data.
     """
+    data_columns = []
+    for row in data_set:
+        last_name = row[1]
+        first_name = row[2]
+        birth_date = row[3]
+        data_columns.append((first_name, last_name, birth_date))
+
+    header = data_columns[0]
+    content = data_columns[1 : len(data_columns)]
+    return {"header": header, "content": content}
 
 
 def write_to_excel_file(data_table: Any) -> Any:
