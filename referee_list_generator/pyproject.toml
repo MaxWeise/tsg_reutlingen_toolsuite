@@ -15,3 +15,10 @@ requires = [
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+development = [
+    "mypy>=1.6.1",
+    "mypy-extensions>=1.0.0",
+    "pytest>=7.4.3",
+]
