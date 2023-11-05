@@ -35,12 +35,7 @@ def prepare_data(data_set):
     Returns:
         Any: The cleaned data.
     """
-    data_columns = []
-    for row in data_set:
-        last_name = row[1]
-        first_name = row[2]
-        birth_date = row[3]
-        data_columns.append((first_name, last_name, birth_date))
+    data_columns = [(row[1], row[2], row[3]) for row in data_set]
 
     header = data_columns[0]
     content = data_columns[1 : len(data_columns)]
