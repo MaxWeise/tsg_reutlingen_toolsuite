@@ -5,10 +5,11 @@ Created: 30.10.2023
 """
 
 import pathlib
-from typing import Any
+import csv
+from typing import Any, Iterator
 
 
-def read_csv_file(csv_file: pathlib.Path) -> Any:
+def read_csv_file(csv_file: pathlib.Path):
     """Read a csv file and retrieve the data.
 
     Args:
@@ -17,7 +18,9 @@ def read_csv_file(csv_file: pathlib.Path) -> Any:
     Returns:
         Any: The contents of the csv file.
     """
-    ...
+    with open(csv_file, "r", newline="") as file_contents:
+        csv_reader = csv.reader(file_contents, delimiter=";")
+        return [tuple(item) for item in csv_reader]
 
 
 def clean_data(data_table: Any) -> Any:
