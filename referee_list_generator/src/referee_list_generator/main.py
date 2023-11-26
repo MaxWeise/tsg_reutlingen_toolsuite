@@ -6,7 +6,22 @@ Created: 30.10.2023
 
 import pathlib
 import csv
-from typing import Any, Iterator
+from typing import Any
+from collections.abc import Iterable
+
+
+class DataTable:
+    def __init__(self, header: tuple[str, ...], contents: list[tuple[str, ...]]):
+        self._header = header
+        self._content = contents
+
+    @property
+    def header(self) -> tuple[str, ...]:
+        return self._header
+
+    @property
+    def content(self) -> list[tuple[str, ...]]:
+        return self._content
 
 
 def read_csv_file(csv_file: pathlib.Path):
@@ -26,7 +41,7 @@ def read_csv_file(csv_file: pathlib.Path):
         return [tuple(item) for item in csv_reader]
 
 
-def prepare_data(data_set):
+def prepare_data(data_set: Iterable) -> DataTable:
     """Remove unused data columns from the csv data.
 
     Args:
@@ -35,11 +50,13 @@ def prepare_data(data_set):
     Returns:
         Any: The cleaned data.
     """
-    data_columns = [(row[1], row[2], row[3]) for row in data_set]
+    data_columns: list[tuple[str, ...]] = [
+        (str(row[1]), str(row[2]), str(row[3])) for row in data_set
+    ]
 
-    header = data_columns[0]
+    header = tuple(data_columns[0])
     content = data_columns[1 : len(data_columns)]
-    return {"header": header, "content": content}
+    return DataTable(header, content)
 
 
 def write_to_excel_file(data_table: Any) -> Any:

@@ -148,12 +148,12 @@ def test_clean_data(data_set):
 
     assert actual is not None
 
-    header = actual.get("header", None)
+    header = actual.header
     print(header)
     assert header is not None
     assert len(header) == 3
 
-    content = actual.get("content", None)
+    content = actual.content
     print(content)
     assert content is not None
     assert len(content) == (len(data_set) - 1)
