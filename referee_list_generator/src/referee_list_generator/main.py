@@ -4,27 +4,82 @@ Created: 30.10.2023
 @author: Max Weise
 """
 
-import pathlib
 import csv
-from typing import Any
-from collections.abc import Iterable
+import dataclasses
+import pathlib
 
 
-class DataTable:
-    def __init__(self, header: tuple[str, ...], contents: list[tuple[str, ...]]):
-        self._header = header
-        self._content = contents
+@dataclasses.dataclass
+class DataRow:
+    """A row in a spreadsheet holding information about a referee.
+
+    Attributes:
+        last_name: The last name of the person. Used as primary key.
+        first_name: The filst name of the person.
+        year_of_birth: The year in which the person was born.
+        training_D_licence: Wheather or not the person has completet
+            the training for the regional D-licence.
+        obtained_D_licence: Wheather or not the person has obtained the
+            regional refereeing-licence.
+        training_CN_licence: Wheather or not the person has completet
+            the training for the national CN-licence.
+        obtained_CN_licence: Wheather or not the person has obtained the
+            national refereeing-licence.
+    """
+
+    last_name: str
+    first_name: str
+    year_of_birth: str
+    training_D_licence: bool = False
+    obtained_D_licence: bool = False
+    expiration_date_d_licence: str | None = None
+    training_CN_licence: bool = False
+    obtained_CN_licence: bool = False
+
+
+class Maybe:
+    """Monad-like class that handles errors through none values.
+
+    Attributes:
+        _value (T): The value of the monad type.
+    """
+
+    def __init__(self, value):
+        """Initialize a Maybe instance.
+
+        Args:
+            value (T): The value of the maybe-instance.
+        """
+        self._value = value
 
     @property
-    def header(self) -> tuple[str, ...]:
-        return self._header
+    def value(self):
+        """The value of the monad."""
+        return self._value
 
-    @property
-    def content(self) -> list[tuple[str, ...]]:
-        return self._content
+    def bind(self, func):
+        """Apply a function to the internal value.
+
+        In case of errors or missing values, a function should return no value.
+        The Maybe monad propagates the error / missing value thorughout the
+        programm.
+
+        Args:
+            func (T -> U | None): A function that takes a value and returns
+                a new value or none.
+
+        Returns:
+            result (Maybe<T | None>): A monad object that holds the result of
+                the computation done by func.
+        """
+        if self._value is None:
+            return Maybe(None)
+
+        result = func(self._value)
+        return Maybe(result)
 
 
-def read_csv_file(csv_file: pathlib.Path):
+def read_csv_file(csv_file: pathlib.Path) -> list[tuple[str, ...]] | None:
     """Read a csv file and retrieve the data.
 
     Args:
@@ -36,39 +91,57 @@ def read_csv_file(csv_file: pathlib.Path):
     Raises:
         UnicodeDecodeError: When a file is not in UTF-8 encoding.
     """
-    with open(csv_file, "r", newline="") as file_contents:
-        csv_reader = csv.reader(file_contents, delimiter=";")
-        return [tuple(item) for item in csv_reader]
+    if not csv_file.exists():
+        return None
+
+    try:
+        with open(csv_file, "r", newline="") as file_contents:
+            csv_reader = csv.reader(file_contents, delimiter=";")
+            return [tuple(item) for item in csv_reader]
+    except UnicodeDecodeError:
+        return None
 
 
-def prepare_data(data_set: Iterable) -> DataTable:
-    """Remove unused data columns from the csv data.
+def _get_year_of_birth(date: str | None) -> str | None:
+    if not date:
+        return None
+
+    return date.split(".")[-1]
+
+
+def get_data_rows(data: list[tuple[str, ...]]) -> list[DataRow] | None:
+    """Populate a list with data objects, that hold personal information.
+
+    Construct objects from individual rows of a csv-file. The function
+    returns only the values from the tuply specified by the DataRow class.
+    In the process of selecting the needed data, the table-headings will be
+    removed, so the firt element of the return value contains actual
+    information instead of headings.
 
     Args:
-        data_table (Any): The data to be cleaned by the function.
+        data: Data organized as a list of tuples.
 
     Returns:
-        Any: The cleaned data.
+        A list of objects that hold specified data to be evaluated at a later
+        point in time.
     """
-    data_columns: list[tuple[str, ...]] = [
-        (str(row[1]), str(row[2]), str(row[3])) for row in data_set
-    ]
+    data_rows: list[DataRow] = []
 
-    header = tuple(data_columns[0])
-    content = data_columns[1 : len(data_columns)]
-    return DataTable(header, content)
+    # remove headings from data
+    data_without_headings = data[1:]
 
+    for row in data_without_headings:
+        last_name = row[1]
+        first_name = row[2]
+        year_of_birth = _get_year_of_birth(row[3])
 
-def write_to_excel_file(data_table: Any) -> Any:
-    """Write contents to a formatted excel file.
+        if not year_of_birth:
+            continue
 
-    Args:
-        data_table (Any): The data to be written to the excel file.
+        current_element = DataRow(last_name, first_name, year_of_birth)
+        data_rows.append(current_element)
 
-    Returns:
-        Any: The return value of the function.
-    """
-    ...
+    return data_rows
 
 
 def main():

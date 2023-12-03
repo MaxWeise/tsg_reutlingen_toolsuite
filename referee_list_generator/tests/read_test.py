@@ -4,11 +4,10 @@ Created: 30.10.2023
 @author: Max Weise
 """
 
-import pytest
 import pathlib
 
+import pytest
 from referee_list_generator.main import read_csv_file  # type: ignore
-
 
 _TABEL_HEADERS = (
     "id",
@@ -68,5 +67,11 @@ def test_read_csv_file(test_file_utf8):
 
 def test_read_csv_file_wrong_file_encoding(test_file_utf16):
     """Given a file with wrong encoding, an error should be thrown."""
-    with pytest.raises(UnicodeDecodeError):
-        return_value = read_csv_file(test_file_utf16)
+    return_value = read_csv_file(test_file_utf16)
+    assert return_value is None
+
+
+def test_read_csv_file_path_does_not_exist():
+    """Return None when a path does not exist."""
+    under_test = read_csv_file(pathlib.Path("./thisPathDoesNotExist.txt"))
+    assert under_test is None

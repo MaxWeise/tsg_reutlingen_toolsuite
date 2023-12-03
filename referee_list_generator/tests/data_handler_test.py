@@ -4,12 +4,15 @@ Created: 05.11.2023
 @author: Max Weise
 """
 
+from csv import unregister_dialect
+
 import pytest
-from referee_list_generator.main import prepare_data  # type: ignore
+from referee_list_generator.main import DataRow, get_data_rows  # type: ignore
 
 
 @pytest.fixture()
 def data_set():
+    """Personal data extracted from a csv-file."""
     return [
         (
             "id",
@@ -142,21 +145,14 @@ def data_set():
     ]
 
 
-def test_clean_data(data_set):
+def test_get_data_rows(data_set):
     """Test that the correct columns get extracted."""
-    actual = prepare_data(data_set)
+    actual = get_data_rows(data_set)
 
     assert actual is not None
 
-    header = actual.header
-    print(header)
-    assert header is not None
-    assert len(header) == 3
+    under_test = actual[0]
+    expected = DataRow(last_name="Mayer", first_name="Olaf", year_of_birth="1972")
 
-    content = actual.content
-    print(content)
-    assert content is not None
-    assert len(content) == (len(data_set) - 1)
-
-    for row in content:
-        assert all(row)
+    assert under_test is not None
+    assert under_test == expected
