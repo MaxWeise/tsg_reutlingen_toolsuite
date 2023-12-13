@@ -8,6 +8,8 @@ import csv
 import dataclasses
 import pathlib
 
+import xlsxwriter  # type: ignore
+
 
 @dataclasses.dataclass
 class DataRow:
@@ -142,6 +144,44 @@ def get_data_rows(data: list[tuple[str, ...]]) -> list[DataRow] | None:
         data_rows.append(current_element)
 
     return data_rows
+
+
+def write_data_to_excel_file(
+    excel_file: pathlib.Path, data: list[DataRow]
+) -> bool | None:
+    """Write given data to an excel file.
+
+    Args:
+        excel_file: The path to the excel file.
+        data: A list of data objects holding the data that should be written
+            to the file.
+
+    Returns:
+        True if no errors occured during the execution of the function.
+        False otherwise.
+    """
+    workbook = xlsxwriter.Workbook(excel_file)
+    worksheet = workbook.add_worksheet()
+
+    try:
+        for position, value in enumerate(data):
+            offset = 5  # Don't start at the top of the file
+            worksheet.write(f"C{position + offset}", value.last_name)
+            worksheet.write(f"D{position + offset}", value.first_name)
+            worksheet.write(f"E{position + offset}", value.year_of_birth)
+            worksheet.write(f"F{position + offset}", value.training_D_licence)
+            worksheet.write(f"G{position + offset}", value.obtained_D_licence)
+            worksheet.write(f"H{position + offset}", value.expiration_date_d_licence)
+            worksheet.write(f"I{position + offset}", value.training_CN_licence)
+            worksheet.write(f"J{position + offset}", value.obtained_CN_licence)
+    except Exception as e:
+        # TODO: Don't catch all the exceptions, see the docs for the actual
+        print(f"This exception occured while writing to the excel file: {e}")
+        return None
+    finally:
+        workbook.close()
+
+    return True
 
 
 def main():
