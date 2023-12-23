@@ -7,7 +7,7 @@ Created: 30.10.2023
 import pathlib
 
 import pytest
-from referee_list_generator.main import read_csv_file  # type: ignore
+from referee_list_generator.functions import read_csv_file  # type: ignore
 
 _TABEL_HEADERS = (
     "id",

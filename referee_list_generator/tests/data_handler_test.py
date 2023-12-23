@@ -4,10 +4,10 @@ Created: 05.11.2023
 @author: Max Weise
 """
 
-from csv import unregister_dialect
 
 import pytest
-from referee_list_generator.main import DataRow, get_data_rows  # type: ignore
+from referee_list_generator.functions import get_data_rows  # type: ignore
+from referee_list_generator.system_core import DataRow  # type: ignore
 
 
 @pytest.fixture()

@@ -4,7 +4,7 @@ Created: 02.12.2023
 @author: Max Weise
 """
 
-from src.referee_list_generator.main import Maybe
+from src.referee_list_generator.system_core import Maybe  # type: ignore
 
 
 def none_function(mock_arg) -> None:

@@ -8,14 +8,15 @@ import os
 import pathlib
 
 import pytest
-from src.referee_list_generator.main import DataRow, write_data_to_excel_file
+from referee_list_generator.functions import write_data_to_excel_file
+from referee_list_generator.system_core import DataRow  # type: ignore
 
 
 @pytest.fixture
 def test_data() -> list[DataRow]:
     """Test data to be written to an excel file."""
     rv: list[DataRow] = [
-        DataRow("Weise", "Max", "2001", training_D_licence=True),
+        DataRow("Weise", "Max", "2001"),
         DataRow("Mustermann", "Max", "1980"),
         DataRow("Henry", "Henryson", "2020"),
         DataRow("Jürgen", "Hurenson", "1969"),
