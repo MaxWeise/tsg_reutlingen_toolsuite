@@ -5,12 +5,21 @@ Created: 23.12.2023
 """
 
 import csv
+import logging
 import pathlib
 import typing
 
 import xlsxwriter  # type: ignore
 
-from referee_list_generator import system_core
+from referee_list_generator import logger, system_core
+
+LOGGER_TYPE: str = "console"
+LOGGING_LEVEL: int = logging.INFO
+LOGGER_FORMAT: str = "[%(levelname)s] - %(message)s (%(name)s)"
+
+MODULE_LOGGER: logger.Logger = logger.logger_factory(
+    LOGGER_TYPE, __name__, LOGGING_LEVEL, LOGGER_FORMAT
+)
 
 
 def read_csv_file(csv_file: pathlib.Path) -> list[tuple[str, ...]] | None:
@@ -25,7 +34,9 @@ def read_csv_file(csv_file: pathlib.Path) -> list[tuple[str, ...]] | None:
     Raises:
         UnicodeDecodeError: When a file is not in UTF-8 encoding.
     """
+    MODULE_LOGGER.info(f"Reading csv file: {csv_file.name}")
     if not csv_file.exists():
+        MODULE_LOGGER.error("The file does not exist!")
         return None
 
     try:
@@ -33,6 +44,7 @@ def read_csv_file(csv_file: pathlib.Path) -> list[tuple[str, ...]] | None:
             csv_reader = csv.reader(file_contents, delimiter=";")
             return [tuple(item) for item in csv_reader]
     except UnicodeDecodeError:
+        MODULE_LOGGER.error("The file has the wrong file encoding. Please use UTF-8")
         return None
 
 
@@ -59,6 +71,7 @@ def get_data_rows(data: list[tuple[str, ...]]) -> list[system_core.DataRow] | No
         A list of objects that hold specified data to be evaluated at a later
         point in time.
     """
+    MODULE_LOGGER.info("Creating data rows.")
     data_rows: list[system_core.DataRow] = []
 
     # remove headings from data
@@ -70,6 +83,9 @@ def get_data_rows(data: list[tuple[str, ...]]) -> list[system_core.DataRow] | No
         year_of_birth = _get_year_of_birth(row[3])
 
         if not year_of_birth:
+            MODULE_LOGGER.warning(
+                "No year of birth given for entry {last_name} {first_name}"
+            )
             continue
 
         current_element = system_core.DataRow(last_name, first_name, year_of_birth)
@@ -121,14 +137,21 @@ def write_data_to_excel_file(
         True if no errors occured during the execution of the function.
         False otherwise.
     """
+    worksheet_name = "Referees"
     workbook = xlsxwriter.Workbook(excel_file)
-    worksheet = workbook.add_worksheet(name="Referees")
+    worksheet = workbook.add_worksheet(name=worksheet_name)
     offset = 5
+    MODULE_LOGGER.info(
+        f"Creating file {excel_file.name} with worksheet {worksheet_name}"
+    )
 
     try:
         _write_headers(worksheet, offset)
         _write_data(worksheet, data, offset)
     except system_core.ExcelWriteError as e:
+        MODULE_LOGGER.error(
+            f"The following error has occured while writing the excel file: {e.message}"
+        )
         workbook.close()
         return None
     finally:
