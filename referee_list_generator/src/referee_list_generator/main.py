@@ -5,7 +5,10 @@ Created: 30.10.2023
 """
 
 import argparse
+import pathlib
 from typing import Any
+
+from referee_list_generator import functions, system_core
 
 
 def setup_cli_arguments() -> Any:
@@ -21,10 +24,19 @@ def setup_cli_arguments() -> Any:
 
     parser.add_argument("filename", help="Pfad zur CSV-Datei", type=str)
 
+    return parser.parse_args()
+
 
 def main():
     """Run the main function of the script."""
     cli_arguments = setup_cli_arguments()
+    file_name = pathlib.Path(cli_arguments.filename)
+    csv_file = system_core.Maybe(file_name)
+    csv_data = csv_file.bind(functions.read_csv_file)
+    data_rows = csv_data.bind(functions.get_data_rows)
+    success = data_rows.bind(functions.write_data_to_excel_file)
+
+    print(f"Programm has succeeded: {True if success.value else False}")
 
 
 if __name__ == "__main__":
