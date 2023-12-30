@@ -55,7 +55,7 @@ def _get_year_of_birth(date: str | None) -> str | None:
     return date.split(".")[-1]
 
 
-def get_data_rows(data: list[tuple[str, ...]]) -> list[system_core.DataRow] | None:
+def get_data_rows(data: list[tuple[str, ...]]) -> list[system_core.DataRow]:
     """Populate a list with data objects, that hold personal information.
 
     Construct objects from individual rows of a csv-file. The function
@@ -95,37 +95,31 @@ def get_data_rows(data: list[tuple[str, ...]]) -> list[system_core.DataRow] | No
 
 
 def _write_headers(worksheet: typing.Any, offset: int):
-    try:
-        worksheet.write(f"C{offset - 1}", "Name")
-        worksheet.write(f"D{offset - 1}", "Vorname")
-        worksheet.write(f"E{offset - 1}", "Jahrgang")
-        worksheet.write(f"F{offset - 1}", "Lehrgang D-Lizenz")
-        worksheet.write(f"G{offset - 1}", "D-Lizenz")
-        worksheet.write(f"H{offset - 1}", "Ablaufdatum D-Lizenz")
-        worksheet.write(f"I{offset - 1}", "Lehrgang CN-Lizenz")
-        worksheet.write(f"J{offset - 1}", "CN-Lizenz")
-    except Exception as e:
-        raise system_core.ExcelWriteError(str(e))
+    worksheet.write(f"C{offset - 1}", "Name")
+    worksheet.write(f"D{offset - 1}", "Vorname")
+    worksheet.write(f"E{offset - 1}", "Jahrgang")
+    worksheet.write(f"F{offset - 1}", "Lehrgang D-Lizenz")
+    worksheet.write(f"G{offset - 1}", "D-Lizenz")
+    worksheet.write(f"H{offset - 1}", "Ablaufdatum D-Lizenz")
+    worksheet.write(f"I{offset - 1}", "Lehrgang CN-Lizenz")
+    worksheet.write(f"J{offset - 1}", "CN-Lizenz")
 
 
 def _write_data(worksheet: typing.Any, data: list[system_core.DataRow], offset: int):
-    try:
-        for position, value in enumerate(data):
-            worksheet.write(f"C{position + offset}", value.last_name)
-            worksheet.write(f"D{position + offset}", value.first_name)
-            worksheet.write(f"E{position + offset}", value.year_of_birth)
-            worksheet.write(f"F{position + offset}", value.begun_training_D_licence)
-            worksheet.write(f"G{position + offset}", value.obtained_D_licence)
-            worksheet.write(f"H{position + offset}", value.expiration_date_d_licence)
-            worksheet.write(f"I{position + offset}", value.training_CN_licence)
-            worksheet.write(f"J{position + offset}", value.obtained_CN_licence)
-    except Exception as e:
-        raise system_core.ExcelWriteError(str(e))
+    for position, value in enumerate(data):
+        worksheet.write(f"C{position + offset}", value.last_name)
+        worksheet.write(f"D{position + offset}", value.first_name)
+        worksheet.write(f"E{position + offset}", value.year_of_birth)
+        worksheet.write(f"F{position + offset}", value.begun_training_D_licence)
+        worksheet.write(f"G{position + offset}", value.obtained_D_licence)
+        worksheet.write(f"H{position + offset}", value.expiration_date_d_licence)
+        worksheet.write(f"I{position + offset}", value.training_CN_licence)
+        worksheet.write(f"J{position + offset}", value.obtained_CN_licence)
 
 
 def write_data_to_excel_file(
     data: list[system_core.DataRow], excel_file: pathlib.Path
-) -> bool | None:
+) -> bool:
     """Write given data to an excel file.
 
     Args:
@@ -145,16 +139,8 @@ def write_data_to_excel_file(
         f"Creating file {excel_file.name} with worksheet {worksheet_name}"
     )
 
-    try:
-        _write_headers(worksheet, offset)
-        _write_data(worksheet, data, offset)
-    except system_core.ExcelWriteError as e:
-        MODULE_LOGGER.error(
-            f"The following error has occured while writing the excel file: {e.message}"
-        )
-        workbook.close()
-        return None
-    finally:
-        workbook.close()
+    _write_headers(worksheet, offset)
+    _write_data(worksheet, data, offset)
+    workbook.close()
 
     return True
