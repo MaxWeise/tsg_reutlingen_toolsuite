@@ -43,3 +43,11 @@ def test_create_excel_file(test_file_utf8, excel_file) -> None:
 
     if test_excel_file.exists():
         os.remove(test_excel_file)
+
+
+def test_main_csvfile_does_not_exist():
+    """Given a non-existent csv file, the functin should return None."""
+    nonexistent_file = "./file_does_not_exist.csv"
+    actual = main(csv_filename=nonexistent_file)
+
+    assert actual is None
