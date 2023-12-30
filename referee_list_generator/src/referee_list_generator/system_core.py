@@ -19,6 +19,17 @@ class ExcelWriteError(Exception):
 
 
 @dataclasses.dataclass
+class MissingArgumentError(Exception):
+    """When a cli argument was not passed to the programm.
+
+    Args:
+        message (str): The message raised by the previous exception.
+    """
+
+    message: str
+
+
+@dataclasses.dataclass
 class DataRow:
     """A row in a spreadsheet holding information about a referee.
 
