@@ -7,11 +7,13 @@ Created: 23.12.2023
 @author: Max Weise
 """
 
+# pylint: disable=redefined-outer-name
+
 import os
 import pathlib
 
 import pytest
-from referee_list_generator.main import main  # type: ignore
+from referee_list_generator.main import main
 from referee_list_generator.system_core import MissingArgumentError
 
 
@@ -23,7 +25,7 @@ def test_file_utf8() -> str:
 
 @pytest.fixture
 def excel_file() -> pathlib.Path:
-    """The output excel file."""
+    """Return the output excel file."""
     return pathlib.Path("./output_file.xlsx")
 
 
@@ -37,7 +39,9 @@ def test_main_no_file_name_given():
 def test_create_excel_file(test_file_utf8, excel_file) -> None:
     """When given a csv file, create a non-empty excel file."""
     test_excel_file: pathlib.Path = excel_file
-    actual: bool | None = main(csv_filename=test_file_utf8, excel_file=test_excel_file)
+    actual: bool | None = main(
+        csv_filename=test_file_utf8, excel_file=test_excel_file
+    )
 
     assert actual
 

@@ -50,21 +50,21 @@ class DataRow:
     last_name: str
     first_name: str
     year_of_birth: str
-    _training_D_licence: bool = False
-    _obtained_D_licence: bool = False
+    _training_d_licence: bool = False
+    _obtained_d_licence: bool = False
     _expiration_date_d_licence: str | None = None
-    _training_CN_licence: bool = False
-    _obtained_CN_licence: bool = False
+    _training_cn_licence: bool = False
+    _obtained_cn_licence: bool = False
 
     @property
-    def begun_training_D_licence(self) -> str:
+    def begun_training_d_licence(self) -> str:
         """Map the property to a human readable string."""
-        return "Ja" if self._training_D_licence else "Nein"
+        return "Ja" if self._training_d_licence else "Nein"
 
     @property
-    def obtained_D_licence(self) -> str:
+    def obtained_d_licence(self) -> str:
         """Map the property to a human readable string."""
-        return "Ja" if self._obtained_D_licence else "Nein"
+        return "Ja" if self._obtained_d_licence else "Nein"
 
     @property
     def expiration_date_d_licence(self) -> str:
@@ -76,14 +76,14 @@ class DataRow:
         )
 
     @property
-    def training_CN_licence(self) -> str:
+    def training_cn_licence(self) -> str:
         """Map the property to a human readable string."""
-        return "Ja" if self._training_CN_licence else "Nein"
+        return "Ja" if self._training_cn_licence else "Nein"
 
     @property
-    def obtained_CN_licence(self) -> str:
+    def obtained_cn_licence(self) -> str:
         """Map the property to a human readable string."""
-        return "Ja" if self._obtained_CN_licence else "Nein"
+        return "Ja" if self._obtained_cn_licence else "Nein"
 
 
 class Maybe:

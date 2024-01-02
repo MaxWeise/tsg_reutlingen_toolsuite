@@ -11,6 +11,13 @@ from typing import Any
 
 from referee_list_generator import functions, system_core
 
+# Metadata
+PROGRAMM_NAME = "KaRi-Listen Generator"
+DESCRIPTION = (
+    "Erstelle eine formattierte Excelliste aus den "
+    "Einträgen einer CSV Datei."
+)
+
 EXCEL_FILE = pathlib.Path("./output_file.xlsx")
 
 
@@ -21,8 +28,8 @@ def setup_cli_arguments() -> argparse.Namespace:
         A Namespace object that contains values of the cli arguments.
     """
     parser = argparse.ArgumentParser(
-        prog="KaRi-Listen Generator",
-        description="Erstelle eine formattierte Excelliste aus den Einträgen einer CSV Datei.",
+        prog=PROGRAMM_NAME,
+        description=DESCRIPTION,
     )
 
     parser.add_argument("filename", help="Pfad zur CSV-Datei", type=str)
@@ -30,11 +37,14 @@ def setup_cli_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main(csv_filename: str | None = None, excel_file: pathlib.Path = EXCEL_FILE) -> Any:
+def main(
+    csv_filename: str | None = None, excel_file: pathlib.Path = EXCEL_FILE
+) -> Any:
     """Run the main function of the script."""
     if not csv_filename:
         raise system_core.MissingArgumentError(
-            "The argument: filename is missing. Please specify a UTF-8 csv file."
+            "The argument: filename is missing. "
+            "Please specify a UTF-8 csv file."
         )
 
     write_to_excel_file = functools.partial(
@@ -44,9 +54,9 @@ def main(csv_filename: str | None = None, excel_file: pathlib.Path = EXCEL_FILE)
     csv_file = system_core.Maybe(file_name)
     csv_data = csv_file.bind(functions.read_csv_file)
     data_rows = csv_data.bind(functions.get_data_rows)
-    success = data_rows.bind(write_to_excel_file)
+    result = data_rows.bind(write_to_excel_file)
 
-    return success.value
+    return result.value
 
 
 if __name__ == "__main__":

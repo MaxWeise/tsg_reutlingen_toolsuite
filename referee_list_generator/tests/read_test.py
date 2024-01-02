@@ -3,6 +3,7 @@
 Created: 30.10.2023
 @author: Max Weise
 """
+# pylint: disable=redefined-outer-name
 
 import pathlib
 
@@ -59,7 +60,7 @@ def test_read_csv_file(test_file_utf8):
     """Test that a file is corectly read."""
     return_value = read_csv_file(test_file_utf8)
 
-    assert return_value != None
+    assert return_value is not None
     assert len(return_value) == 8
     assert return_value[0] == _TABEL_HEADERS
     assert return_value[1] == _FIRST_ROW

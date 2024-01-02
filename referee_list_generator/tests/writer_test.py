@@ -4,6 +4,8 @@ Created: 13.12.2023
 @author: Max Weise
 """
 
+# pylint: disable=redefined-outer-name
+
 import os
 import pathlib
 

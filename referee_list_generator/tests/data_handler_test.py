@@ -4,10 +4,11 @@ Created: 05.11.2023
 @author: Max Weise
 """
 
+# pylint: disable=redefined-outer-name
 
 import pytest
-from referee_list_generator.functions import get_data_rows  # type: ignore
-from referee_list_generator.system_core import DataRow  # type: ignore
+from referee_list_generator.functions import get_data_rows
+from referee_list_generator.system_core import DataRow
 
 
 @pytest.fixture()
@@ -152,7 +153,9 @@ def test_get_data_rows(data_set):
     assert actual is not None
 
     under_test = actual[0]
-    expected = DataRow(last_name="Mayer", first_name="Olaf", year_of_birth="1972")
+    expected = DataRow(
+        last_name="Mayer", first_name="Olaf", year_of_birth="1972"
+    )
 
     assert under_test is not None
     assert under_test == expected

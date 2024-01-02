@@ -40,11 +40,13 @@ def read_csv_file(csv_file: pathlib.Path) -> list[tuple[str, ...]] | None:
         return None
 
     try:
-        with open(csv_file, "r", newline="") as file_contents:
+        with open(csv_file, "r", newline="", encoding="utf-8") as file_contents:
             csv_reader = csv.reader(file_contents, delimiter=";")
             return [tuple(item) for item in csv_reader]
     except UnicodeDecodeError:
-        MODULE_LOGGER.error("The file has the wrong file encoding. Please use UTF-8")
+        MODULE_LOGGER.error(
+            "The file has the wrong file encoding. Please use UTF-8"
+        )
         return None
 
 
@@ -88,7 +90,9 @@ def get_data_rows(data: list[tuple[str, ...]]) -> list[system_core.DataRow]:
             )
             continue
 
-        current_element = system_core.DataRow(last_name, first_name, year_of_birth)
+        current_element = system_core.DataRow(
+            last_name, first_name, year_of_birth
+        )
         data_rows.append(current_element)
 
     return data_rows
@@ -105,16 +109,20 @@ def _write_headers(worksheet: typing.Any, offset: int):
     worksheet.write(f"J{offset - 1}", "CN-Lizenz")
 
 
-def _write_data(worksheet: typing.Any, data: list[system_core.DataRow], offset: int):
+def _write_data(
+    worksheet: typing.Any, data: list[system_core.DataRow], offset: int
+):
     for position, value in enumerate(data):
         worksheet.write(f"C{position + offset}", value.last_name)
         worksheet.write(f"D{position + offset}", value.first_name)
         worksheet.write(f"E{position + offset}", value.year_of_birth)
-        worksheet.write(f"F{position + offset}", value.begun_training_D_licence)
-        worksheet.write(f"G{position + offset}", value.obtained_D_licence)
-        worksheet.write(f"H{position + offset}", value.expiration_date_d_licence)
-        worksheet.write(f"I{position + offset}", value.training_CN_licence)
-        worksheet.write(f"J{position + offset}", value.obtained_CN_licence)
+        worksheet.write(f"F{position + offset}", value.begun_training_d_licence)
+        worksheet.write(f"G{position + offset}", value.obtained_d_licence)
+        worksheet.write(
+            f"H{position + offset}", value.expiration_date_d_licence
+        )
+        worksheet.write(f"I{position + offset}", value.training_cn_licence)
+        worksheet.write(f"J{position + offset}", value.obtained_cn_licence)
 
 
 def write_data_to_excel_file(

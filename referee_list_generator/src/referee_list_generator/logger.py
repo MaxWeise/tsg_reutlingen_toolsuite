@@ -5,7 +5,9 @@ logger. The functions / classes in this file can be used to setup moduleloggers
 
 Common Usage:
 
-    module_logger: logger.Logger = logger.logger_factory("console", __name__, logging.DEBUG)
+    module_logger: logger.Logger = logger.logger_factory("console",
+                                                            __name__,
+                                                            logging.DEBUG)
 
     def function_in_file(arg: int) -> bool | None:
         module_logger.info(...)
@@ -76,7 +78,7 @@ def logger_factory(
         logger_type (str): The kind of logger that should be created.
         logger_name (str): The name of the logger displayed in the terminal.
         logging_level (int): The level used to filter logging messages.
-        format_string (str | None): Specify the format by providing it as a string.
+        format_string (str | None): Specify the format by providing a string.
             Defaults to None.
 
     Returns:
@@ -85,5 +87,7 @@ def logger_factory(
     available_loggers = {
         "console": ConsoleLogger,
     }
-    logger = available_loggers[logger_type](logger_name, logging_level, format_string)
+    logger = available_loggers[logger_type](
+        logger_name, logging_level, format_string
+    )
     return logger
