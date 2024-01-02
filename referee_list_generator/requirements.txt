@@ -5,4 +5,5 @@ mypy-extensions==1.0.0
 pydocstyle==6.3.0
 pylint==3.0.3
 pytest==7.4.3
+tox==4.11.4
 typing_extensions==4.8.0
