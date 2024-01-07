@@ -29,6 +29,7 @@ jobs:
         cd $GITHUB_WORKSPACE/referee_list_generator
     - name: Install dependencies
       run: |
+        echo $GITHUB_WORKSPACE
         echo $PWD
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
