@@ -25,12 +25,9 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Change directory
-      run: |
-        cd $GITHUB_WORKSPACE/referee_list_generator
-        echo $PWD
     - name: Install dependencies
       run: |
+        cd $GITHUB_WORKSPACE/referee_list_generator
         echo $GITHUB_WORKSPACE
         echo $PWD
         python -m pip install --upgrade pip
@@ -45,5 +42,5 @@ jobs:
         # flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        echo $PWD
+        cd $GITHUB_WORKSPACE/referee_list_generator
         pytest
