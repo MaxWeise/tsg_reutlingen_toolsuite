@@ -5,7 +5,7 @@ name: Test for referee_list_generator python script
 
 on:
   push:
-    branches: [ "production", "ref-list/*"]
+    branches: [ "production", "ref-list/**"]
   # pull_request:
   #   branches: [ "production" ]
 
