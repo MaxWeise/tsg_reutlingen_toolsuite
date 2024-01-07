@@ -7,8 +7,8 @@ Created: 05.11.2023
 # pylint: disable=redefined-outer-name
 
 import pytest
-from referee_list_generator.functions import get_data_rows
-from referee_list_generator.system_core import DataRow
+from ophardt_to_excel.functions import get_data_rows
+from ophardt_to_excel.system_core import DataRow
 
 
 @pytest.fixture()

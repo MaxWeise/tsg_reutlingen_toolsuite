@@ -4,7 +4,7 @@ Created: 02.12.2023
 @author: Max Weise
 """
 
-from referee_list_generator.system_core import Maybe
+from ophardt_to_excel.system_core import Maybe
 
 
 def none_function(mock_arg) -> None:

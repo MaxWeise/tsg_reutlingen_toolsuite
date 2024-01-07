@@ -9,7 +9,7 @@ import functools
 import pathlib
 from typing import Any
 
-from referee_list_generator import functions, system_core
+from ophardt_to_excel import functions, system_core
 
 # Metadata
 PROGRAMM_NAME = "KaRi-Listen Generator"

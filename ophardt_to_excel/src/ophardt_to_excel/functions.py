@@ -11,7 +11,7 @@ import typing
 
 import xlsxwriter  # type: ignore
 
-from referee_list_generator import logger, system_core
+from ophardt_to_excel import logger, system_core
 
 LOGGER_TYPE: str = "console"
 LOGGING_LEVEL: int = logging.INFO

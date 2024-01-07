@@ -13,8 +13,8 @@ import os
 import pathlib
 
 import pytest
-from referee_list_generator.main import main
-from referee_list_generator.system_core import MissingArgumentError
+from ophardt_to_excel.main import main
+from ophardt_to_excel.system_core import MissingArgumentError
 
 
 @pytest.fixture

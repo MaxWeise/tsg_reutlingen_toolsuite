@@ -10,8 +10,8 @@ import os
 import pathlib
 
 import pytest
-from referee_list_generator.functions import write_data_to_excel_file
-from referee_list_generator.system_core import DataRow  # type: ignore
+from ophardt_to_excel.functions import write_data_to_excel_file
+from ophardt_to_excel.system_core import DataRow  # type: ignore
 
 
 @pytest.fixture
