@@ -1,5 +1,5 @@
 [project]
-name = "referee_list_generator"
+name = "ophartd-to-excel"
 version = "1.0.0"
 authors = [
     {name = "Max Weise", email = "fencingmax21@gmail.com"}
