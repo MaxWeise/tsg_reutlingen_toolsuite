@@ -22,12 +22,12 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        cd $GITHUB_WORKSPACE/referee_list_generator
+        cd $GITHUB_WORKSPACE/ophardt_to_excel
         python -m pip install --upgrade pip
         python -m pip install pylint
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install -e .
     - name: Run tests
       run: |
-        cd $GITHUB_WORKSPACE/referee_list_generator
+        cd $GITHUB_WORKSPACE/ophardt_to_excel
         pylint src

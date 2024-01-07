@@ -17,14 +17,14 @@ jobs:
         python-version: '3.10'
     - name: Install dependencies
       run: |
-        cd $GITHUB_WORKSPACE/referee_list_generator
+        cd $GITHUB_WORKSPACE/ophardt_to_excel
         python -m pip install --upgrade pip
         python -m pip install pyinstaller
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Build artifact
       run: |
-        cd $GITHUB_WORKSPACE/referee_list_generator
-        pyinstaller --onefile src/referee_list_generator/main.py --name ophardt_to_excel.py
+        cd $GITHUB_WORKSPACE/ophardt_to_excel
+        pyinstaller --onefile src/ophardt_to_excel/main.py --name ophardt_to_excel.py
 
     - name: Archive Artifact
       uses: actions/upload-artifact@v3
