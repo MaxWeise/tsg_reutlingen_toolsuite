@@ -1,5 +1,5 @@
 [project]
-name = "ophartd-to-excel"
+name = "ophardt-to-excel"
 version = "1.0.0"
 authors = [
     {name = "Max Weise", email = "fencingmax21@gmail.com"}
