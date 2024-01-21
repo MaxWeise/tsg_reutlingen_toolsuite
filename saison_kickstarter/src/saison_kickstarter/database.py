@@ -15,12 +15,20 @@ Created: 14.01.2024
 
 from typing import Any, Protocol
 
+from saison_kickstarter.database_item import DatabaseItem
+
 
 class Database(Protocol):
     """Provide CRUD methods to interact with a database."""
 
-    def execute_statement(self, statement: str) -> Any:
-        """Excecute a given sql statement and return its sucessvalue"""
+    def create(self, item: DatabaseItem) -> bool | None:
+        """Create a resouce in the underlying table."""
         raise NotImplementedError(
-            f"This method is not implemented on tpye {self}."
+            f"The method is not implemented for type {self}"
+        )
+
+    def read(self) -> list[Any] | None:
+        """Read all values from a database table."""
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
         )
