@@ -39,18 +39,18 @@ class AgeGroup(enum.Enum):
 
 @dataclasses.dataclass
 class Tournament:
+    """Representation of a tournament in the database."""
+
+    identifier: int
     date: datetime.datetime
     city: str
     category: Category
     age_group: set[AgeGroup]
-    _identifier: int = dataclasses.field(
-        default_factory=itertools.count().__next__
-    )
 
     def to_tuple(self) -> tuple:
         age_groups = " ".join([ag.value for ag in self.age_group])
         return (
-            self._identifier,
+            self.identifier,
             self.date,
             self.city,
             self.category.value,

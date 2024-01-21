@@ -8,7 +8,6 @@ Created: 14.01.2024
 
 import datetime
 import os
-import pathlib
 import sqlite3
 
 import pytest
@@ -33,7 +32,7 @@ def database_file():
 def tournament() -> Tournament:
     test_date = datetime.datetime(2000, 1, 1)
     return Tournament(
-        test_date, "Reutlingen", Category.DM, {AgeGroup.SENIOR, AgeGroup.U20}
+        0, test_date, "Reutlingen", Category.DM, {AgeGroup.SENIOR, AgeGroup.U20}
     )
 
 
@@ -61,6 +60,7 @@ def test_create_tournament(database_file, tournament):
 def database_with_values():
     path = "./tests/test_assets/test_database_with_values.db"
     test_item: DatabaseItem = Tournament(
+        0,
         datetime.datetime(2000, 1, 1),
         "Reutlingen",
         Category.DM,
@@ -96,4 +96,19 @@ def test_read_tournaments(database_with_values):
     actual = under_test.read()
 
     assert actual
-    assert all(actual[0])
+
+    actual_element = actual[0]
+    expected_values = (
+        0,
+        "2000-01-01 00:00:00",
+        "Reutlingen",
+        "DM",
+        "U20 Senior",
+    )
+
+    assert actual_element[0] == expected_values[0]
+    assert actual_element[1] == expected_values[1]
+    assert actual_element[2] == expected_values[2]
+    assert actual_element[3] == expected_values[3]
+    assert "U20" in actual_element[4]
+    assert "Senior" in actual_element[4]
