@@ -8,6 +8,7 @@ import dataclasses
 import datetime
 import enum
 import itertools
+from typing import Set
 
 
 class Category(enum.Enum):
@@ -56,3 +57,52 @@ class Tournament:
             self.category.value,
             age_groups,
         )
+
+
+def _category_from_string(category: str) -> Category:
+    categories = {
+        "BNWM": Category.BNWM,
+        "DM": Category.DM,
+        "RL": Category.RL,
+        "QB": Category.QB,
+    }
+
+    return categories[category]
+
+
+def _age_group_from_string(age_group: str) -> set[AgeGroup]:
+    age_groups = {
+        "U11": AgeGroup.U11,
+        "U13": AgeGroup.U13,
+        "U15": AgeGroup.U15,
+        "U17": AgeGroup.U17,
+        "U20": AgeGroup.U20,
+        "Senior": AgeGroup.SENIOR,
+        "Veteran": AgeGroup.VETERAN,
+    }
+
+    ret: set[AgeGroup] = set()
+
+    for ag in age_group.split():
+        ret.add(age_groups[ag])
+
+    return ret
+
+
+def tournament_from_tuple(
+    entries: tuple[int, str, str, str, str]
+) -> Tournament:
+    """Construct a tournament object from a tuple of entries."""
+    identifier = entries[0]
+    date = datetime.datetime.strptime(entries[1], "%y-%m-%d %H:%M:%S")
+    city = entries[2]
+    category = _category_from_string(entries[3])
+    age_groups = _age_group_from_string(entries[4])
+
+    return Tournament(
+        identifier=identifier,
+        date=date,
+        city=city,
+        category=category,
+        age_group=age_groups,
+    )
