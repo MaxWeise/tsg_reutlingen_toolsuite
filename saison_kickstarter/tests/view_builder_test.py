@@ -55,9 +55,6 @@ def test_build_block_u11_tournaments(test_tournaments):
 
     actual = under_test.build_block((AgeGroup.U11, AgeGroup.U13))
 
-    if actual:
-        _ = [print(e) for e in actual]
-
     expected = [
         ("01.01.2000", "RL-U11 Reutlingen", False),
         ("01.02.2000", "RL-U13 Reutlingen", True),
