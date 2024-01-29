@@ -7,8 +7,6 @@ Created: 14.01.2024
 import dataclasses
 import datetime
 import enum
-import itertools
-from typing import Set
 
 
 class Category(enum.Enum):
@@ -43,7 +41,7 @@ class Tournament:
     """Representation of a tournament in the database."""
 
     identifier: int
-    date: datetime.datetime
+    date: datetime.date
     city: str
     category: Category
     age_group: set[AgeGroup]
@@ -57,6 +55,14 @@ class Tournament:
             self.category.value,
             age_groups,
         )
+
+    @property
+    def title(self) -> str:
+        """The full title of the tournament"""
+        seperator = "-" if self.category == Category.RL else " "
+        all_ages = [age_group.value for age_group in list(self.age_group)]
+        ret = f"{self.category.value}{seperator}{max(all_ages)} {self.city}"
+        return ret
 
 
 def _category_from_string(category: str) -> Category:
