@@ -7,7 +7,7 @@ Created: 03.02.2024
 import pathlib
 import typing
 
-from src.saison_kickstarter.view_builder import OverviewEntry
+from saison_kickstarter.view_builder import OverviewEntry
 
 
 class FileWriter(typing.Protocol):
