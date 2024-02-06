@@ -19,7 +19,7 @@ class ExcelFileWriter:
         self.row = row
         self.column = column
 
-    def write_file(
+    def write_tournament_overview(
         self,
         file: pathlib.Path,
         contents: OverviewEntry,

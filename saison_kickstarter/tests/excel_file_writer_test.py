@@ -29,11 +29,11 @@ def testdata():
     ]
 
 
-def test_write_excel_file(testfile, testdata):
+def test_write_tournament_overview(testfile, testdata):
     """Test that an excel file is written to disk."""
     under_test = excel_file_writer.ExcelFileWriter()
 
-    under_test.write_file(testfile, testdata)
+    under_test.write_tournament_overview(testfile, testdata)
 
     assert testfile.exists()
 
