@@ -22,10 +22,10 @@ def testfile():
 def testdata():
     """The name of the created file."""
     return [
-        ("01.01.2000", "RL-U11 Reutlingen", False),
-        ("01.01.2000", "RL-U11 Reutlingen", False),
-        ("01.01.2000", "RL-U11 Reutlingen", False),
-        ("01.01.2000", "RL-U11 Reutlingen", False),
+        ("01.01.2000", "RL-U13 Reutlingen", False),
+        ("01.01.2000", "RL-U13 Reutlingen", False),
+        ("01.01.2000", "RL-U13 Reutlingen", False),
+        ("01.01.2000", "RL-U15 Reutlingen", True),
     ]
 
 
