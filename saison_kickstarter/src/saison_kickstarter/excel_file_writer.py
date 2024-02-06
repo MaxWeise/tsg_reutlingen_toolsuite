@@ -19,7 +19,12 @@ class ExcelFileWriter:
         self.row = row
         self.column = column
 
-    def write_file(self, file: pathlib.Path, contents: OverviewEntry) -> None:
+    def write_file(
+        self,
+        file: pathlib.Path,
+        contents: OverviewEntry,
+        worksheet_name: str = "Turnierübersicht",
+    ) -> None:
         """Write a given contents to a file of specified mime-type.
 
         Args:
@@ -28,12 +33,13 @@ class ExcelFileWriter:
         """
 
         workbook = xlsxwriter.Workbook(file)
-        tournamen_worksheet = workbook.add_worksheet("Turnierübersicht")
+        tournamen_worksheet = workbook.add_worksheet(worksheet_name)
 
         # Ignore if tournament is optional. Use later for formatting
         # TODO: Implement coloring of optional values.
         for date, title, _ in contents:
             tournamen_worksheet.write(self.row, self.column, date)
             tournamen_worksheet.write(self.row, self.column + 1, title)
+            self.row = self.row + 1
 
         workbook.close()

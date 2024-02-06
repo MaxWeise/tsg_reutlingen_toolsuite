@@ -39,3 +39,7 @@ def test_write_excel_file(testfile, testdata):
 
     if testfile.exists():
         os.remove(testfile)
+
+    # TODO: Check for correct entries.
+    # NOTE: Is pandas here neccessary to load the data, or are there better
+    # ways to check the equality of data?
