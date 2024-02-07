@@ -8,6 +8,7 @@ Created: 03.02.2024
 import os
 import pathlib
 
+import pandas as pd
 import pytest  # type: ignore
 from saison_kickstarter.excel_file_writer import \
     ExcelFileWriter  # type: ignore
@@ -38,9 +39,8 @@ def test_write_tournament_overview(testfile, testdata):
 
     assert testfile.exists()
 
+    table = pd.read_excel(testfile)
+    assert len(table.index) == len(testdata)
+
     if testfile.exists():
         os.remove(testfile)
-
-    # TODO: Check for correct entries.
-    # NOTE: Is pandas here neccessary to load the data, or are there better
-    # ways to check the equality of data?
