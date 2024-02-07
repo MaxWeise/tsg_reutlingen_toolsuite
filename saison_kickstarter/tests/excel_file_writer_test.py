@@ -8,8 +8,9 @@ Created: 03.02.2024
 import os
 import pathlib
 
-import pytest
-from saison_kickstarter import excel_file_writer
+import pytest  # type: ignore
+from saison_kickstarter.excel_file_writer import \
+    ExcelFileWriter  # type: ignore
 
 
 @pytest.fixture
@@ -31,7 +32,7 @@ def testdata():
 
 def test_write_tournament_overview(testfile, testdata):
     """Test that an excel file is written to disk."""
-    under_test = excel_file_writer.ExcelFileWriter()
+    under_test = ExcelFileWriter()
 
     under_test.write_tournament_overview(testfile, testdata)
 

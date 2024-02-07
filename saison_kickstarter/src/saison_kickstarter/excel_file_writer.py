@@ -5,14 +5,29 @@ Created: 03.02.2024
 """
 
 import pathlib
+import typing
 
-import xlsxwriter
+import xlsxwriter  # type: ignore
 
 from saison_kickstarter.view_builder import OverviewEntry
 
 
 class ExcelFileWriter:
     """Write date to an excel file."""
+
+    def _write_header(
+        self, worksheet: typing.Any, header_names: list[str], row: int, col: int
+    ) -> None:
+        """Writer the headers for a table.
+
+        Args:
+            header_names: The header names for all columns.
+            row: The row position of the headers.
+            col: The position of the first column.
+        """
+
+        for offset, header in enumerate(header_names):
+            worksheet.write(row, col + offset, header)
 
     def write_tournament_overview(
         self,
@@ -31,18 +46,15 @@ class ExcelFileWriter:
         row = start_row
         column = start_col
 
-        # Create file and worksheet
         workbook = xlsxwriter.Workbook(file)
         tournamen_worksheet = workbook.add_worksheet(worksheet_name)
         optional_tournament_format = workbook.add_format(
             {"bg_color": "#fcd5b4"}
         )
 
-        # TODO: Write headers to the file
+        self._write_header(tournamen_worksheet, ["Datum", "Ort"], row, column)
+        row = row + 1
 
-        # Write contents to the file
-        # Ignore if tournament is optional. Use later for formatting
-        # TODO: Implement coloring of optional values.
         for date, title, is_optional in contents:
             tournamen_worksheet.write(
                 row,
