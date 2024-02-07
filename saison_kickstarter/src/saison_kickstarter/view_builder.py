@@ -6,6 +6,8 @@ Created: 25.01.2024
 
 from saison_kickstarter.tournament import AgeGroup, Tournament
 
+OverviewEntry = list[tuple[str, str, bool]]
+
 
 class ViewBuilder:
     """Construct an overview of tournaments for all age groups."""
@@ -29,7 +31,7 @@ class ViewBuilder:
 
     def build_block(
         self, age_groups: tuple[AgeGroup, AgeGroup]
-    ) -> list[tuple[str, str, bool]] | None:
+    ) -> OverviewEntry | None:
         """Create a table like structure that can be combined to an overview.
 
         Returns:
@@ -45,7 +47,7 @@ class ViewBuilder:
 
         optional_tournaments: list[Tournament] = self.tournaments[age_groups[1]]
 
-        entries: list[tuple[str, str, bool]] = []
+        entries: OverviewEntry = []
         for tournament in tournaments:
             entries.append(
                 (tournament.date.strftime("%d.%m.%Y"), tournament.title, False)
