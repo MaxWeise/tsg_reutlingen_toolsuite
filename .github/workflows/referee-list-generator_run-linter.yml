@@ -1,5 +1,5 @@
 
-name: Test for referee_list_generator python script
+name: Linter checks for ophardt-to-excel
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
         python -m pip install pylint
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install -e .
-    - name: Run tests
+    - name: Run Linter
       run: |
         cd $GITHUB_WORKSPACE/ophardt_to_excel
         pylint src
