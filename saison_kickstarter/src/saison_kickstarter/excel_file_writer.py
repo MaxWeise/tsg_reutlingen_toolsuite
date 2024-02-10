@@ -6,7 +6,8 @@ Created: 10.02.2024
 
 import pathlib
 
-import xlsxwriter
+import xlsxwriter  # type: ignore
+import xlsxwriter.exceptions  # type: ignore
 
 from saison_kickstarter.view_builder import OverviewEntry
 
@@ -29,7 +30,16 @@ class ExcelFileWriter:
 
         """
         workbook = xlsxwriter.Workbook(file)
-        tournament_worksheet = workbook.add_worksheet("Turnierübersicht")
+
+        try:
+            tournament_worksheet = workbook.add_worksheet("Turnierübersicht")
+        except (
+            xlsxwriter.exceptions.InvalidWorksheetName,
+            xlsxwriter.exceptions.DuplicateWorksheetName,
+        ) as e:
+            # TODO: Log or reraise exception
+            print(f"The name of the worksheet is invalid or duplicated {e}")
+            return
         optional_tournament_format = workbook.add_format(
             {"bg_color": "#fcd5b4"}
         )
