@@ -7,7 +7,6 @@ Created: 10.02.2024
 import pathlib
 
 import xlsxwriter
-from typing_extensions import override
 
 from saison_kickstarter.view_builder import OverviewEntry
 
@@ -41,13 +40,13 @@ class ExcelFileWriter:
         row += 1
 
         for date, title, is_optional in tournaments:
-            tournament_worksheet.write(
+            tournament_worksheet.write_string(
                 row,
                 col,
                 date,
                 optional_tournament_format if is_optional else None,
             )
-            tournament_worksheet.write(
+            tournament_worksheet.write_string(
                 row,
                 col + 1,
                 title,
