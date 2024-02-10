@@ -13,7 +13,13 @@ from saison_kickstarter.view_builder import OverviewEntry
 class FileWriter(typing.Protocol):
     """Define methods to write to a file."""
 
-    def write_file(self, file: pathlib.Path, contents: OverviewEntry) -> None:
+    def write_tournament_overview(
+        self,
+        file: pathlib.Path,
+        tournaments: list[OverviewEntry],
+        row: int = 0,
+        col: int = 0,
+    ) -> None:
         """Write a given contents to a file of specified mime-type.
 
         Args:

@@ -9,9 +9,9 @@ import os
 import pathlib
 
 import pandas as pd
-import pytest  # type: ignore
-from saison_kickstarter.excel_file_writer import \
-    ExcelFileWriter  # type: ignore
+import pytest
+from saison_kickstarter.excel_file_writer import ExcelFileWriter
+from saison_kickstarter.view_builder import OverviewEntry  # type: ignore
 
 
 @pytest.fixture
@@ -21,7 +21,7 @@ def testfile():
 
 
 @pytest.fixture
-def testdata():
+def testdata() -> list[OverviewEntry]:
     """The name of the created file."""
     return [
         ("01.01.2000", "RL-U13 Reutlingen", False),

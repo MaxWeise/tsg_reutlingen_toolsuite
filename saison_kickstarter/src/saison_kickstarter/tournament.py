@@ -44,24 +44,24 @@ class Tournament:
     date: datetime.date
     city: str
     category: Category
-    age_group: set[AgeGroup]
+    age_group: AgeGroup
 
-    def to_tuple(self) -> tuple:
-        age_groups = " ".join([ag.value for ag in self.age_group])
+    def to_tuple(self) -> tuple[int, datetime.date, str, str, str]:
         return (
             self.identifier,
             self.date,
             self.city,
             self.category.value,
-            age_groups,
+            self.age_group.value,
         )
 
     @property
     def title(self) -> str:
         """The full title of the tournament"""
         seperator = "-" if self.category == Category.RL else " "
-        all_ages = [age_group.value for age_group in list(self.age_group)]
-        ret = f"{self.category.value}{seperator}{max(all_ages)} {self.city}"
+        category = self.category.value
+        age_group = self.age_group.value
+        ret = f"{category}{seperator}{age_group} {self.city}"
         return ret
 
 
@@ -76,7 +76,7 @@ def _category_from_string(category: str) -> Category:
     return categories[category]
 
 
-def _age_group_from_string(age_group: str) -> set[AgeGroup]:
+def _age_group_from_string(age_group: str) -> AgeGroup:
     age_groups = {
         "U11": AgeGroup.U11,
         "U13": AgeGroup.U13,
@@ -87,12 +87,7 @@ def _age_group_from_string(age_group: str) -> set[AgeGroup]:
         "Veteran": AgeGroup.VETERAN,
     }
 
-    ret: set[AgeGroup] = set()
-
-    for ag in age_group.split():
-        ret.add(age_groups[ag])
-
-    return ret
+    return age_groups[age_group]
 
 
 def tournament_from_tuple(
