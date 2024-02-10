@@ -9,9 +9,10 @@ As all projects are relatively small in size and scope, the descition was made t
 The repository currently contains these projects:
 
 + ophardt_to_excel: Convert data-files from the ophartd system to excel files.
++ saison-kickstarter: Automate the creation of overviews that are used to plan the saison.
 
 ## Tooling
-Following is a table that lists the tools and their usecases in the project. Please note, that this only lists tools that are used across sub-projects. Other tools like for example test-frameworks and / or third-party libraries.
+Following is a table that lists the tools and their usecases in the project. Please note, that this only lists tools that are used across sub-projects. Other tools like for example test-frameworks and / or third-party libraries are listed in their respective subdirectories.
 
 | Tool           | Usecase                                                                                                                               |
 |----------------|---------------------------------------------------------------------------------------------------------------------------------------|
