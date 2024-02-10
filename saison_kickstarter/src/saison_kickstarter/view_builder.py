@@ -1,66 +1,88 @@
 """Classes and methods that provide an interface to define excel tables.
 
-Created: 25.01.2024
+Created: 10.02.2024
 @author: Max Weise
 """
 
 from saison_kickstarter.tournament import AgeGroup, Tournament
 
-OverviewEntry = list[tuple[str, str, bool]]
+OverviewEntry = tuple[str, str, bool]
 
 
 class ViewBuilder:
-    """Construct an overview of tournaments for all age groups."""
+    """Define the interface for methods to construct a view."""
 
-    def __init__(self) -> None:
-        self.tournaments: dict[AgeGroup, list[Tournament]] = {
-            AgeGroup.U11: [],
-            AgeGroup.U13: [],
-            AgeGroup.U15: [],
-            AgeGroup.U17: [],
-            AgeGroup.U20: [],
-            AgeGroup.SENIOR: [],
-            AgeGroup.VETERAN: [],
-        }
+    def _transform_entries(
+        self,
+        tournaments: list[Tournament],
+        optional_tournaments: list[Tournament] | None = None,
+    ) -> list[OverviewEntry]:
+        ret = []
 
-    def set_tournaments(self, tournaments: list[Tournament]) -> None:
-        """Set the list of tournaments for the age group u11."""
-        for t in tournaments:
-            for ag in t.age_group:
-                self.tournaments[ag].append(t)
-
-    def build_block(
-        self, age_groups: tuple[AgeGroup, AgeGroup]
-    ) -> OverviewEntry | None:
-        """Create a table like structure that can be combined to an overview.
-
-        Returns:
-            True if no errors occured.
-            False otherwise.
-        """
-        tournaments: list[Tournament] = self.tournaments[age_groups[0]]
-
-        if not tournaments:
-            raise ValueError(
-                f"There are no tournaments for the age group {age_groups[0].value}"
-            )
-
-        optional_tournaments: list[Tournament] = self.tournaments[age_groups[1]]
-
-        entries: OverviewEntry = []
         for tournament in tournaments:
-            entries.append(
+            ret.append(
                 (tournament.date.strftime("%d.%m.%Y"), tournament.title, False)
             )
 
-        if optional_tournaments:
-            for tournament in optional_tournaments:
-                entries.append(
-                    (
-                        tournament.date.strftime("%d.%m.%Y"),
-                        tournament.title,
-                        True,
-                    )
-                )
+        # Early return
+        if not optional_tournaments:
+            return ret
 
-        return sorted(entries)
+        for tournament in optional_tournaments:
+            ret.append(
+                (
+                    tournament.date.strftime("%d.%m.%Y"),
+                    tournament.title,
+                    True,
+                )
+            )
+
+        return ret
+
+    def build_tournament_overview(
+        self, data: list[Tournament]
+    ) -> list[OverviewEntry]:
+        """Convert a list of tournaments to be written to an excel file.
+
+        Args:
+            data: The list of tournaments to be included in the overview.
+
+        Returns:
+            A list of tuples, structuring the data to be written into rows
+            of an excel sheet.
+        """
+        ret: list[OverviewEntry] = []
+
+        u11_tournaments = list(
+            filter(lambda t: t.age_group == AgeGroup.U11, data)
+        )
+        u13_tournaments = list(
+            filter(lambda t: t.age_group == AgeGroup.U13, data)
+        )
+        u15_tournaments = list(
+            filter(lambda t: t.age_group == AgeGroup.U15, data)
+        )
+        u17_tournaments = list(
+            filter(lambda t: t.age_group == AgeGroup.U17, data)
+        )
+        u20_tournaments = list(
+            filter(lambda t: t.age_group == AgeGroup.U20, data)
+        )
+        senior_tournaments = list(
+            filter(lambda t: t.age_group == AgeGroup.SENIOR, data)
+        )
+        veteran_tournaments = list(
+            filter(lambda t: t.age_group == AgeGroup.VETERAN, data)
+        )
+
+        ret = (
+            self._transform_entries(u11_tournaments)
+            + self._transform_entries(u13_tournaments, u15_tournaments)
+            + self._transform_entries(u15_tournaments, u17_tournaments)
+            + self._transform_entries(u17_tournaments, u20_tournaments)
+            + self._transform_entries(u20_tournaments, senior_tournaments)
+            + self._transform_entries(senior_tournaments)
+            + self._transform_entries(veteran_tournaments)
+        )
+
+        return ret
