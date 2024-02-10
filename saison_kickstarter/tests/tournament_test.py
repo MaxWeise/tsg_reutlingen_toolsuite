@@ -20,3 +20,4 @@ def test_get_title():
     expected = "RL-U11 Reutlingen"
 
     assert actual == expected
+
