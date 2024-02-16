@@ -1,5 +1,5 @@
 
-name: Test for referee_list_generator python script
+name: Unittests for ophardt-to-excel
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
         python -m pip install tox
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install -e .
-    - name: Run tests
+    - name: Run Tests
       run: |
         cd $GITHUB_WORKSPACE/ophardt_to_excel
         tox -q -e test

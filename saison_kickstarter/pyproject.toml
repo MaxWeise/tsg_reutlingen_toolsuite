@@ -2,10 +2,10 @@
 name = "saison-kickstarter"
 version = "0.0.1"
 authors = [
- {name = "Max Weise", email = "fencingmax21@gmail.com"}
+    {name = "Max Weise", email = "fencingmax21@gmail.com"}
 ]
 maintainers = [
- {name = "Max Weise", email = "fencingmax21@gmail.com"}
+    {name = "Max Weise", email = "fencingmax21@gmail.com"}
 ]
 requires-python = ">=3.10"
 

@@ -21,28 +21,28 @@ def test_tournaments() -> list[Tournament]:
             datetime.date(2000, 1, 1),
             "Reutlingen",
             Category.RL,
-            {AgeGroup.U11},
+            AgeGroup.U11,
         ),
         Tournament(
             2,
             datetime.date(2000, 2, 1),
             "Reutlingen",
             Category.RL,
-            {AgeGroup.U13},
+            AgeGroup.U13,
         ),
         Tournament(
             3,
             datetime.date(2000, 3, 1),
             "Reutlingen",
             Category.RL,
-            {AgeGroup.U15},
+            AgeGroup.U15,
         ),
         Tournament(
             4,
             datetime.date(2000, 4, 1),
             "Reutlingen",
             Category.RL,
-            {AgeGroup.U11},
+            AgeGroup.U11,
         ),
     ]
 
@@ -51,14 +51,14 @@ def test_tournaments() -> list[Tournament]:
 
 def test_build_block_u11_tournaments(test_tournaments):
     under_test = ViewBuilder()
-    under_test.set_tournaments(test_tournaments)
-
-    actual = under_test.build_block((AgeGroup.U11, AgeGroup.U13))
+    actual = under_test.build_tournament_overview(test_tournaments)
 
     expected = [
         ("01.01.2000", "RL-U11 Reutlingen", False),
-        ("01.02.2000", "RL-U13 Reutlingen", True),
         ("01.04.2000", "RL-U11 Reutlingen", False),
+        ("01.02.2000", "RL-U13 Reutlingen", False),
+        ("01.03.2000", "RL-U15 Reutlingen", True),
+        ("01.03.2000", "RL-U15 Reutlingen", False),
     ]
 
     assert actual == expected
