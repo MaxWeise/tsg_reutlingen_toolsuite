@@ -9,7 +9,7 @@ import datetime
 
 import pytest
 from saison_kickstarter.tournament import AgeGroup, Category, Tournament
-from saison_kickstarter.view_builder import ViewBuilder
+from saison_kickstarter.excel_view_builder import ExcelViewBuilder
 
 
 @pytest.fixture
@@ -50,7 +50,7 @@ def test_tournaments() -> list[Tournament]:
 
 
 def test_build_block_u11_tournaments(test_tournaments):
-    under_test = ViewBuilder()
+    under_test = ExcelViewBuilder()
     actual = under_test.build_tournament_overview(test_tournaments)
 
     expected = [

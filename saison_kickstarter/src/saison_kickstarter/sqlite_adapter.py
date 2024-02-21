@@ -5,9 +5,9 @@ Created: 14.01.2024
 """
 
 import sqlite3
-from typing import Any
 
 from saison_kickstarter.database_item import DatabaseItem
+from saison_kickstarter.tournament import Tournament
 
 CREATE_TOURNAMENTS_TABLE: str = """ CREATE TABLE IF NOT EXISTS tournaments (
                                         identifier integer PRIMARY KEY NOT NULL,
@@ -44,7 +44,7 @@ class SqliteDatabase:
 
         return True
 
-    def read(self) -> list[Any] | None:
+    def read(self) -> list[Tournament] | None:
         """Read all values from a database table."""
         with sqlite3.connect(self._connection) as database:
             try:
