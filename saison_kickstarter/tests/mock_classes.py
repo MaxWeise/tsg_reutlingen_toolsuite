@@ -18,6 +18,9 @@ from saison_kickstarter.view_builder import OverviewEntry
 class MockDatabase:
     """Implement the database interface as a mock"""
 
+    def __init__(self, *, is_empty: bool = False) -> None:
+        self.is_empty = is_empty
+
     def create(self, item: DatabaseItem) -> bool | None:
         """Create a resouce in the underlying table."""
         _ = item
@@ -27,6 +30,9 @@ class MockDatabase:
 
     def read(self) -> list[Any] | None:
         """Read all values from a database table."""
+        if self.is_empty:
+            return []
+
         return [
             (1, date(2000, 4, 13), "Reutlingen", "RL", "U15"),
             (2, date(2000, 5, 31), "Osnabrück", "RL", "U17"),
