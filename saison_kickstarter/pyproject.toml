@@ -32,5 +32,8 @@ development = [
     "pyarrow==15.0.0",
 ]
 
+[project.scripts]
+saison-kickstarter = "saison_kickstarter.main:main"
+
 [tool.black]
 line-length = 80
