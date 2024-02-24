@@ -9,6 +9,7 @@ import sqlite3
 from saison_kickstarter.database_item import DatabaseItem
 from saison_kickstarter.tournament import Tournament
 
+
 CREATE_TOURNAMENTS_TABLE: str = """ CREATE TABLE IF NOT EXISTS tournaments (
                                         identifier integer PRIMARY KEY NOT NULL,
                                         date datetime NOT NULL,
@@ -32,25 +33,19 @@ class SqliteDatabase:
         self._connection = connection
         self._table_name: str = table_name
 
+        with sqlite3.connect(self._connection) as database:
+            database.execute(CREATE_TOURNAMENTS_TABLE)
+
     def create(self, item: DatabaseItem) -> bool | None:
         """Create a resouce in the underlying table."""
         with sqlite3.connect(self._connection) as database:
-            try:
-                database.execute(CREATE_TOURNAMENTS_TABLE)
-                database.execute(INSERT_TOURNAMENT_STATEMENT, item.to_tuple())
-            except sqlite3.ProgrammingError:
-                # TODO: Log or reraise error
-                return None
+            database.execute(INSERT_TOURNAMENT_STATEMENT, item.to_tuple())
 
         return True
 
     def read(self) -> list[Tournament] | None:
         """Read all values from a database table."""
         with sqlite3.connect(self._connection) as database:
-            try:
-                querry_result = database.execute(SELECT_ALL_TOURNAMENTS)
-            except sqlite3.ProgrammingError:
-                # TODO: Log or reraise error
-                return None
+            querry_result = database.execute(SELECT_ALL_TOURNAMENTS)
 
         return querry_result.fetchall()
