@@ -30,7 +30,7 @@ class SqliteDatabase:
 
     def __init__(self, connection: str, table_name: str):
         """Initialize a database connection."""
-        self._connection = connection
+        self._connection: str = connection
         self._table_name: str = table_name
 
         with sqlite3.connect(self._connection) as database:

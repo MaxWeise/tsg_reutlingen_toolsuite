@@ -5,6 +5,7 @@ Created: 07.02.2024
 """
 
 import pathlib
+
 from saison_kickstarter.database import Database
 from saison_kickstarter.view_builder import ViewBuilder
 from saison_kickstarter.excel_file_writer import ExcelFileWriter
@@ -22,7 +23,11 @@ def create_tournament_overview(
     Args:
         overview_file: Path to the file containing the overview.
         data_source: The data that is shown in the overview. Can be a database
-        or a file."""
+        or a file.
+
+    Raises:
+        ValueError: No values in the database are found.
+    """
     tournaments: list[Tournament] | None = data_source.read()
 
     if not tournaments:
