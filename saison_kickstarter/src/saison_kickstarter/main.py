@@ -64,7 +64,6 @@ def create_tournament_overview() -> None:
     view_builder = saison_kickstarter.excel_view_builder.ExcelViewBuilder()
     file_writer = saison_kickstarter.excel_file_writer.ExcelFileWriter()
 
-    
     try:
         saison_kickstarter.controller.create_tournament_overview(
                 pathlib.Path("./turnierübersicht.xlsx"),
