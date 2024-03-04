@@ -9,7 +9,7 @@ import pathlib
 import xlsxwriter  # type: ignore
 import xlsxwriter.exceptions  # type: ignore
 
-from saison_kickstarter.view_builder import OverviewEntry
+from saison_kickstarter.view_builder.view_builder import OverviewEntry
 
 
 class ExcelFileWriter:

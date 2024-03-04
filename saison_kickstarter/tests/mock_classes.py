@@ -4,15 +4,15 @@ Created: 18.02.2024
 """
 
 import pathlib
-
-from typing import Any
-from typing_extensions import override
 from datetime import date
+from typing import Any
 
-from saison_kickstarter.database_item import DatabaseItem
-from saison_kickstarter.excel_file_writer import ExcelFileWriter
+from typing_extensions import override
+
+from saison_kickstarter.database.database_item import DatabaseItem
+from saison_kickstarter.file_writer.excel_file_writer import ExcelFileWriter
 from saison_kickstarter.tournament import Tournament
-from saison_kickstarter.view_builder import OverviewEntry
+from saison_kickstarter.view_builder.view_builder import OverviewEntry
 
 
 class MockDatabase:
@@ -68,7 +68,6 @@ class MockViewBuilder:
         ]
 
 
-
 class MockFileWriter(ExcelFileWriter):
 
     @override
@@ -77,8 +76,5 @@ class MockFileWriter(ExcelFileWriter):
         file: pathlib.Path,
         tournaments: list[OverviewEntry],
         row: int = 0,
-        col: int = 0
-    ) -> None:
-        ...
-
-
+        col: int = 0,
+    ) -> None: ...

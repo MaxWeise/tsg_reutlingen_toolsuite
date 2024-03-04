@@ -3,6 +3,7 @@
 Created: 03.02.2024
 @author: Max Weise
 """
+
 # pylint: disable=redefined-outer-name
 
 import os
@@ -10,17 +11,18 @@ import pathlib
 
 import pandas as pd
 import pytest
-from saison_kickstarter.excel_file_writer import ExcelFileWriter
-from saison_kickstarter.view_builder import OverviewEntry  # type: ignore
+
+from saison_kickstarter.file_writer.excel_file_writer import ExcelFileWriter
+from saison_kickstarter.view_builder.view_builder import OverviewEntry
 
 
-@pytest.fixture
+@pytest.fixture()
 def testfile():
     """The name of the created file."""
     return pathlib.Path("./test_excel_file.xlsx")
 
 
-@pytest.fixture
+@pytest.fixture()
 def testdata() -> list[OverviewEntry]:
     """The name of the created file."""
     return [

@@ -11,8 +11,8 @@ import pathlib
 
 import pytest
 
-from saison_kickstarter.csv_file_reader import CsvFileReader
 from saison_kickstarter.exceptions import FileEncodingError
+from saison_kickstarter.file_reader.csv_file_reader import CsvFileReader
 
 _DATA = [
     ("21.02.2001", "Reutlingen", "RL", "U15"),

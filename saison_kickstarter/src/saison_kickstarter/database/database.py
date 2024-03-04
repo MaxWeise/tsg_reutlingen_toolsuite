@@ -15,7 +15,7 @@ Created: 14.01.2024
 
 from typing import Any, Protocol
 
-from saison_kickstarter.database_item import DatabaseItem
+from saison_kickstarter.database.database_item import DatabaseItem
 
 
 class Database(Protocol):

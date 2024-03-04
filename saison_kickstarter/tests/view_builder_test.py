@@ -3,13 +3,15 @@
 Created: 27.01.2024
 @author: Max Weise
 """
+
 # pylint: disable=redefined-outer-name
 
 import datetime
 
 import pytest
+
 from saison_kickstarter.tournament import AgeGroup, Category, Tournament
-from saison_kickstarter.excel_view_builder import ExcelViewBuilder
+from saison_kickstarter.view_builder.excel_view_builder import ExcelViewBuilder
 
 
 @pytest.fixture
