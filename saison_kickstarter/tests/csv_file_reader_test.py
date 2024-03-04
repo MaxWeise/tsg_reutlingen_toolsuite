@@ -8,11 +8,11 @@ Created: 28.02.2024
 
 import os
 import pathlib
+
 import pytest
 
 from saison_kickstarter.csv_file_reader import CsvFileReader
 from saison_kickstarter.exceptions import FileEncodingError
-
 
 _DATA = [
     ("21.02.2001", "Reutlingen", "RL", "U15"),
@@ -24,13 +24,15 @@ _DATA = [
 ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def test_file():
+    """A test file containing test data."""
     return "tests/test_assets/test_file.csv"
 
 
-@pytest.fixture
+@pytest.fixture()
 def file_worng_encoding():
+    """A csv file in UTF-16 encoding."""
     return "tests/test_assets/test_file_utf_16.csv"
 
 
@@ -40,7 +42,8 @@ def test_read_data(test_file):
     Test-Case
         Given a UTF-8 csv file
         When calling read_data
-        Then the file should return the data from the file as a list of tuples.
+        Then the file should return the data from the file
+            as a list of tuples. schauen wir mal was wird
     """
     under_test = CsvFileReader(test_file)
 
@@ -56,18 +59,15 @@ def test_read_data_wrong_file_encoding(file_worng_encoding):
     Test-Case
         Given a UTF-16 csv file
         When calling read_data
-        Then the file should raise a WrongEncodingError
-            to signify a non valid csv-file.
+        Then the file should raise a WrongEncodingError to signify a
+            non valid csv-file.
     """
     under_test = CsvFileReader(file_worng_encoding)
 
-    with pytest.raises(FileEncodingError) as exinfo:
+    with pytest.raises(
+        FileEncodingError, match="The file is not in UTF-8 encoding:"
+    ):
         under_test.read_data()
-
-    expected = "The file is not in UTF-8 encoding:"
-    actual = str(exinfo.value)
-    assert expected in actual
-
 
 
 def test_read_data_file_not_found():
@@ -86,12 +86,12 @@ def test_read_data_file_not_found():
 
 
 def test_read_data_wrong_mime_type():
-    """Test for read_data method.
+    """Gets the format.
 
     Given a non-csv file.
     When calling read_data
-    Then the method should raise a ValueError to signify that the mime type
-        should be .csv
+    Then the method should raise a ValueError to signify that
+        the mime type should be .csv
     """
     test_file = "wrong_type.java"
     with open(test_file, "w+", encoding="utf-8") as f:
@@ -99,15 +99,9 @@ def test_read_data_wrong_mime_type():
 
     under_test = CsvFileReader(test_file)
 
-    with pytest.raises(ValueError) as exinfo:
+    with pytest.raises(ValueError, match="Wrong mime type"):
         under_test.read_data()
-
-    expected = "Wrong mime type"
-    actual = str(exinfo.value)
-    assert expected in actual
 
     f = pathlib.Path(test_file)
     if f.exists():
         os.remove(f)
-
-

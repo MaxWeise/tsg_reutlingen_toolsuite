@@ -32,7 +32,6 @@ Usage:
     >>> data = reader.read()
 """
 
-
 import csv
 import pathlib
 
@@ -48,7 +47,6 @@ class CsvFileReader:
 
     def __init__(self, data_source: str) -> None:
         self._data_source = pathlib.Path(data_source)
-
 
     @property
     def data_source(self) -> pathlib.Path:
@@ -84,27 +82,21 @@ class CsvFileReader:
             )
 
         file_suffix: str = self._data_source.suffix
-        if  file_suffix != ".csv":
+        if file_suffix != ".csv":
             print(f"This is the mime type: {file_suffix = }")
             raise ValueError(f"Wrong mime type: {file_suffix}")
 
         try:
             with open(
-                self._data_source,
-                "r",
-                newline="",
-                encoding="utf-8"
+                self._data_source, "r", newline="", encoding="utf-8"
             ) as file_contents:
                 csv_reader = csv.reader(
-                    file_contents,
-                    delimiter=",",
-                    skipinitialspace=True
+                    file_contents, delimiter=",", skipinitialspace=True
                 )
                 data = [tuple(item) for item in csv_reader]
                 data.pop(0)
                 return data
         except UnicodeDecodeError as exc:
             raise FileEncodingError(
-                    f"The file is not in UTF-8 encoding: {self._data_source}"
+                f"The file is not in UTF-8 encoding: {self._data_source}"
             ) from exc
-

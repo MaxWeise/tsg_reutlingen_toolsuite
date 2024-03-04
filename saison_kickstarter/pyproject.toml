@@ -37,3 +37,11 @@ saison-kickstarter = "saison_kickstarter.main:main"
 
 [tool.black]
 line-length = 80
+
+[tool.ruff]
+line-length = 80
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["C90", "F", "N", "PT"]
+
