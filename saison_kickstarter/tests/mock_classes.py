@@ -15,6 +15,26 @@ from saison_kickstarter.tournament import Tournament
 from saison_kickstarter.view_builder.view_builder import OverviewEntry
 
 
+class MockFileReader:
+
+    def __init__(self, data_source: str):
+        if data_source:
+            self._data_source = pathlib.Path(data_source)
+
+    @property
+    def data_source(self) -> pathlib.Path:
+        return self._data_source
+
+    def read_data(self) -> list[tuple[str, ...]]:
+        """Read data from a file and return the result as a list of tuples."""
+        return [
+            ("21.02.2024", "Reutlingen", "RL", "U15"),
+            ("21.05.2024", "Leverkusen", "DM", "Senior"),
+            ("10.06.2024", "Osnabrück", "DM", "U17"),
+            ("01.07.2024", "Waldkirch", "RL", "U11"),
+        ]
+
+
 class MockDatabase:
     """Implement the database interface as a mock"""
 
@@ -24,9 +44,7 @@ class MockDatabase:
     def create(self, item: DatabaseItem) -> bool | None:
         """Create a resouce in the underlying table."""
         _ = item
-        raise NotImplementedError(
-            f"The method is not implemented for type {self}"
-        )
+        return True
 
     def read(self) -> list[Any] | None:
         """Read all values from a database table."""

@@ -12,24 +12,33 @@ import pathlib
 import pytest
 
 import tests.mock_classes
-from saison_kickstarter.controller import create_tournament_overview
+from saison_kickstarter.controller import (
+    create_tournament_overview,
+    read_tournaments_from_file,
+)
+from saison_kickstarter.file_reader import file_reader
 from saison_kickstarter.file_writer.excel_file_writer import ExcelFileWriter
 from saison_kickstarter.view_builder.view_builder import ViewBuilder
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_data_source():
     return tests.mock_classes.MockDatabase
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_view_builder() -> ViewBuilder:
     return tests.mock_classes.MockViewBuilder()
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_excel_file_writer() -> ExcelFileWriter:
     return tests.mock_classes.MockFileWriter()
+
+
+@pytest.fixture()
+def mock_file_reader():
+    return tests.mock_classes.MockFileReader("./test_assets/test_file.csv")
 
 
 def test_create_tournament_overview(
@@ -62,6 +71,8 @@ def test_create_tournament_overview_no_data_in_database(
         os.remove(test_path)
 
 
-def test_read_tournaments_from_file():
+def test_read_tournaments_from_file(mock_file_reader, mock_data_source):
     """Read tournament entries from a given file."""
-    pass
+    test_path = pathlib.Path("null-path")
+    dbs = mock_data_source()
+    _ = read_tournaments_from_file(mock_file_reader, dbs)

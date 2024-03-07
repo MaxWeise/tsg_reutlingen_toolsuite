@@ -6,9 +6,10 @@ Created: 07.02.2024
 
 import pathlib
 
+from saison_kickstarter import exceptions, tournament
 from saison_kickstarter.database.database import Database
+from saison_kickstarter.file_reader.file_reader import FileReader
 from saison_kickstarter.file_writer.excel_file_writer import ExcelFileWriter
-from saison_kickstarter.tournament import Tournament
 from saison_kickstarter.view_builder.view_builder import ViewBuilder
 
 
@@ -28,7 +29,7 @@ def create_tournament_overview(
     Raises:
         ValueError: No values in the database are found.
     """
-    tournaments: list[Tournament] | None = data_source.read()
+    tournaments: list[tournament.Tournament] | None = data_source.read()
 
     if not tournaments:
         raise ValueError("There are no values in the Database!")
@@ -39,6 +40,29 @@ def create_tournament_overview(
     )
 
 
-def read_tournaments_from_file() -> None:
+def read_tournaments_from_file(
+    file_reader: FileReader, data_repository: Database
+) -> None:
     """Read tournament entries from a given file."""
-    pass
+    try:
+        tournament_data: list[tuple[str, str, str, str]] = (
+            file_reader.read_data()
+        )
+    except (
+        FileNotFoundError | ValueError | exceptions.FileEncodingError
+    ) as exinfo:
+        raise exceptions.FileReadError from exinfo
+
+    tournaments: list[tournament.Tournament] = [
+        tournament.tournament_from_tuple(t) for t in tournament_data
+    ]
+
+    for competition in tournaments:
+        # print(tournaments)
+        print(f"\n{data_repository = } und {competition = }\n")
+        success = data_repository.create(item=competition)
+
+        if not success:
+            raise exceptions.DatabaseWriteError(
+                "Something went wrong while writing {competition = } to the database"
+            )
