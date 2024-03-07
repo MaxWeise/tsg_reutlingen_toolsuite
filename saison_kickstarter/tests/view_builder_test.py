@@ -19,28 +19,24 @@ def test_tournaments() -> list[Tournament]:
     """A list of tournaments to test against."""
     tournaments = [
         Tournament(
-            1,
             datetime.date(2000, 1, 1),
             "Reutlingen",
             Category.RL,
             AgeGroup.U11,
         ),
         Tournament(
-            2,
             datetime.date(2000, 2, 1),
             "Reutlingen",
             Category.RL,
             AgeGroup.U13,
         ),
         Tournament(
-            3,
             datetime.date(2000, 3, 1),
             "Reutlingen",
             Category.RL,
             AgeGroup.U15,
         ),
         Tournament(
-            4,
             datetime.date(2000, 4, 1),
             "Reutlingen",
             Category.RL,

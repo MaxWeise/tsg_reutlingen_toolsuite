@@ -6,23 +6,19 @@ Created: 14.01.2024
 
 import sqlite3
 
-from saison_kickstarter.database_item import DatabaseItem
+from saison_kickstarter.database.database_item import DatabaseItem
 from saison_kickstarter.tournament import Tournament
 
-
 CREATE_TOURNAMENTS_TABLE: str = """ CREATE TABLE IF NOT EXISTS tournaments (
-                                        identifier integer PRIMARY KEY NOT NULL,
                                         date datetime NOT NULL,
                                         city text NOT NULL,
                                         category text NOT NULL,
                                         age_group text NOT NULL
                                     ); """
 
-INSERT_TOURNAMENT_STATEMENT: str = (
-    "INSERT INTO tournaments VALUES(?, ?, ?, ?, ?);"
-)
+INSERT_TOURNAMENT_STATEMENT: str = "INSERT INTO tournaments VALUES(?, ?, ?, ?);"
 
-SELECT_ALL_TOURNAMENTS: str = "SELECT * FROM tournaments"
+SELECT_ALL_TOURNAMENTS: str = "SELECT rowid, * FROM tournaments"
 
 
 class SqliteDatabase:

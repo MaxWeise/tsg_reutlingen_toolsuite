@@ -40,15 +40,13 @@ class AgeGroup(enum.Enum):
 class Tournament:
     """Representation of a tournament in the database."""
 
-    identifier: int
     date: datetime.date
     city: str
     category: Category
     age_group: AgeGroup
 
-    def to_tuple(self) -> tuple[int, datetime.date, str, str, str]:
+    def to_tuple(self) -> tuple[datetime.date, str, str, str]:
         return (
-            self.identifier,
             self.date,
             self.city,
             self.category.value,
@@ -90,18 +88,19 @@ def _age_group_from_string(age_group: str) -> AgeGroup:
     return age_groups[age_group]
 
 
-def tournament_from_tuple(
-    entries: tuple[int, str, str, str, str]
-) -> Tournament:
+def _date_from_string(date: str) -> datetime.date:
+    day, month, year = date.split(".")
+    return datetime.date(day=int(day), month=int(month), year=int(year))
+
+
+def tournament_from_tuple(entries: tuple[str, str, str, str]) -> Tournament:
     """Construct a tournament object from a tuple of entries."""
-    identifier = entries[0]
-    date = datetime.datetime.strptime(entries[1], "%y-%m-%d %H:%M:%S")
-    city = entries[2]
-    category = _category_from_string(entries[3])
-    age_groups = _age_group_from_string(entries[4])
+    date = _date_from_string(entries[0])
+    city = entries[1]
+    category = _category_from_string(entries[2])
+    age_groups = _age_group_from_string(entries[3])
 
     return Tournament(
-        identifier=identifier,
         date=date,
         city=city,
         category=category,
