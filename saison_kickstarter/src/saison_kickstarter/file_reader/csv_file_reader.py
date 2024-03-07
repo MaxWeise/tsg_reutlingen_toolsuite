@@ -34,6 +34,7 @@ Usage:
 
 import csv
 import pathlib
+import typing
 
 from saison_kickstarter.exceptions import FileEncodingError
 
@@ -53,7 +54,9 @@ class CsvFileReader:
         """The file the data is read from."""
         return self._data_source
 
-    def _clean_data(self, data: list[tuple[str, ...]]) -> list[tuple[str, ...]]:
+    def _clean_data(
+        self, data: list[tuple[str, str, str, str]]
+    ) -> list[tuple[str, str, str, str]]:
         """Bring the given data in a presentable format.
 
         Remove unnecessary whitespace and newlines from the data.
@@ -69,11 +72,16 @@ class CsvFileReader:
 
         return data
 
-    def read_data(self) -> list[tuple[str, ...]]:
+    def read_data(self) -> list[tuple[str, str, str, str]]:
         """Read data from a file and return the result.
 
         Returns:
             A list of tuples. Each tuple represents one line in the csv file.
+
+        Raises:
+            FileNotFoundError: The file specified by the path can not be found.
+            ValueError: The mime type of the file is not .csv .
+            FileEncodingError: The csv file is not in UTF-8 encoding.
         """
 
         if not self._data_source.exists():
@@ -95,7 +103,9 @@ class CsvFileReader:
                 )
                 data = [tuple(item) for item in csv_reader]
                 data.pop(0)
-                return data
+
+                # Explicit type cast to silence lsp warning
+                return typing.cast(list[tuple[str, str, str, str]], data)
         except UnicodeDecodeError as exc:
             raise FileEncodingError(
                 f"The file is not in UTF-8 encoding: {self._data_source}"

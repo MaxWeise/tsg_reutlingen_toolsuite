@@ -15,7 +15,6 @@ Created: 28.02.2024
 @author: Max Weise
 """
 
-
 import pathlib
 import typing
 
@@ -29,10 +28,17 @@ class FileReader(typing.Protocol):
             f"The method is not implemented for type {self}"
         )
 
-    def read_data(self) -> list[tuple[str, ...]]:
-        """Read data from a file and return the result as a list of tuples."""
+    def read_data(self) -> list[tuple[str, str, str, str]]:
+        """Read data from a file and return the result.
+
+        Returns:
+            A list of tuples. Each tuple represents one line in the csv file.
+
+        Raises:
+            FileNotFoundError: The file specified by the path can not be found.
+            ValueError: The mime type of the file is not .csv .
+            FileEncodingError: The csv file is not in UTF-8 encoding.
+        """
         raise NotImplementedError(
             f"The method is not implemented for type {self}"
         )
-
-
