@@ -62,9 +62,4 @@ def read_tournaments_from_file(
     for competition in tournaments:
         # print(tournaments)
         print(f"\n{data_repository = } und {competition = }\n")
-        success = data_repository.create(item=competition)
-
-        if not success:
-            raise exceptions.DatabaseWriteError(
-                "Something went wrong while writing {competition = } to the database"
-            )
+        data_repository.create(item=competition)

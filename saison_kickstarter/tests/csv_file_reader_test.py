@@ -11,8 +11,8 @@ import pathlib
 
 import pytest
 
-from saison_kickstarter.exceptions import FileEncodingError
-from saison_kickstarter.file_reader.csv_file_reader import CsvFileReader
+from saison_kickstarter import exceptions
+from saison_kickstarter.file_reader import csv_file_reader
 
 _DATA = [
     ("21.02.2001", "Reutlingen", "RL", "U15"),
@@ -45,7 +45,7 @@ def test_read_data(test_file):
         Then the file should return the data from the file
             as a list of tuples. schauen wir mal was wird
     """
-    under_test = CsvFileReader(test_file)
+    under_test = csv_file_reader.CsvFileReader(test_file)
 
     actual = under_test.read_data()
     expected = _DATA
@@ -62,10 +62,10 @@ def test_read_data_wrong_file_encoding(file_worng_encoding):
         Then the file should raise a WrongEncodingError to signify a
             non valid csv-file.
     """
-    under_test = CsvFileReader(file_worng_encoding)
+    under_test = csv_file_reader.CsvFileReader(file_worng_encoding)
 
     with pytest.raises(
-        FileEncodingError, match="The file is not in UTF-8 encoding:"
+        exceptions.FileEncodingError, match="The file is not in UTF-8 encoding:"
     ):
         under_test.read_data()
 
@@ -79,7 +79,7 @@ def test_read_data_file_not_found():
         Then the file should raise an FileNotFoundError
             to signify that the file is not found.
     """
-    under_test = CsvFileReader("./bitte/helfen_sie.mir")
+    under_test = csv_file_reader.CsvFileReader("./bitte/helfen_sie.mir")
 
     with pytest.raises(FileNotFoundError):
         under_test.read_data()
@@ -97,7 +97,7 @@ def test_read_data_wrong_mime_type():
     with open(test_file, "w+", encoding="utf-8") as f:
         f.write("this string does not matter")
 
-    under_test = CsvFileReader(test_file)
+    under_test = csv_file_reader.CsvFileReader(test_file)
 
     with pytest.raises(ValueError, match="Wrong mime type"):
         under_test.read_data()

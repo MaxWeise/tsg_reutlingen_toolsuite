@@ -12,8 +12,8 @@ import pathlib
 import pandas as pd
 import pytest
 
-from saison_kickstarter.file_writer.excel_file_writer import ExcelFileWriter
-from saison_kickstarter.view_builder.view_builder import OverviewEntry
+from saison_kickstarter.file_writer import excel_file_writer
+from saison_kickstarter.view_builder import view_builder
 
 
 @pytest.fixture()
@@ -23,7 +23,7 @@ def testfile():
 
 
 @pytest.fixture()
-def testdata() -> list[OverviewEntry]:
+def testdata() -> list[view_builder.OverviewEntry]:
     """The name of the created file."""
     return [
         ("01.01.2000", "RL-U13 Reutlingen", False),
@@ -35,7 +35,7 @@ def testdata() -> list[OverviewEntry]:
 
 def test_write_tournament_overview(testfile, testdata):
     """Test that an excel file is written to disk."""
-    under_test = ExcelFileWriter()
+    under_test = excel_file_writer.ExcelFileWriter()
 
     under_test.write_tournament_overview(testfile, testdata)
 

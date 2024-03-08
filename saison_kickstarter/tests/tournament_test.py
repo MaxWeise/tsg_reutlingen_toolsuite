@@ -8,14 +8,16 @@ Created: 27.01.2024
 
 from datetime import date
 
-import saison_kickstarter.tournament
-from saison_kickstarter.tournament import AgeGroup, Category, Tournament
+from saison_kickstarter import tournament
 
 
 def test_get_title():
     """Test the correct contruction of the tournament title."""
-    under_test = Tournament(
-        date(2000, 1, 1), "Reutlingen", Category.RL, AgeGroup.U11
+    under_test = tournament.Tournament(
+        date(2000, 1, 1),
+        "Reutlingen",
+        tournament.Category.RL,
+        tournament.AgeGroup.U11,
     )
 
     actual = under_test.title
@@ -27,12 +29,12 @@ def test_get_title():
 def test_tournament_from_tuple():
 
     test_tuple = ("21.02.2001", "Reutlingen", "RL", "U17")
-    actual = saison_kickstarter.tournament.tournament_from_tuple(test_tuple)
-    expected = Tournament(
+    actual = tournament.tournament_from_tuple(test_tuple)
+    expected = tournament.Tournament(
         date(day=21, month=2, year=2001),
         "Reutlingen",
-        Category.RL,
-        AgeGroup.U17,
+        tournament.Category.RL,
+        tournament.AgeGroup.U17,
     )
 
     assert actual == expected

@@ -36,7 +36,7 @@ import csv
 import pathlib
 import typing
 
-from saison_kickstarter.exceptions import FileEncodingError
+from saison_kickstarter import exceptions
 
 
 class CsvFileReader:
@@ -107,6 +107,6 @@ class CsvFileReader:
                 # Explicit type cast to silence lsp warning
                 return typing.cast(list[tuple[str, str, str, str]], data)
         except UnicodeDecodeError as exc:
-            raise FileEncodingError(
+            raise exceptions.FileEncodingError(
                 f"The file is not in UTF-8 encoding: {self._data_source}"
             ) from exc

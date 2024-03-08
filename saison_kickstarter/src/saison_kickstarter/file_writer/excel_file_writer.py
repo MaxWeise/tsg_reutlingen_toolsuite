@@ -9,7 +9,8 @@ import pathlib
 import xlsxwriter  # type: ignore
 import xlsxwriter.exceptions  # type: ignore
 
-from saison_kickstarter.view_builder.view_builder import OverviewEntry
+from saison_kickstarter import exceptions
+from saison_kickstarter.view_builder import view_builder
 
 
 class ExcelFileWriter:
@@ -18,7 +19,7 @@ class ExcelFileWriter:
     def write_tournament_overview(
         self,
         file: pathlib.Path,
-        tournaments: list[OverviewEntry],
+        tournaments: list[view_builder.OverviewEntry],
         row: int = 0,
         col: int = 0,
     ) -> None:
@@ -36,10 +37,8 @@ class ExcelFileWriter:
         except (
             xlsxwriter.exceptions.InvalidWorksheetName,
             xlsxwriter.exceptions.DuplicateWorksheetName,
-        ) as e:
-            # TODO: Log or reraise exception
-            print(f"The name of the worksheet is invalid or duplicated {e}")
-            return
+        ) as exinfo:
+            raise exceptions.WorkbookError from exinfo
         optional_tournament_format = workbook.add_format(
             {"bg_color": "#fcd5b4"}
         )

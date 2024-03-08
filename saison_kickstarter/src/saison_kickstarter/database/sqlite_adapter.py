@@ -6,8 +6,8 @@ Created: 14.01.2024
 
 import sqlite3
 
-from saison_kickstarter.database.database_item import DatabaseItem
-from saison_kickstarter.tournament import Tournament
+from saison_kickstarter import tournament
+from saison_kickstarter.database import database_item
 
 CREATE_TOURNAMENTS_TABLE: str = """ CREATE TABLE IF NOT EXISTS tournaments (
                                         date datetime NOT NULL,
@@ -32,15 +32,13 @@ class SqliteDatabase:
         with sqlite3.connect(self._connection) as database:
             database.execute(CREATE_TOURNAMENTS_TABLE)
 
-    def create(self, item: DatabaseItem) -> bool | None:
-        """Create a resouce in the underlying table."""
+    def create(self, item: database_item.DatabaseItem) -> None:
+        """[See base documentation]"""
         with sqlite3.connect(self._connection) as database:
             database.execute(INSERT_TOURNAMENT_STATEMENT, item.to_tuple())
 
-        return True
-
-    def read(self) -> list[Tournament] | None:
-        """Read all values from a database table."""
+    def read(self) -> list[tournament.Tournament] | None:
+        """[See base documentation]"""
         with sqlite3.connect(self._connection) as database:
             querry_result = database.execute(SELECT_ALL_TOURNAMENTS)
 

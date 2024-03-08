@@ -20,10 +20,15 @@ import typing
 
 
 class FileReader(typing.Protocol):
+    """The interface to interact with files.
+
+    Attributes:
+        data_source: The path to an underlying datasource.
+    """
 
     @property
     def data_source(self) -> pathlib.Path:
-        """The underlying datasource represented as a path."""
+        """The path to an underlying datasource."""
         raise NotImplementedError(
             f"The method is not implemented for type {self}"
         )
@@ -35,9 +40,9 @@ class FileReader(typing.Protocol):
             A list of tuples. Each tuple represents one line in the csv file.
 
         Raises:
-            FileNotFoundError: The file specified by the path can not be found.
-            ValueError: The mime type of the file is not .csv .
-            FileEncodingError: The csv file is not in UTF-8 encoding.
+            FileNotFoundError: The file can not be found.
+            ValueError: The mime type of the file is not correct .
+            FileEncodingError: The file is not UTF-8 encoded.
         """
         raise NotImplementedError(
             f"The method is not implemented for type {self}"

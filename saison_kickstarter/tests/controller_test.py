@@ -12,13 +12,9 @@ import pathlib
 import pytest
 
 import tests.mock_classes
-from saison_kickstarter.controller import (
-    create_tournament_overview,
-    read_tournaments_from_file,
-)
-from saison_kickstarter.file_reader import file_reader
-from saison_kickstarter.file_writer.excel_file_writer import ExcelFileWriter
-from saison_kickstarter.view_builder.view_builder import ViewBuilder
+from saison_kickstarter import controller
+from saison_kickstarter.file_writer import excel_file_writer
+from saison_kickstarter.view_builder import view_builder
 
 
 @pytest.fixture()
@@ -27,12 +23,12 @@ def mock_data_source():
 
 
 @pytest.fixture()
-def mock_view_builder() -> ViewBuilder:
+def mock_view_builder() -> view_builder.ViewBuilder:
     return tests.mock_classes.MockViewBuilder()
 
 
 @pytest.fixture()
-def mock_excel_file_writer() -> ExcelFileWriter:
+def mock_excel_file_writer() -> excel_file_writer.ExcelFileWriter:
     return tests.mock_classes.MockFileWriter()
 
 
@@ -47,7 +43,7 @@ def test_create_tournament_overview(
     """Create an overview of all tournaments of a season."""
     test_path = pathlib.Path("null-path")
     dbs = mock_data_source()
-    create_tournament_overview(
+    controller.create_tournament_overview(
         test_path, dbs, mock_view_builder, mock_excel_file_writer
     )
 
@@ -62,7 +58,7 @@ def test_create_tournament_overview_no_data_in_database(
     dbs = mock_data_source(is_empty=True)
 
     with pytest.raises(ValueError) as exinfo:
-        create_tournament_overview(
+        controller.create_tournament_overview(
             test_path, dbs, mock_view_builder, mock_excel_file_writer
         )
         assert "There are no values in the Database!" in str(exinfo.value)
@@ -74,6 +70,6 @@ def test_create_tournament_overview_no_data_in_database(
 # TODO: Test the exceptions of read_tournaments
 def test_read_tournaments_from_file(mock_file_reader, mock_data_source):
     """Read tournament entries from a given file."""
-    test_path = pathlib.Path("null-path")
+    # test_path = pathlib.Path("null-path")
     dbs = mock_data_source()
-    _ = read_tournaments_from_file(mock_file_reader, dbs)
+    _ = controller.read_tournaments_from_file(mock_file_reader, dbs)

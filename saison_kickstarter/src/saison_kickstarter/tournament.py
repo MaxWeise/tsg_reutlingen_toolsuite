@@ -46,6 +46,11 @@ class Tournament:
     age_group: AgeGroup
 
     def to_tuple(self) -> tuple[datetime.date, str, str, str]:
+        """Convert a tournament to a tuple.
+
+        Returns:
+            The data of the tournament object in form of a tuple.
+        """
         return (
             self.date,
             self.city,
@@ -94,7 +99,14 @@ def _date_from_string(date: str) -> datetime.date:
 
 
 def tournament_from_tuple(entries: tuple[str, str, str, str]) -> Tournament:
-    """Construct a tournament object from a tuple of entries."""
+    """Construct a tournament object from a tuple of entries.
+
+    Args:
+        entries: A tuple of data that will be converted into a tournament object.
+
+    Returns:
+        A tournament containing the data from entries.
+    """
     date = _date_from_string(entries[0])
     city = entries[1]
     category = _category_from_string(entries[2])

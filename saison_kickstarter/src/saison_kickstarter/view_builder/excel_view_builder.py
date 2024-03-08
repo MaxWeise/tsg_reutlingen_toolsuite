@@ -4,7 +4,7 @@ Created: 10.02.2024
 @author: Max Weise
 """
 
-from saison_kickstarter.tournament import AgeGroup, Tournament
+from saison_kickstarter import tournament
 
 OverviewEntry = tuple[str, str, bool]
 
@@ -14,8 +14,8 @@ class ExcelViewBuilder:
 
     def _transform_entries(
         self,
-        tournaments: list[Tournament],
-        optional_tournaments: list[Tournament] | None = None,
+        tournaments: list[tournament.Tournament],
+        optional_tournaments: list[tournament.Tournament] | None = None,
     ) -> list[OverviewEntry]:
         ret = []
 
@@ -40,39 +40,31 @@ class ExcelViewBuilder:
         return ret
 
     def build_tournament_overview(
-        self, data: list[Tournament]
+        self, data: list[tournament.Tournament]
     ) -> list[OverviewEntry]:
-        """Convert a list of tournaments to be written to an excel file.
-
-        Args:
-            data: The list of tournaments to be included in the overview.
-
-        Returns:
-            A list of tuples, structuring the data to be written into rows
-            of an excel sheet.
-        """
+        """[See base class]."""
         ret: list[OverviewEntry] = []
 
         u11_tournaments = list(
-            filter(lambda t: t.age_group == AgeGroup.U11, data)
+            filter(lambda t: t.age_group == tournament.AgeGroup.U11, data)
         )
         u13_tournaments = list(
-            filter(lambda t: t.age_group == AgeGroup.U13, data)
+            filter(lambda t: t.age_group == tournament.AgeGroup.U13, data)
         )
         u15_tournaments = list(
-            filter(lambda t: t.age_group == AgeGroup.U15, data)
+            filter(lambda t: t.age_group == tournament.AgeGroup.U15, data)
         )
         u17_tournaments = list(
-            filter(lambda t: t.age_group == AgeGroup.U17, data)
+            filter(lambda t: t.age_group == tournament.AgeGroup.U17, data)
         )
         u20_tournaments = list(
-            filter(lambda t: t.age_group == AgeGroup.U20, data)
+            filter(lambda t: t.age_group == tournament.AgeGroup.U20, data)
         )
         senior_tournaments = list(
-            filter(lambda t: t.age_group == AgeGroup.SENIOR, data)
+            filter(lambda t: t.age_group == tournament.AgeGroup.SENIOR, data)
         )
         veteran_tournaments = list(
-            filter(lambda t: t.age_group == AgeGroup.VETERAN, data)
+            filter(lambda t: t.age_group == tournament.AgeGroup.VETERAN, data)
         )
 
         ret = (

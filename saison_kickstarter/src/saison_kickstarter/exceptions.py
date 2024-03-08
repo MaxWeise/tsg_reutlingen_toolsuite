@@ -18,3 +18,7 @@ class FileReadError(Exception):
 
 class DatabaseWriteError(Exception):
     """An error occured while trying to write to a database."""
+
+
+class WorkbookError(Exception):
+    """The active workbook encoountered a problem."""

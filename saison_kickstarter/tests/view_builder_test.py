@@ -10,37 +10,37 @@ import datetime
 
 import pytest
 
-from saison_kickstarter.tournament import AgeGroup, Category, Tournament
-from saison_kickstarter.view_builder.excel_view_builder import ExcelViewBuilder
+from saison_kickstarter import tournament
+from saison_kickstarter.view_builder import excel_view_builder
 
 
 @pytest.fixture
-def test_tournaments() -> list[Tournament]:
+def test_tournaments() -> list[tournament.Tournament]:
     """A list of tournaments to test against."""
     tournaments = [
-        Tournament(
+        tournament.Tournament(
             datetime.date(2000, 1, 1),
             "Reutlingen",
-            Category.RL,
-            AgeGroup.U11,
+            tournament.Category.RL,
+            tournament.AgeGroup.U11,
         ),
-        Tournament(
+        tournament.Tournament(
             datetime.date(2000, 2, 1),
             "Reutlingen",
-            Category.RL,
-            AgeGroup.U13,
+            tournament.Category.RL,
+            tournament.AgeGroup.U13,
         ),
-        Tournament(
+        tournament.Tournament(
             datetime.date(2000, 3, 1),
             "Reutlingen",
-            Category.RL,
-            AgeGroup.U15,
+            tournament.Category.RL,
+            tournament.AgeGroup.U15,
         ),
-        Tournament(
+        tournament.Tournament(
             datetime.date(2000, 4, 1),
             "Reutlingen",
-            Category.RL,
-            AgeGroup.U11,
+            tournament.Category.RL,
+            tournament.AgeGroup.U11,
         ),
     ]
 
@@ -48,7 +48,7 @@ def test_tournaments() -> list[Tournament]:
 
 
 def test_build_block_u11_tournaments(test_tournaments):
-    under_test = ExcelViewBuilder()
+    under_test = excel_view_builder.ExcelViewBuilder()
     actual = under_test.build_tournament_overview(test_tournaments)
 
     expected = [
