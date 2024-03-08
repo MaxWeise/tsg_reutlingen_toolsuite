@@ -49,7 +49,9 @@ def read_tournaments_from_file(
             file_reader.read_data()
         )
     except (
-        FileNotFoundError | ValueError | exceptions.FileEncodingError
+        FileNotFoundError,
+        ValueError,
+        exceptions.FileEncodingError,
     ) as exinfo:
         raise exceptions.FileReadError from exinfo
 

@@ -71,6 +71,7 @@ def test_create_tournament_overview_no_data_in_database(
         os.remove(test_path)
 
 
+# TODO: Test the exceptions of read_tournaments
 def test_read_tournaments_from_file(mock_file_reader, mock_data_source):
     """Read tournament entries from a given file."""
     test_path = pathlib.Path("null-path")
