@@ -94,12 +94,27 @@ def _age_group_from_string(age_group: str) -> AgeGroup:
 
 
 def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
-    if sql_date_format:
-        day, month, year = reversed(date.split("-"))
-        return datetime.date(day=int(day), month=int(month), year=int(year))
+    """Construct a datetime object from a string.
 
-    day, month, year = date.split(".")
-    return datetime.date(day=int(day), month=int(month), year=int(year))
+    SQL saves the date as yyyy-mm-dd. To handle this special case, a flag
+    is used to determine which date-format is used and how the date should be
+    retrieved from the string.
+
+    Args:
+        date (str): The date as string.
+        sql_date_format (bool): Wether the date is in yyyy-mm-dd format.
+
+    Returns:
+        A datetime object that holds the data from the string.
+    """
+    date_seperator = "-" if sql_date_format else "."
+    parts = date.split(date_seperator)
+
+    if sql_date_format:
+        parts.reverse()
+
+    day, month, year = parts
+    return datetime.date(year=int(year), month=int(month), day=int(day))
 
 
 def tournament_from_tuple(
@@ -109,6 +124,8 @@ def tournament_from_tuple(
 
     Args:
         entries: A tuple of data that will be converted into a tournament object.
+        sql_data_format (bool, optional): If the dateformat is yyyy-mm-dd.
+            Defaults to False
 
     Returns:
         A tournament containing the data from entries.
