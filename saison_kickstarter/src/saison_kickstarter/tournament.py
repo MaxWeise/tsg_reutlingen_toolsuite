@@ -93,12 +93,18 @@ def _age_group_from_string(age_group: str) -> AgeGroup:
     return age_groups[age_group]
 
 
-def _date_from_string(date: str) -> datetime.date:
+def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
+    if sql_date_format:
+        day, month, year = reversed(date.split("-"))
+        return datetime.date(day=int(day), month=int(month), year=int(year))
+
     day, month, year = date.split(".")
     return datetime.date(day=int(day), month=int(month), year=int(year))
 
 
-def tournament_from_tuple(entries: tuple[str, str, str, str]) -> Tournament:
+def tournament_from_tuple(
+    entries: tuple[str, str, str, str], sql_date_format: bool = False
+) -> Tournament:
     """Construct a tournament object from a tuple of entries.
 
     Args:
@@ -107,7 +113,7 @@ def tournament_from_tuple(entries: tuple[str, str, str, str]) -> Tournament:
     Returns:
         A tournament containing the data from entries.
     """
-    date = _date_from_string(entries[0])
+    date = _date_from_string(entries[0], sql_date_format)
     city = entries[1]
     category = _category_from_string(entries[2])
     age_groups = _age_group_from_string(entries[3])
