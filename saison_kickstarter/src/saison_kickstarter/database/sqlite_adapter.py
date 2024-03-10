@@ -18,7 +18,7 @@ CREATE_TOURNAMENTS_TABLE: str = """ CREATE TABLE IF NOT EXISTS tournaments (
 
 INSERT_TOURNAMENT_STATEMENT: str = "INSERT INTO tournaments VALUES(?, ?, ?, ?);"
 
-SELECT_ALL_TOURNAMENTS: str = "SELECT rowid, * FROM tournaments"
+SELECT_ALL_TOURNAMENTS: str = "SELECT * FROM tournaments"
 
 
 class SqliteDatabase:
@@ -40,6 +40,11 @@ class SqliteDatabase:
     def read(self) -> list[tournament.Tournament] | None:
         """[See base documentation]"""
         with sqlite3.connect(self._connection) as database:
-            querry_result = database.execute(SELECT_ALL_TOURNAMENTS)
+            querry_result: list[tuple[str, str, str, str]] = database.execute(
+                SELECT_ALL_TOURNAMENTS
+            ).fetchall()
 
-        return querry_result.fetchall()
+        return [
+            tournament.tournament_from_tuple(tournament_entry, True)
+            for tournament_entry in querry_result
+        ]
