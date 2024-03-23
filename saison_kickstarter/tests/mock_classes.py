@@ -16,6 +16,7 @@ from saison_kickstarter.view_builder.view_builder import OverviewEntry
 
 
 class MockFileReader:
+    """A file reader used to mock the behaviour of real objects."""
 
     def __init__(self, data_source: str):
         if data_source:

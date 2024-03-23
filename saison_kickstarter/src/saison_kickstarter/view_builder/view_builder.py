@@ -6,15 +6,22 @@ Created: 18.02.2024
 
 from typing import Protocol
 
-from saison_kickstarter.tournament import Tournament
+from saison_kickstarter import tournament
 
 OverviewEntry = tuple[str, str, bool]
 
 
 class ViewBuilder(Protocol):
+    """An interface to provide methods to structure data.
+
+    Data that needs to be written in an excel file should follow a structure,
+    that is dependant on the file format and the requirements of the user.
+    ViewBuilder classes provide the formatting to write data into their
+    destined locations.
+    """
 
     def build_tournament_overview(
-        self, data: list[Tournament]
+        self, data: list[tournament.Tournament]
     ) -> list[OverviewEntry]:
         """Convert a list of tournaments to be written to an excel file.
 

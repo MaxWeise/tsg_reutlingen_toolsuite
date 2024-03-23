@@ -9,7 +9,12 @@ Classes:
 Example:
 
     >>> database: Database = SqlAdapter("./connection.db")
-    >>> item: DatabaseItem = Tournament("01.01.2000", "Reutlingen", "RL", "U17").to_tuple()
+    >>> item: DatabaseItem = Tournament(
+            "01.01.2000",
+            "Reutlingen",
+            "RL",
+            "U17"
+        ).to_tuple()
     >>> database.create(item)
     >>> querry = database.read()
     >>> print(querry)

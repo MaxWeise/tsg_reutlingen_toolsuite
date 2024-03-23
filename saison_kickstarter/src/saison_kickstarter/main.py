@@ -57,7 +57,7 @@ def read_data_from_file(data_file: str) -> None:
     try:
         controller.read_tournaments_from_file(reader, data_source)
     except exceptions.FileReadError as ex:
-        logger.error(f"Something went wrong while reading from a file: {ex}")
+        logger.error("Something went wrong while reading from a file: %s", ex)
 
 
 def create_tournament_overview() -> None:

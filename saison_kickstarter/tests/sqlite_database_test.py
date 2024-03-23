@@ -31,7 +31,7 @@ def test_create_tournament():
     test_file = "./test_database_file.db"
     under_test = sqlite_adapter.SqliteDatabase(test_file, "")
 
-    _ = under_test.create(test_tournament)
+    under_test.create(test_tournament)
 
     with sqlite3.connect(test_file) as connection:
         querry_result = connection.execute("SELECT * FROM tournaments;")

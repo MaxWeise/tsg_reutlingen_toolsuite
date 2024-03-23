@@ -72,4 +72,4 @@ def test_read_tournaments_from_file(mock_file_reader, mock_data_source):
     """Read tournament entries from a given file."""
     # test_path = pathlib.Path("null-path")
     dbs = mock_data_source()
-    _ = controller.read_tournaments_from_file(mock_file_reader, dbs)
+    controller.read_tournaments_from_file(mock_file_reader, dbs)

@@ -123,7 +123,8 @@ def tournament_from_tuple(
     """Construct a tournament object from a tuple of entries.
 
     Args:
-        entries: A tuple of data that will be converted into a tournament object.
+        entries: A tuple of data that will be converted
+            into a tournament object.
         sql_data_format (bool, optional): If the dateformat is yyyy-mm-dd.
             Defaults to False
 

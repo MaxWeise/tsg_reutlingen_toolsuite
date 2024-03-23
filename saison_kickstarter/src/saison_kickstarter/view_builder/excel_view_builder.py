@@ -19,20 +19,24 @@ class ExcelViewBuilder:
     ) -> list[OverviewEntry]:
         ret = []
 
-        for tournament in tournaments:
+        for competition in tournaments:
             ret.append(
-                (tournament.date.strftime("%d.%m.%Y"), tournament.title, False)
+                (
+                    competition.date.strftime("%d.%m.%Y"),
+                    competition.title,
+                    False,
+                )
             )
 
         # Early return
         if not optional_tournaments:
             return ret
 
-        for tournament in optional_tournaments:
+        for competition in optional_tournaments:
             ret.append(
                 (
-                    tournament.date.strftime("%d.%m.%Y"),
-                    tournament.title,
+                    competition.date.strftime("%d.%m.%Y"),
+                    competition.title,
                     True,
                 )
             )
