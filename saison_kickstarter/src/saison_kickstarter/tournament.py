@@ -81,16 +81,18 @@ def _category_from_string(category: str) -> Category:
 
 def _age_group_from_string(age_group: str) -> AgeGroup:
     age_groups = {
-        "U11": AgeGroup.U11,
-        "U13": AgeGroup.U13,
-        "U15": AgeGroup.U15,
-        "U17": AgeGroup.U17,
-        "U20": AgeGroup.U20,
-        "Senior": AgeGroup.SENIOR,
-        "Veteran": AgeGroup.VETERAN,
+        "u11": AgeGroup.U11,
+        "u13": AgeGroup.U13,
+        "u15": AgeGroup.U15,
+        "u17": AgeGroup.U17,
+        "u20": AgeGroup.U20,
+        "senior": AgeGroup.SENIOR,
+        "senioren": AgeGroup.SENIOR,
+        "veteran": AgeGroup.VETERAN,
+        "veteranen": AgeGroup.VETERAN,
     }
 
-    return age_groups[age_group]
+    return age_groups[age_group.lower()]
 
 
 def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
