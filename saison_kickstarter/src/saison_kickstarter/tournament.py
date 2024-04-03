@@ -89,6 +89,7 @@ def _age_group_from_string(age_group: str) -> AgeGroup:
         "senior": AgeGroup.SENIOR,
         "senioren": AgeGroup.SENIOR,
         "veteran": AgeGroup.VETERAN,
+        "veteranen": AgeGroup.VETERAN,
     }
 
     return age_groups[age_group.lower()]
