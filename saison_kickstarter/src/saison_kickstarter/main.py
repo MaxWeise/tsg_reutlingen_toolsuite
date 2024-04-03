@@ -110,7 +110,6 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     """Run the main function."""
     arguments = parse_args()
-    print(arguments)
 
     if arguments.command == "read-data":
         if not arguments.file:
