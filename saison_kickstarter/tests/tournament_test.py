@@ -38,3 +38,19 @@ def test_tournament_from_tuple():
     )
 
     assert actual == expected
+
+
+def test_tournament_from_tuple_table_header_senioren():
+    """Test for the correct contruction of a tournament object.
+
+    Given the age group "senioren"
+    When calling the tested method
+    The object should have the age group "senior".
+    """
+    test_tuple_en = ("21.02.2001", "Reutlingen", "RL", "senior")
+    test_tuple_de = ("21.02.2001", "Reutlingen", "RL", "Senioren")
+
+    actual_en = tournament.tournament_from_tuple(test_tuple_en)
+    actual_de = tournament.tournament_from_tuple(test_tuple_de)
+
+    assert actual_en == actual_de
