@@ -91,7 +91,6 @@ class CsvFileReader:
 
         file_suffix: str = self._data_source.suffix
         if file_suffix != ".csv":
-            print(f"This is the mime type: {file_suffix = }")
             raise ValueError(f"Wrong mime type: {file_suffix}")
 
         try:

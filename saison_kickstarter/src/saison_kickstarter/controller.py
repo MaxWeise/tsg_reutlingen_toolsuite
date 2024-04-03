@@ -53,7 +53,7 @@ def read_tournaments_from_file(
         ValueError,
         exceptions.FileEncodingError,
     ) as exinfo:
-        raise exceptions.FileReadError from exinfo
+        raise exceptions.FileReadError(exinfo) from exinfo
 
     tournaments: list[tournament.Tournament] = [
         tournament.tournament_from_tuple(t) for t in tournament_data

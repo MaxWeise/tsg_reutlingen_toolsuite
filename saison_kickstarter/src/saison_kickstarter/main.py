@@ -57,7 +57,11 @@ def read_data_from_file(data_file: str) -> None:
     try:
         controller.read_tournaments_from_file(reader, data_source)
     except exceptions.FileReadError as ex:
-        logger.error("Something went wrong while reading from a file: %s", ex)
+        logger.error(
+            "Something went wrong while reading from a file: %s %s",
+            type(ex),
+            ex,
+        )
 
 
 def create_tournament_overview() -> None:
@@ -86,12 +90,18 @@ def parse_args() -> argparse.Namespace:
     """Register CLI arguments and return a namespace containing the values."""
     parser = argparse.ArgumentParser(prog=PROGRAMM_NAME, epilog=EPILOG)
     available_commands = ["create-overview", "read-data"]
-    # domain_choices = ["tournament", "referee"]
 
     parser.add_argument(
         "command",
         choices=available_commands,
         help="Use stored data to create an overview of the given doamin.",
+    )
+
+    parser.add_argument(
+        "-f",
+        "--file",
+        type=str,
+        help="Give the path to an existing file.",
     )
 
     return parser.parse_args()
@@ -101,6 +111,15 @@ def main() -> None:
     """Run the main function."""
     arguments = parse_args()
     print(arguments)
+
+    if arguments.command == "read-data":
+        if not arguments.file:
+            logger.error("Missing file to read data from")
+            return
+
+        read_data_from_file(arguments.file)
+    if arguments.command == "create-overview":
+        create_tournament_overview()
 
 
 if __name__ == "__main__":
