@@ -100,7 +100,7 @@ class CsvFileReader:
                 csv_reader = csv.reader(
                     file_contents, delimiter=",", skipinitialspace=True
                 )
-                data = [tuple(item) for item in csv_reader]
+                data = [tuple(item) for item in csv_reader if tuple(item) != ()]
                 data.pop(0)
 
                 # Explicit type cast to silence lsp warning

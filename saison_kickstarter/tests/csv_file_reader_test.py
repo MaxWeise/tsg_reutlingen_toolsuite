@@ -36,6 +36,12 @@ def file_worng_encoding():
     return "tests/test_assets/test_file_utf_16.csv"
 
 
+@pytest.fixture()
+def file_with_extra_line():
+    """A csv file with an extra empty line at the end of the file."""
+    return "tests/test_assets/test_file_with_extra_line.csv"
+
+
 def test_read_data(test_file):
     """Test for read_data method.
 
@@ -46,6 +52,22 @@ def test_read_data(test_file):
             as a list of tuples. schauen wir mal was wird
     """
     under_test = csv_file_reader.CsvFileReader(test_file)
+
+    actual = under_test.read_data()
+    expected = _DATA
+
+    assert actual == expected
+
+
+def test_raed_data_file_with_extra_line(file_with_extra_line):
+    """Test the read_data method.
+
+    Test Case
+        Given a csv file with an extra line at the end
+        When calling the read_data function on the file
+        Then the fuction should ignore the empty line.
+    """
+    under_test = csv_file_reader.CsvFileReader(file_with_extra_line)
 
     actual = under_test.read_data()
     expected = _DATA
