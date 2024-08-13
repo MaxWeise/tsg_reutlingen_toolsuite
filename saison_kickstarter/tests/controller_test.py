@@ -12,7 +12,7 @@ import pathlib
 import pytest
 
 import tests.mock_classes
-from saison_kickstarter import controller
+from saison_kickstarter import controller, exceptions
 from saison_kickstarter.file_writer import excel_file_writer
 from saison_kickstarter.view_builder import view_builder
 
@@ -73,3 +73,22 @@ def test_read_tournaments_from_file(mock_file_reader, mock_data_source):
     # test_path = pathlib.Path("null-path")
     dbs = mock_data_source()
     controller.read_tournaments_from_file(mock_file_reader, dbs)
+
+
+def test_read_tournaments_from_file_duplicated_entries(
+    mock_file_reader, mock_data_source
+):
+    mock_data = [
+        ("21.02.2001", "Reutlingen", "RL", "U15"),
+        ("21.02.2001", "Reutlingen", "RL", "U15"),
+        ("28.02.2024", "Heidenheim", "RL", "U13"),
+    ]
+
+    mock_file_reader.set_return_value(mock_data)
+    with pytest.raises(
+        exceptions.DuplicateEntryError,
+        match="There are duplicated entries in the list!",
+    ):
+        controller.read_tournaments_from_file(
+            mock_file_reader, mock_data_source
+        )

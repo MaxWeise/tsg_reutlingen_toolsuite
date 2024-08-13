@@ -22,12 +22,21 @@ class MockFileReader:
         if data_source:
             self._data_source = pathlib.Path(data_source)
 
+        self.return_value: list[tuple[str, ...]] | None = None
+
     @property
     def data_source(self) -> pathlib.Path:
         return self._data_source
 
+    def set_return_value(self, new_value: list[tuple[str, ...]]):
+        """Set the return value to a specified list of tuples."""
+        self.return_value = new_value
+
     def read_data(self) -> list[tuple[str, ...]]:
         """Read data from a file and return the result as a list of tuples."""
+        if self.return_value:
+            return self.return_value
+
         return [
             ("21.02.2024", "Reutlingen", "RL", "U15"),
             ("21.05.2024", "Leverkusen", "DM", "Senior"),

@@ -13,6 +13,12 @@ from saison_kickstarter.file_writer.excel_file_writer import ExcelFileWriter
 from saison_kickstarter.view_builder.view_builder import ViewBuilder
 
 
+def _check_for_duplicated_entries(data: list[tournament.Tournament]) -> bool:
+    """Check if the list contains duplicated data."""
+    data_as_set = set(data)
+    return len(data) != len(data_as_set)
+
+
 def create_tournament_overview(
     overview_file: pathlib.Path,
     data_source: Database,
@@ -45,9 +51,8 @@ def read_tournaments_from_file(
 ) -> None:
     """Read tournament entries from a given file."""
     try:
-        tournament_data: list[tuple[str, str, str, str]] = (
-            file_reader.read_data()
-        )
+        data = file_reader.read_data()
+        tournament_data: list[tuple[str, str, str, str]] = data
     except (
         FileNotFoundError,
         ValueError,
@@ -58,6 +63,12 @@ def read_tournaments_from_file(
     tournaments: list[tournament.Tournament] = [
         tournament.tournament_from_tuple(t) for t in tournament_data
     ]
+
+    duplicates = _check_for_duplicated_entries(tournaments)
+    if duplicates:
+        raise exceptions.DuplicateEntryError(
+            "There are duplicated entries in the list!"
+        )
 
     for competition in tournaments:
         data_repository.create(item=competition)
