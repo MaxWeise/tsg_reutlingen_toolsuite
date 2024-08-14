@@ -6,13 +6,18 @@ Created: 07.02.2024
 
 # pylint: disable=redefined-outer-name
 
+# TODO: The tests in this file need to be reworked, as there is a lot of
+# implicit state. Mocks should do the trick to not use as much sate as
+# is currently needed to run the tests and verify the functionality of the
+# application.
+
 import os
 import pathlib
 
 import pytest
 
 import tests.mock_classes
-from saison_kickstarter import controller
+from saison_kickstarter import controller, exceptions
 from saison_kickstarter.file_writer import excel_file_writer
 from saison_kickstarter.view_builder import view_builder
 
@@ -73,3 +78,52 @@ def test_read_tournaments_from_file(mock_file_reader, mock_data_source):
     # test_path = pathlib.Path("null-path")
     dbs = mock_data_source()
     controller.read_tournaments_from_file(mock_file_reader, dbs)
+
+
+def test_read_tournaments_from_file_add_tournament_on_same_date(
+    mock_file_reader, mock_data_source
+):
+    """Test for the read_data_from_file function.
+
+    Given two tournaments on the same date but different cities
+    When calling the tested function
+    Then both tournaments should be added to the database.
+    """
+    # Setup the mock objects
+    mock_data = [
+        ("21.02.2001", "Reutlingen", "RL", "U15"),
+        ("21.02.2001", "Waldkirch", "RL", "U15"),
+        ("28.02.2024", "Heidenheim", "RL", "U13"),
+    ]
+    mock_file_reader.set_return_value(mock_data)
+    dbs = mock_data_source()
+
+    # Run the tested function
+    controller.read_tournaments_from_file(mock_file_reader, dbs)
+
+    # TODO: Assert all tournaments where correctly added
+
+
+def test_read_tournaments_from_file_duplicated_entries(
+    mock_file_reader, mock_data_source
+):
+    """Test how the controller deal with read data.
+
+    Given reading a file with duplicated entrie.
+    When reading data that has duplicated entries
+    Then the function should raise an error.
+    """
+    mock_data = [
+        ("21.02.2001", "Reutlingen", "RL", "U15"),
+        ("21.02.2001", "Reutlingen", "RL", "U15"),
+        ("28.02.2024", "Heidenheim", "RL", "U13"),
+    ]
+
+    mock_file_reader.set_return_value(mock_data)
+    with pytest.raises(
+        exceptions.DuplicateEntryError,
+        match="There are duplicated entries in the list!",
+    ):
+        controller.read_tournaments_from_file(
+            mock_file_reader, mock_data_source
+        )

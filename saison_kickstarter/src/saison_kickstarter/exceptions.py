@@ -22,3 +22,7 @@ class DatabaseWriteError(Exception):
 
 class WorkbookError(Exception):
     """The active workbook encoountered a problem."""
+
+
+class DuplicateEntryError(Exception):
+    """When trying to write a list with duplicate tournament entries."""
