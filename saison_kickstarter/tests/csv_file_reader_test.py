@@ -24,19 +24,19 @@ _DATA = [
 ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_file():
     """A test file containing test data."""
     return "tests/test_assets/test_file.csv"
 
 
-@pytest.fixture()
+@pytest.fixture
 def file_worng_encoding():
     """A csv file in UTF-16 encoding."""
     return "tests/test_assets/test_file_utf_16.csv"
 
 
-@pytest.fixture()
+@pytest.fixture
 def file_with_extra_line():
     """A csv file with an extra empty line at the end of the file."""
     return "tests/test_assets/test_file_with_extra_line.csv"
