@@ -8,13 +8,14 @@ Created: 07.02.2024
 
 # TODO: Most tests need assertions and inspections
 
+import datetime
 import os
 import pathlib
 from unittest import mock
 
 import pytest
 
-from saison_kickstarter import controller, exceptions
+from saison_kickstarter import controller, exceptions, tournament
 
 
 def test_create_tournament_overview():
@@ -67,6 +68,10 @@ def test_create_tournament_overview():
     )
 
     # Assert that methods are called once
+    dbs.read.assert_called_once()
+    mock_view_builder.build_tournament_overview.assert_called_once()
+
+    # Cleanup
     if test_path.exists():
         os.remove(test_path)
 
@@ -91,21 +96,24 @@ def test_create_tournament_overview_no_data_in_database():
     mock_view_builder = mock.Mock()
     mock_excel_file_writer = mock.Mock()
 
-    with pytest.raises(ValueError) as exinfo:
+    with pytest.raises(
+        ValueError, match="There are no values in the Database!"
+    ):
         controller.create_tournament_overview(
             test_path, dbs, mock_view_builder, mock_excel_file_writer
         )
-        assert "There are no values in the Database!" in str(exinfo.value)
 
     if test_path.exists():
         os.remove(test_path)
 
 
-# TODO: Test the exceptions of read_tournaments
-# TODO: Add docstring to the function
 def test_read_tournaments_from_file():
-    """Read tournament entries from a given file."""
-    # test_path = pathlib.Path("null-path")
+    """Tests to read tournament entries from a given file.
+
+    Given a csv file with tournament entries
+    When calling the tested function
+    Then the data should be written in a database file.
+    """
     dbs = mock.Mock()
     mock_data = [
         ("21.02.2001", "Reutlingen", "RL", "U15"),
@@ -116,6 +124,35 @@ def test_read_tournaments_from_file():
     mock_file_reader.read_data.return_value = mock_data
 
     controller.read_tournaments_from_file(mock_file_reader, dbs)
+
+    mock_file_reader.read_data.assert_called_once()
+    dbs.create.assert_called()
+
+
+@pytest.mark.parametrize(
+    ("exception", "expected"),
+    [
+        (FileNotFoundError, exceptions.FileReadError),
+        (ValueError, exceptions.FileReadError),
+        (exceptions.FileEncodingError, exceptions.FileReadError),
+    ],
+)
+def test_read_tournaments_from_file_test_exceptions(exception, expected):
+    """Tests to read tournament entries from a given file.
+
+    Given the exceptions raised by the file reader
+    When an exception gets raised by the file reader
+    Then the function should raise a FileReaderError from the underlying
+        exception.
+    """
+    mock_file_reader = mock.Mock()
+    mock_file_reader.read_data.side_effect = exception()
+    mock_data_source = mock.Mock()
+
+    with pytest.raises(expected):
+        controller.read_tournaments_from_file(
+            mock_file_reader, mock_data_source
+        )
 
 
 # TODO: Assert all tournaments where correctly added
@@ -139,6 +176,17 @@ def test_read_tournaments_from_file_add_tournament_on_same_date():
 
     # Run the tested function
     controller.read_tournaments_from_file(mock_file_reader, mock_data_source)
+
+    # Last turnament in list. Other entries fail. Perhaps because this method
+    # is called in a loop and this is the last entry.
+    test_tournament = tournament.Tournament(
+        datetime.date(2024, 2, 28),
+        "Heidenheim",
+        tournament.Category.RL,
+        tournament.AgeGroup.U13,
+    )
+
+    mock_data_source.create.assert_called_with(item=test_tournament)
 
 
 def test_read_tournaments_from_file_duplicated_entries():
