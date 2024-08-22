@@ -6,8 +6,6 @@ Created: 07.02.2024
 
 # pylint: disable=redefined-outer-name
 
-# TODO: Most tests need assertions and inspections
-
 import datetime
 import os
 import pathlib
@@ -155,7 +153,6 @@ def test_read_tournaments_from_file_test_exceptions(exception, expected):
         )
 
 
-# TODO: Assert all tournaments where correctly added
 def test_read_tournaments_from_file_add_tournament_on_same_date():
     """Test for the read_data_from_file function.
 
