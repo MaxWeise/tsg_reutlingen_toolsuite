@@ -1,6 +1,6 @@
 [project]
 name = "saison-kickstarter"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
     {name = "Max Weise", email = "fencingmax21@gmail.com"}
 ]
@@ -45,3 +45,5 @@ indent-width = 4
 [tool.ruff.lint]
 select = ["C90", "F", "N", "PT"]
 
+[tool.pytest.ini_options]
+addopts = "--cov-report term --cov=saison_kickstarter --cov-fail-under=60"

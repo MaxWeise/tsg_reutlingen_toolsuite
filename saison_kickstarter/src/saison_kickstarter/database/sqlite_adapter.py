@@ -39,10 +39,10 @@ class SqliteDatabase:
 
     def read(self) -> list[tournament.Tournament] | None:
         """[See base documentation]"""
-        with sqlite3.connect(self._connection) as database:
-            querry_result: list[tuple[str, str, str, str]] = database.execute(
-                SELECT_ALL_TOURNAMENTS
-            ).fetchall()
+        conn = sqlite3.connect(self._connection)
+        cursor = conn.cursor()
+        querry_result = cursor.execute(SELECT_ALL_TOURNAMENTS).fetchall()
+        conn.close()
 
         return [
             tournament.tournament_from_tuple(tournament_entry, True)
