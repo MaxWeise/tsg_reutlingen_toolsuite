@@ -71,6 +71,8 @@ def test_read_tournaments(temporary_database):
 
         actual = under_test.read()
 
+        mock_connection.close.assert_called()
+
     expected = [
         tournament.Tournament(
             datetime.date(year=2000, month=1, day=1),
