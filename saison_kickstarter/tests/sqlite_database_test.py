@@ -7,7 +7,6 @@ Created: 14.01.2024
 # pylint: disable=redefined-outer-name
 
 import datetime
-import sqlite3
 from unittest import mock
 
 import pytest
