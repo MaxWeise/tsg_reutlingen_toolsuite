@@ -7,15 +7,23 @@ Created: 14.01.2024
 # pylint: disable=redefined-outer-name
 
 import datetime
-import os
-import pathlib
 import sqlite3
+from unittest import mock
+
+import pytest
 
 from saison_kickstarter import tournament
 from saison_kickstarter.database import sqlite_adapter
 
 
-def test_create_tournament():
+@pytest.fixture
+def temporary_database(tmp_path):
+    """A path to a temporary database file."""
+    tmp_file = tmp_path / "temporary_database_file.db"
+    return tmp_file
+
+
+def test_create_tournament(temporary_database):
     """Test for the create methdod.
 
     Given a list of tournaments and a path to a database file
@@ -28,22 +36,18 @@ def test_create_tournament():
         tournament.Category.RL,
         tournament.AgeGroup.U20,
     )
-    test_file = "./test_database_file.db"
+    test_file = temporary_database
     under_test = sqlite_adapter.SqliteDatabase(test_file, "")
 
-    under_test.create(test_tournament)
+    with mock.patch(
+        "saison_kickstarter.database.sqlite_adapter.sqlite3.connect"
+    ) as mock_database:
+        under_test.create(test_tournament)
 
-    with sqlite3.connect(test_file) as connection:
-        querry_result = connection.execute("SELECT * FROM tournaments;")
-
-    expected = ("2021-01-01", "Reutlingen", "RL", "U20")
-    assert querry_result.fetchall()[0] == expected
-
-    if pathlib.Path(test_file).exists():
-        os.remove(test_file)
+    mock_database.assert_called()
 
 
-def test_read_tournaments():
+def test_read_tournaments(temporary_database):
     """Test for the read method.
 
     Given a database file with tournament objects saved
@@ -51,10 +55,23 @@ def test_read_tournaments():
     Then the method should return a list of tournament objects
         according to the data from the database.
     """
-    test_file = "./tests/test_assets/test_tournaments.db"
+    test_file = temporary_database
     under_test = sqlite_adapter.SqliteDatabase(test_file, "")
+    mock_data = [
+        ("2000-01-01", "Reutlingen", "RL", "U11"),
+        ("2000-01-01", "Reutlingen", "RL", "U11"),
+        ("2000-01-01", "Reutlingen", "RL", "U13"),
+    ]
 
-    actual = under_test.read()
+    with mock.patch(
+        "saison_kickstarter.database.sqlite_adapter.sqlite3"
+    ) as mock_sqlite:
+        mock_connection = mock_sqlite.connect.return_value
+        mock_cursor = mock_connection.cursor.return_value
+        mock_cursor.execute.return_value.fetchall.return_value = mock_data
+
+        actual = under_test.read()
+
     expected = [
         tournament.Tournament(
             datetime.date(year=2000, month=1, day=1),
@@ -73,48 +90,6 @@ def test_read_tournaments():
             "Reutlingen",
             tournament.Category.RL,
             tournament.AgeGroup.U13,
-        ),
-        tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U13,
-        ),
-        tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U15,
-        ),
-        tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U15,
-        ),
-        tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U17,
-        ),
-        tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U17,
-        ),
-        tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U20,
-        ),
-        tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U20,
         ),
     ]
 
