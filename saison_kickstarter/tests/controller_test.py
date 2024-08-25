@@ -159,12 +159,16 @@ def test_read_tournaments_from_file_add_tournament_on_same_date():
     Given two tournaments on the same date but different cities
     When calling the tested function
     Then both tournaments should be added to the database.
+
+    Tournaments are considered equal, when all attributes match.
     """
     # Setup the mock objects
     mock_data = [
         ("21.02.2001", "Reutlingen", "RL", "U15"),
-        ("21.02.2001", "Waldkirch", "RL", "U15"),
-        ("28.02.2024", "Heidenheim", "RL", "U13"),
+        ("21.02.2001", "Reutlingen", "RL", "U13"),
+        ("21.02.2001", "Reutlingen", "RL", "U11"),
+        ("21.02.2001", "Reutlingen", "QB", "U11"),
+        ("21.02.2001", "Waldkirch", "RL", "U13"),
     ]
     mock_file_reader = mock.Mock()
     mock_file_reader.read_data.return_value = mock_data
@@ -177,8 +181,8 @@ def test_read_tournaments_from_file_add_tournament_on_same_date():
     # Last turnament in list. Other entries fail. Perhaps because this method
     # is called in a loop and this is the last entry.
     test_tournament = tournament.Tournament(
-        datetime.date(2024, 2, 28),
-        "Heidenheim",
+        datetime.date(2001, 2, 21),
+        "Waldkirch",
         tournament.Category.RL,
         tournament.AgeGroup.U13,
     )

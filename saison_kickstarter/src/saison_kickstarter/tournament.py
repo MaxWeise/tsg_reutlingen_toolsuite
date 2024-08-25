@@ -68,13 +68,15 @@ class Tournament:
         return ret
 
     def __eq__(self, value: object, /) -> bool:
-        return isinstance(value, type(self)) and (self.date, self.city) == (
-            value.date,
-            value.city,
-        )
+        return isinstance(value, type(self)) and (
+            self.date,
+            self.city,
+            self.category.value,
+            self.age_group,
+        ) == (value.date, value.city, value.category.value, value.age_group)
 
     def __hash__(self) -> int:
-        return hash((self.date, self.city))
+        return hash((self.date, self.city, self.category.value, self.age_group))
 
 
 def _category_from_string(category: str) -> Category:
