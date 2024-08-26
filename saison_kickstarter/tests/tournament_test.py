@@ -25,6 +25,18 @@ def test_get_title():
 
     assert actual == expected
 
+    # under_test = tournament.Tournament(
+    #     date(2000, 1, 1),
+    #     "Reutlingen",
+    #     tournament.Category.QB,
+    #     tournament.AgeGroup.SENIOR,
+    # )
+    #
+    # actual = under_test.title
+    # expected = "QB Reutlingen"
+    #
+    # assert actual == expected
+
 
 def test_tournament_from_tuple():
 
