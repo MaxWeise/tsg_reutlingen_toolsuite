@@ -4,9 +4,44 @@ Created: 10.02.2024
 @author: Max Weise
 """
 
+import dataclasses
+import datetime
+
 from saison_kickstarter import tournament
 
 OverviewEntry = tuple[str, str, bool]
+
+
+@dataclasses.dataclass(order=True)
+class _OverviewEntryItem:
+    """Helper class to define order an order for the entry items.
+
+    Attributes:
+        date (datetime.date): Date of the competition.
+        competition_name (str): Name of the competition, must adhere to
+            nomenclature.
+        is_optional (bool): Whether or not the tournament is optional
+            for the current age group.
+    """
+
+    date: datetime.date
+    competition_name: str
+    is_optional: bool
+
+    def __lq__(self, other) -> bool:
+        return self.date < other.date
+
+    def to_tuple(self) -> OverviewEntry:
+        """Convert the object to a tuple.
+
+        Returns:
+            The object represented as a tuple.
+        """
+        return (
+            self.date.strftime("%d.%m.%Y"),
+            self.competition_name,
+            self.is_optional,
+        )
 
 
 class ExcelViewBuilder:
@@ -17,30 +52,27 @@ class ExcelViewBuilder:
         tournaments: list[tournament.Tournament],
         optional_tournaments: list[tournament.Tournament] | None = None,
     ) -> list[OverviewEntry]:
-        ret = []
+        """Combine lists of mandatory and optional tournaments.
 
-        for competition in tournaments:
-            ret.append(
-                (
-                    competition.date.strftime("%d.%m.%Y"),
-                    competition.title,
-                    False,
-                )
-            )
+        Returns:
+            A combined list of mandatory and optional tournaments. The list will
+            be sorted by date.
+        """
+        optional_tournaments_ = (
+            optional_tournaments if optional_tournaments else []
+        )
+        temp1: list[_OverviewEntryItem] = [
+            _OverviewEntryItem(comp.date, comp.title, False)
+            for comp in tournaments
+        ]
+        temp2: list[_OverviewEntryItem] = [
+            _OverviewEntryItem(comp.date, comp.title, True)
+            for comp in optional_tournaments_
+        ]
 
-        # Early return
-        if not optional_tournaments:
-            return ret
-
-        for competition in optional_tournaments:
-            ret.append(
-                (
-                    competition.date.strftime("%d.%m.%Y"),
-                    competition.title,
-                    True,
-                )
-            )
-
+        ret: list[OverviewEntry] = [
+            comp.to_tuple() for comp in sorted(temp1 + temp2)
+        ]
         return ret
 
     def build_tournament_overview(
@@ -48,26 +80,25 @@ class ExcelViewBuilder:
     ) -> list[OverviewEntry]:
         """[See base class]."""
         ret: list[OverviewEntry] = []
-
-        u11_tournaments = list(
+        u11_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.U11, data)
         )
-        u13_tournaments = list(
+        u13_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.U13, data)
         )
-        u15_tournaments = list(
+        u15_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.U15, data)
         )
-        u17_tournaments = list(
+        u17_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.U17, data)
         )
-        u20_tournaments = list(
+        u20_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.U20, data)
         )
-        senior_tournaments = list(
+        senior_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.SENIOR, data)
         )
-        veteran_tournaments = list(
+        veteran_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.VETERAN, data)
         )
 
