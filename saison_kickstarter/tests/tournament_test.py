@@ -8,34 +8,123 @@ Created: 27.01.2024
 
 from datetime import date
 
+import pytest
+
 from saison_kickstarter import tournament
+from saison_kickstarter.tournament import AgeGroup, Category, Tournament
+
+standart_date = date(2000, 1, 1)
 
 
-def test_get_title():
+@pytest.mark.parametrize(
+    ("tournament", "expected_title"),
+    [
+        (
+            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U11),
+            "RL-U11 Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U11
+            ),
+            "BNWM U11 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U13),
+            "RL-U13 Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U13
+            ),
+            "BNWM U13 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U13),
+            "DM U13 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U15),
+            "RL-U15 Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U15
+            ),
+            "BNWM U15 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.QB, AgeGroup.U15),
+            "U15Q Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U15),
+            "DM U15 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U17),
+            "RL-U17 Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U17
+            ),
+            "BNWM U17 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.QB, AgeGroup.U17),
+            "U17Q Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U17),
+            "DM U17 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U20),
+            "RL-U20 Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U20
+            ),
+            "BNWM U20 Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.QB, AgeGroup.U20),
+            "U20Q Reutlingen",
+        ),
+        (
+            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U20),
+            "DM U20 Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.BNWM, AgeGroup.SENIOR
+            ),
+            "BNWM Sen Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.QB, AgeGroup.SENIOR
+            ),
+            "QB Reutlingen",
+        ),
+        (
+            Tournament(
+                standart_date, "Reutlingen", Category.DM, AgeGroup.SENIOR
+            ),
+            "DM Sen Reutlingen",
+        ),
+    ],
+)
+def test_get_title(tournament, expected_title):
     """Test the correct contruction of the tournament title."""
-    under_test = tournament.Tournament(
-        date(2000, 1, 1),
-        "Reutlingen",
-        tournament.Category.RL,
-        tournament.AgeGroup.U11,
-    )
 
+    under_test = tournament
     actual = under_test.title
-    expected = "RL-U11 Reutlingen"
+    expected = expected_title
 
     assert actual == expected
-
-    # under_test = tournament.Tournament(
-    #     date(2000, 1, 1),
-    #     "Reutlingen",
-    #     tournament.Category.QB,
-    #     tournament.AgeGroup.SENIOR,
-    # )
-    #
-    # actual = under_test.title
-    # expected = "QB Reutlingen"
-    #
-    # assert actual == expected
 
 
 def test_tournament_from_tuple():

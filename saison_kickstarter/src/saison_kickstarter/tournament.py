@@ -58,14 +58,27 @@ class Tournament:
             self.age_group.value,
         )
 
+    def _get_title_qb(self) -> str:
+        """Construct the title for national qualification tournaments.
+
+        Returns:
+            The title formatted according to the nomenclature.
+        """
+        if self.age_group == AgeGroup.SENIOR:
+            return f"{self.category.value} {self.city}"
+
+        return f"{self.age_group.value}Q {self.city}"
+
     @property
     def title(self) -> str:
         """The full title of the tournament"""
         seperator = "-" if self.category == Category.RL else " "
-        category = self.category.value
-        age_group = self.age_group.value
-        ret = f"{category}{seperator}{age_group} {self.city}"
-        return ret
+
+        if self.category == Category.QB:
+            return self._get_title_qb()
+
+        age_group = self.age_group.value[0:3]   # shortened version for senior
+        return f"{self.category.value}{seperator}{age_group} {self.city}"
 
     def __eq__(self, value: object, /) -> bool:
         return isinstance(value, type(self)) and (

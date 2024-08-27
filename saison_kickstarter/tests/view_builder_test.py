@@ -68,8 +68,6 @@ def test_build_tournament_overview(test_tournaments):
     under_test = excel_view_builder.ExcelViewBuilder()
     actual = under_test.build_tournament_overview(test_tournaments)
 
-    # FIXME: Nomenclature for Senior QB should be "QB Reutlingen"
-    # Instead of "QB Senior Reutlingen" (See Ticket#28)
     expected = [
         # U11 Tournaments
         ("01.04.2000", "RL-U11 Reutlingen", False),
@@ -84,9 +82,9 @@ def test_build_tournament_overview(test_tournaments):
         ("01.05.2000", "RL-U20 Reutlingen", True),
         # U20 Tournaments with optional Senior Tournaments
         ("01.05.2000", "RL-U20 Reutlingen", False),
-        ("01.06.2000", "QB Senior Reutlingen", True),
+        ("01.06.2000", "QB Reutlingen", True),
         # Senior Tournaments
-        ("01.06.2000", "QB Senior Reutlingen", False),
+        ("01.06.2000", "QB Reutlingen", False),
     ]
 
     assert actual == expected
