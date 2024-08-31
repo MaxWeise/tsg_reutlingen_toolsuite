@@ -160,13 +160,42 @@ def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
     return datetime.date(year=int(year), month=int(month), day=int(day))
 
 
-def tournament_from_dict(
-    entries: dict[str, str], sql_date_format: bool = False
+def tournament_from_tuple(
+    entries: tuple[str, str, str, str, str], sql_date_format: bool = False
 ) -> Tournament:
     """Construct a tournament object from a tuple of entries.
 
     Args:
         entries: A tuple of data that will be converted
+            into a tournament object.
+        sql_data_format (bool, optional): If the dateformat is yyyy-mm-dd.
+            Defaults to False
+
+    Returns:
+        A tournament containing the data from entries.
+    """
+    first_date = _date_from_string(entries[0], sql_date_format)
+    second_date = _date_from_string(entries[1], sql_date_format)
+    city = entries[2]
+    category = _category_from_string(entries[3])
+    age_groups = _age_group_from_string(entries[4])
+
+    return Tournament(
+        first_day=first_date,
+        second_day=second_date,
+        city=city,
+        category=category,
+        age_group=age_groups,
+    )
+
+
+def tournament_from_dict(
+    entries: dict[str, str], sql_date_format: bool = False
+) -> Tournament:
+    """Construct a tournament object from a dictionary of entries.
+
+    Args:
+        entries: A dictionary of data that will be converted
             into a tournament object.
         sql_data_format (bool, optional): If the dateformat is yyyy-mm-dd.
             Defaults to False
