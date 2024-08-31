@@ -24,12 +24,13 @@ class _OverviewEntryItem:
             for the current age group.
     """
 
-    date: datetime.date
+    first_day: datetime.date
+    second_day: datetime.date
     competition_name: str
     is_optional: bool
 
     def __lq__(self, other) -> bool:
-        return self.date < other.date
+        return self.first_day < other.first_day
 
     def to_tuple(self) -> OverviewEntry:
         """Convert the object to a tuple.
@@ -37,8 +38,26 @@ class _OverviewEntryItem:
         Returns:
             The object represented as a tuple.
         """
+        competition_date: str = ""
+
+        first_day = "{:02d}".format(self.first_day.day)
+        first_month = "{:02d}".format(self.first_day.month)
+
+        second_day = "{:02d}".format(self.second_day.day)
+        second_month = "{:02d}".format(self.second_day.month)
+
+        year = self.first_day.year
+        if first_month == second_month:
+            # Short date format
+            competition_date = f"{first_day}./{second_day}.{first_month}.{year}"
+        else:
+            # Handle long date format
+            competition_date = (
+                f"{first_day}.{first_month}./{second_day}.{second_month}.{year}"
+            )
+
         return (
-            self.date.strftime("%d.%m.%Y"),
+            competition_date,
             self.competition_name,
             self.is_optional,
         )
@@ -62,11 +81,15 @@ class ExcelViewBuilder:
             optional_tournaments if optional_tournaments else []
         )
         temp1: list[_OverviewEntryItem] = [
-            _OverviewEntryItem(comp.date, comp.title, False)
+            _OverviewEntryItem(
+                comp.first_day, comp.second_day, comp.title, False
+            )
             for comp in tournaments
         ]
         temp2: list[_OverviewEntryItem] = [
-            _OverviewEntryItem(comp.date, comp.title, True)
+            _OverviewEntryItem(
+                comp.first_day, comp.second_day, comp.title, True
+            )
             for comp in optional_tournaments_
         ]
 
