@@ -20,98 +20,202 @@ standart_date = date(2000, 1, 1)
     ("tournament", "expected_title"),
     [
         (
-            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U11),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.RL,
+                age_group=AgeGroup.U11,
+            ),
             "RL-U11 Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U11
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.BNWM,
+                age_group=AgeGroup.U11,
             ),
             "BNWM U11 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U13),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.RL,
+                age_group=AgeGroup.U13,
+            ),
             "RL-U13 Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U13
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.BNWM,
+                age_group=AgeGroup.U13,
             ),
             "BNWM U13 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U13),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.DM,
+                age_group=AgeGroup.U13,
+            ),
             "DM U13 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U15),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.RL,
+                age_group=AgeGroup.U15,
+            ),
             "RL-U15 Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U15
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.BNWM,
+                age_group=AgeGroup.U15,
             ),
             "BNWM U15 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.QB, AgeGroup.U15),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.QB,
+                age_group=AgeGroup.U15,
+            ),
             "U15Q Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U15),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.DM,
+                age_group=AgeGroup.U15,
+            ),
             "DM U15 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U17),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.RL,
+                age_group=AgeGroup.U17,
+            ),
             "RL-U17 Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U17
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.BNWM,
+                age_group=AgeGroup.U17,
             ),
             "BNWM U17 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.QB, AgeGroup.U17),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.QB,
+                age_group=AgeGroup.U17,
+            ),
             "U17Q Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U17),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.DM,
+                age_group=AgeGroup.U17,
+            ),
             "DM U17 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.RL, AgeGroup.U20),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.RL,
+                age_group=AgeGroup.U20,
+            ),
             "RL-U20 Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.BNWM, AgeGroup.U20
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.BNWM,
+                age_group=AgeGroup.U20,
             ),
             "BNWM U20 Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.QB, AgeGroup.U20),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.QB,
+                age_group=AgeGroup.U20,
+            ),
             "U20Q Reutlingen",
         ),
         (
-            Tournament(standart_date, "Reutlingen", Category.DM, AgeGroup.U20),
+            Tournament(
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.DM,
+                age_group=AgeGroup.U20,
+            ),
             "DM U20 Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.BNWM, AgeGroup.SENIOR
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.BNWM,
+                age_group=AgeGroup.SENIOR,
             ),
             "BNWM Sen Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.QB, AgeGroup.SENIOR
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.QB,
+                age_group=AgeGroup.SENIOR,
             ),
             "QB Reutlingen",
         ),
         (
             Tournament(
-                standart_date, "Reutlingen", Category.DM, AgeGroup.SENIOR
+                first_day=standart_date,
+                second_day=standart_date,
+                city="Reutlingen",
+                category=Category.DM,
+                age_group=AgeGroup.SENIOR,
             ),
             "DM Sen Reutlingen",
         ),
@@ -127,15 +231,22 @@ def test_get_title(tournament, expected_title):
     assert actual == expected
 
 
-def test_tournament_from_tuple():
+def test_tournament_from_dict():
 
-    test_tuple = ("21.02.2001", "Reutlingen", "RL", "U17")
-    actual = tournament.tournament_from_tuple(test_tuple)
+    test_dict = {
+        "first_day": "21.02.2001",
+        "second_day": "22.02.2001",
+        "city": "Reutlingen",
+        "category": "RL",
+        "age_group": "U17",
+    }
+    actual = tournament.tournament_from_dict(test_dict)
     expected = tournament.Tournament(
-        date(day=21, month=2, year=2001),
-        "Reutlingen",
-        tournament.Category.RL,
-        tournament.AgeGroup.U17,
+        first_day=date(day=21, month=2, year=2001),
+        second_day=date(day=22, month=2, year=2001),
+        city="Reutlingen",
+        category=tournament.Category.RL,
+        age_group=tournament.AgeGroup.U17,
     )
 
     assert actual == expected
@@ -148,11 +259,23 @@ def test_tournament_from_tuple_table_header_senioren():
     When calling the tested method
     The object should have the age group "senior".
     """
-    test_tuple_en = ("21.02.2001", "Reutlingen", "RL", "senior")
-    test_tuple_de = ("21.02.2001", "Reutlingen", "RL", "Senioren")
+    test_dict_de = {
+        "first_day": "21.02.2001",
+        "second_day": "22.02.2001",
+        "city": "Reutlingen",
+        "category": "RL",
+        "age_group": "Senioren",
+    }
+    test_dict_en = {
+        "first_day": "21.02.2001",
+        "second_day": "22.02.2001",
+        "city": "Reutlingen",
+        "category": "RL",
+        "age_group": "senior",
+    }
 
-    actual_en = tournament.tournament_from_tuple(test_tuple_en)
-    actual_de = tournament.tournament_from_tuple(test_tuple_de)
+    actual_en = tournament.tournament_from_dict(test_dict_de)
+    actual_de = tournament.tournament_from_dict(test_dict_en)
 
     assert actual_en == actual_de
 
@@ -164,10 +287,22 @@ def test_tournament_from_tuple_table_header_veteranen():
     When calling the tested method
     The object should have the age group "veteran".
     """
-    test_tuple_en = ("21.02.2001", "Reutlingen", "RL", "veteran")
-    test_tuple_de = ("21.02.2001", "Reutlingen", "RL", "Veteranen")
+    test_dict_de = {
+        "first_day": "21.02.2001",
+        "second_day": "22.02.2001",
+        "city": "Reutlingen",
+        "category": "RL",
+        "age_group": "Veteranen",
+    }
+    test_dict_en = {
+        "first_day": "21.02.2001",
+        "second_day": "22.02.2001",
+        "city": "Reutlingen",
+        "category": "RL",
+        "age_group": "veteran",
+    }
 
-    actual_en = tournament.tournament_from_tuple(test_tuple_en)
-    actual_de = tournament.tournament_from_tuple(test_tuple_de)
+    actual_en = tournament.tournament_from_dict(test_dict_en)
+    actual_de = tournament.tournament_from_dict(test_dict_de)
 
     assert actual_en == actual_de

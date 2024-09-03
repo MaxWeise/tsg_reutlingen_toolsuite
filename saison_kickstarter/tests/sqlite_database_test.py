@@ -30,10 +30,11 @@ def test_create_tournament(temporary_database):
     Then the database should include the given objects.
     """
     test_tournament = tournament.Tournament(
-        datetime.date(year=2021, month=1, day=1),
-        "Reutlingen",
-        tournament.Category.RL,
-        tournament.AgeGroup.U20,
+        first_day=datetime.date(year=2021, month=1, day=1),
+        second_day=datetime.date(year=2021, month=1, day=2),
+        city="Reutlingen",
+        category=tournament.Category.RL,
+        age_group=tournament.AgeGroup.U20,
     )
     test_file = temporary_database
     under_test = sqlite_adapter.SqliteDatabase(test_file, "")
@@ -57,9 +58,9 @@ def test_read_tournaments(temporary_database):
     test_file = temporary_database
     under_test = sqlite_adapter.SqliteDatabase(test_file, "")
     mock_data = [
-        ("2000-01-01", "Reutlingen", "RL", "U11"),
-        ("2000-01-01", "Reutlingen", "RL", "U11"),
-        ("2000-01-01", "Reutlingen", "RL", "U13"),
+        ("2000-01-01", "2000-01-02", "Reutlingen", "RL", "U11"),
+        ("2000-01-01", "2000-01-02", "Reutlingen", "RL", "U11"),
+        ("2000-01-01", "2000-01-02", "Reutlingen", "RL", "U13"),
     ]
 
     with mock.patch(
@@ -75,22 +76,25 @@ def test_read_tournaments(temporary_database):
 
     expected = [
         tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U11,
+            first_day=datetime.date(year=2000, month=1, day=1),
+            second_day=datetime.date(year=2000, month=1, day=2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U11,
         ),
         tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U11,
+            first_day=datetime.date(year=2000, month=1, day=1),
+            second_day=datetime.date(year=2000, month=1, day=2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U11,
         ),
         tournament.Tournament(
-            datetime.date(year=2000, month=1, day=1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U13,
+            first_day=datetime.date(year=2000, month=1, day=1),
+            second_day=datetime.date(year=2000, month=1, day=2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U13,
         ),
     ]
 

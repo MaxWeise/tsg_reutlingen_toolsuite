@@ -34,7 +34,6 @@ Usage:
 
 import csv
 import pathlib
-import typing
 
 from saison_kickstarter import exceptions
 
@@ -54,25 +53,46 @@ class CsvFileReader:
         """The file the data is read from."""
         return self._data_source
 
-    def _clean_data(
-        self, data: list[tuple[str, str, str, str]]
-    ) -> list[tuple[str, str, str, str]]:
-        """Bring the given data in a presentable format.
+    def _construct_dict_from_tuple(
+        self, data: tuple[str, str, str, str]
+    ) -> dict[str, str]:
+        """Take a tuple and construct a dictionary from the given values.
 
-        Remove unnecessary whitespace and newlines from the data.
-        Remove the header line from the data.
+        Args:
+            data: The tuple containing data.
 
         Returns:
-            List of tuples without header line and additional white space.
+            A dictionary containing values.
         """
-        data.pop(0)
-        for row in data:
-            for element in row:
-                element.strip()
+        date, city, category, age_group = data
+        ret = {}
+        # Parse the dates into two parts
+        if len(date) < 14:
+            raise ValueError(
+                f"Wrong date-format recieved: {date}."
+                "\nDate should follow either dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format!"
+            )
 
-        return data
+        parts_uncleaned = date.split(".")
+        parts = [part.replace("/", "") for part in parts_uncleaned]
 
-    def read_data(self) -> list[tuple[str, str, str, str]]:
+        if len(date) == 14:
+            # Handle Weekend in same month
+            first_day, second_day, month, year = parts
+            ret["first_day"] = f"{first_day}.{month}.{year}"
+            ret["second_day"] = f"{second_day}.{month}.{year}"
+        else:
+            first_day, first_month, second_day, second_month, year = parts
+            ret["first_day"] = f"{first_day}.{first_month}.{year}"
+            ret["second_day"] = f"{second_day}.{second_month}.{year}"
+
+        ret["city"] = city
+        ret["category"] = category
+        ret["age_group"] = age_group
+
+        return ret
+
+    def read_data(self) -> list[dict[str, str]]:
         """Read data from a file and return the result.
 
         Returns:
@@ -101,10 +121,15 @@ class CsvFileReader:
                     file_contents, delimiter=",", skipinitialspace=True
                 )
                 data = [tuple(item) for item in csv_reader if tuple(item)]
-                data.pop(0)
+                data.pop(0)  # Remove csv header from data
+
+                # Create dictionaries from tuple data
+                ret: list[dict[str, str]] = [
+                    self._construct_dict_from_tuple(item) for item in data  #type: ignore
+                ]
 
                 # Explicit type cast to silence lsp warning
-                return typing.cast(list[tuple[str, str, str, str]], data)
+                return ret
         except UnicodeDecodeError as exc:
             raise exceptions.FileEncodingError(
                 f"The file is not in UTF-8 encoding: {self._data_source}"

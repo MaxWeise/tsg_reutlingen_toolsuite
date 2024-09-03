@@ -6,9 +6,6 @@ Created: 03.02.2024
 
 # pylint: disable=redefined-outer-name
 
-import os
-import pathlib
-
 import pandas as pd
 import pytest
 
@@ -16,20 +13,21 @@ from saison_kickstarter.file_writer import excel_file_writer
 from saison_kickstarter.view_builder import view_builder
 
 
-@pytest.fixture()
-def testfile():
-    """The name of the created file."""
-    return pathlib.Path("./test_excel_file.xlsx")
+@pytest.fixture
+def testfile(tmp_path):
+    """Temporary file provided by pytest."""
+    tmp_file = tmp_path / "test_excel_file.xlsx"
+    return tmp_file
 
 
-@pytest.fixture()
+@pytest.fixture
 def testdata() -> list[view_builder.OverviewEntry]:
-    """The name of the created file."""
+    """Testdata to write in the temporary file."""
     return [
-        ("01.01.2000", "RL-U13 Reutlingen", False),
-        ("01.01.2000", "RL-U13 Reutlingen", False),
-        ("01.01.2000", "RL-U13 Reutlingen", False),
-        ("01.01.2000", "RL-U15 Reutlingen", True),
+        ("01./02.01.2000", "RL-U13 Reutlingen", False),
+        ("01./02.01.2000", "RL-U13 Reutlingen", False),
+        ("01./02.01.2000", "RL-U13 Reutlingen", False),
+        ("01./02.01.2000", "RL-U15 Reutlingen", True),
     ]
 
 
@@ -43,6 +41,3 @@ def test_write_tournament_overview(testfile, testdata):
 
     table = pd.read_excel(testfile)
     assert len(table.index) == len(testdata)
-
-    if testfile.exists():
-        os.remove(testfile)

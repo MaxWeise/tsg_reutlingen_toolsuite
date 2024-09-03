@@ -39,7 +39,6 @@ def create_tournament_overview(
 
     if not tournaments:
         raise ValueError("There are no values in the Database!")
-
     tournament_view = view_builder.build_tournament_overview(tournaments)
     file_writer.write_tournament_overview(
         overview_file, tournament_view, row=2, col=3
@@ -52,7 +51,7 @@ def read_tournaments_from_file(
     """Read tournament entries from a given file."""
     try:
         data = file_reader.read_data()
-        tournament_data: list[tuple[str, str, str, str]] = data
+        tournament_data: list[dict[str, str]] = data
     except (
         FileNotFoundError,
         ValueError,
@@ -61,7 +60,7 @@ def read_tournaments_from_file(
         raise exceptions.FileReadError(exinfo) from exinfo
 
     tournaments: list[tournament.Tournament] = [
-        tournament.tournament_from_tuple(t) for t in tournament_data
+        tournament.tournament_from_dict(t) for t in tournament_data
     ]
 
     duplicates = _check_for_duplicated_entries(tournaments)
