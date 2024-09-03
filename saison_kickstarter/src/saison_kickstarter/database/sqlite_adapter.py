@@ -10,13 +10,16 @@ from saison_kickstarter import tournament
 from saison_kickstarter.database import database_item
 
 CREATE_TOURNAMENTS_TABLE: str = """ CREATE TABLE IF NOT EXISTS tournaments (
-                                        date datetime NOT NULL,
+                                        first_day datetime NOT NULL,
+                                        second_day datetime NOT NULL,
                                         city text NOT NULL,
                                         category text NOT NULL,
                                         age_group text NOT NULL
                                     ); """
 
-INSERT_TOURNAMENT_STATEMENT: str = "INSERT INTO tournaments VALUES(?, ?, ?, ?);"
+INSERT_TOURNAMENT_STATEMENT: str = (
+    "INSERT INTO tournaments VALUES(?, ?, ?, ?, ?);"
+)
 
 SELECT_ALL_TOURNAMENTS: str = "SELECT * FROM tournaments"
 

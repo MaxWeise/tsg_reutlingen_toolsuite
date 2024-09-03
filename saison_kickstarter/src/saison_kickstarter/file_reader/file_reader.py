@@ -33,7 +33,7 @@ class FileReader(typing.Protocol):
             f"The method is not implemented for type {self}"
         )
 
-    def read_data(self) -> list[tuple[str, str, str, str]]:
+    def read_data(self) -> list[dict[str, str]]:
         """Read data from a file and return the result.
 
         Returns:

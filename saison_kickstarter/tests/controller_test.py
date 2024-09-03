@@ -16,7 +16,51 @@ import pytest
 from saison_kickstarter import controller, exceptions, tournament
 
 
-def test_create_tournament_overview():
+@pytest.fixture
+def mock_data():
+    """A list of data to use as mock."""
+    mock_data = [
+        {
+            "first_day": "21.02.2001",
+            "second_day": "22.02.2001",
+            "city": "Reutlingen",
+            "category": "RL",
+            "age_group": "U15",
+        },
+        {
+            "first_day": "21.02.2001",
+            "second_day": "22.02.2001",
+            "city": "Waldkirch",
+            "category": "RL",
+            "age_group": "U15",
+        },
+        {
+            "first_day": "28.02.2001",
+            "second_day": "01.03.2001",
+            "city": "Heidenheim",
+            "category": "RL",
+            "age_group": "U13",
+        },
+    ]
+    return mock_data
+
+
+@pytest.fixture
+def mock_view_data():
+    """A list of data to use as mock view."""
+    mock_view = [
+        # U 13 Turniere
+        ("28./29.02.2024", "RL-U13 Heidenheim", False),
+        ("21./22.02.2001", "RL-U15 Reutlingen", True),
+        ("21./22.03.2001", "RL-U15 Tauberbischofsheim", True),
+        # U 15 Turniere
+        ("21./22.02.2001", "RL-U15 Reutlingen", False),
+        ("21./22.03.2001", "RL-U15 Tauberbischofsheim", False),
+    ]
+    return mock_view
+
+
+def test_create_tournament_overview(mock_data, mock_view_data):
     """Create an overview of all tournaments of a season.
 
     Given a database with a list of tournaments
@@ -35,26 +79,12 @@ def test_create_tournament_overview():
     """
     # Create mocks
     ## Data Source
-    mock_data = [
-        ("21.02.2001", "Reutlingen", "RL", "U15"),
-        ("28.02.2024", "Heidenheim", "RL", "U13"),
-        ("21.03.2001", "Tauberbischofsheim", "RL", "U15"),
-    ]
     dbs = mock.Mock()
     dbs.read.return_value = mock_data
 
     ## View-Builder
-    mock_view = [
-        # U 13 Turniere
-        ("28.02.2024", "RL-U13 Heidenheim", False),
-        ("21.02.2001", "RL-U15 Reutlingen", True),
-        ("21.03.2001", "RL-U15 Tauberbischofsheim", True),
-        # U 15 Turniere
-        ("21.02.2001", "RL-U15 Reutlingen", False),
-        ("21.03.2001", "RL-U15 Tauberbischofsheim", False),
-    ]
     mock_view_builder = mock.Mock()
-    mock_view_builder.build_tournament_overview.return_value = mock_view
+    mock_view_builder.build_tournament_overview.return_value = mock_view_data
 
     ## File Writer
     test_path = pathlib.Path("null-path")
@@ -105,26 +135,21 @@ def test_create_tournament_overview_no_data_in_database():
         os.remove(test_path)
 
 
-def test_read_tournaments_from_file():
+def test_read_tournaments_from_file(mock_data):
     """Tests to read tournament entries from a given file.
 
     Given a csv file with tournament entries
     When calling the tested function
     Then the data should be written in a database file.
     """
-    dbs = mock.Mock()
-    mock_data = [
-        ("21.02.2001", "Reutlingen", "RL", "U15"),
-        ("21.02.2001", "Waldkirch", "RL", "U15"),
-        ("28.02.2024", "Heidenheim", "RL", "U13"),
-    ]
+    mock_database = mock.Mock()
     mock_file_reader = mock.Mock()
     mock_file_reader.read_data.return_value = mock_data
 
-    controller.read_tournaments_from_file(mock_file_reader, dbs)
+    controller.read_tournaments_from_file(mock_file_reader, mock_database)
 
     mock_file_reader.read_data.assert_called_once()
-    dbs.create.assert_called()
+    mock_database.create.assert_called()
 
 
 @pytest.mark.parametrize(
@@ -153,7 +178,7 @@ def test_read_tournaments_from_file_test_exceptions(exception, expected):
         )
 
 
-def test_read_tournaments_from_file_add_tournament_on_same_date():
+def test_read_tournaments_from_file_add_tournament_on_same_date(mock_data):
     """Test for the read_data_from_file function.
 
     Given two tournaments on the same date but different cities
@@ -163,13 +188,6 @@ def test_read_tournaments_from_file_add_tournament_on_same_date():
     Tournaments are considered equal, when all attributes match.
     """
     # Setup the mock objects
-    mock_data = [
-        ("21.02.2001", "Reutlingen", "RL", "U15"),
-        ("21.02.2001", "Reutlingen", "RL", "U13"),
-        ("21.02.2001", "Reutlingen", "RL", "U11"),
-        ("21.02.2001", "Reutlingen", "QB", "U11"),
-        ("21.02.2001", "Waldkirch", "RL", "U13"),
-    ]
     mock_file_reader = mock.Mock()
     mock_file_reader.read_data.return_value = mock_data
 
@@ -181,10 +199,11 @@ def test_read_tournaments_from_file_add_tournament_on_same_date():
     # Last turnament in list. Other entries fail. Perhaps because this method
     # is called in a loop and this is the last entry.
     test_tournament = tournament.Tournament(
-        datetime.date(2001, 2, 21),
-        "Waldkirch",
-        tournament.Category.RL,
-        tournament.AgeGroup.U13,
+        first_day=datetime.date(2001, 2, 28),
+        second_day=datetime.date(2001, 3, 1),
+        city="Heidenheim",
+        category=tournament.Category.RL,
+        age_group=tournament.AgeGroup.U13,
     )
 
     mock_data_source.create.assert_called_with(item=test_tournament)
@@ -199,9 +218,20 @@ def test_read_tournaments_from_file_duplicated_entries():
     """
     # Setup mocks
     mock_data = [
-        ("21.02.2001", "Reutlingen", "RL", "U15"),
-        ("21.02.2001", "Reutlingen", "RL", "U15"),
-        ("28.02.2024", "Heidenheim", "RL", "U13"),
+        {
+            "first_day": "21.02.2001",
+            "second_day": "22.02.2001",
+            "city": "Reutlingen",
+            "category": "RL",
+            "age_group": "U15",
+        },
+        {
+            "first_day": "21.02.2001",
+            "second_day": "22.02.2001",
+            "city": "Reutlingen",
+            "category": "RL",
+            "age_group": "U15",
+        },
     ]
 
     mock_file_reader = mock.Mock()

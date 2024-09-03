@@ -19,40 +19,53 @@ def test_tournaments():
     """Some tournaments to test the sorting of the list."""
     test_tournaments = [
         tournament.Tournament(
-            datetime.date(2000, 1, 1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U17,
+            first_day=datetime.date(2000, 1, 1),
+            second_day=datetime.date(2000, 1, 2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U17,
         ),
         tournament.Tournament(
-            datetime.date(2000, 2, 1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U15,
+            first_day=datetime.date(2000, 2, 1),
+            second_day=datetime.date(2000, 2, 2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U15,
         ),
         tournament.Tournament(
-            datetime.date(2000, 3, 1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U13,
+            first_day=datetime.date(2000, 3, 1),
+            second_day=datetime.date(2000, 3, 2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U13,
         ),
         tournament.Tournament(
-            datetime.date(2000, 4, 1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U11,
+            first_day=datetime.date(2000, 4, 1),
+            second_day=datetime.date(2000, 4, 2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U11,
         ),
         tournament.Tournament(
-            datetime.date(2000, 5, 1),
-            "Reutlingen",
-            tournament.Category.RL,
-            tournament.AgeGroup.U20,
+            first_day=datetime.date(2000, 5, 1),
+            second_day=datetime.date(2000, 5, 2),
+            city="Reutlingen",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U20,
         ),
         tournament.Tournament(
-            datetime.date(2000, 6, 1),
-            "Reutlingen",
-            tournament.Category.QB,
-            tournament.AgeGroup.SENIOR,
+            first_day=datetime.date(2000, 6, 1),
+            second_day=datetime.date(2000, 6, 2),
+            city="Reutlingen",
+            category=tournament.Category.QB,
+            age_group=tournament.AgeGroup.SENIOR,
+        ),
+        tournament.Tournament(
+            first_day=datetime.date(2000, 7, 31),
+            second_day=datetime.date(2000, 8, 1),
+            city="Reutlingen",
+            category=tournament.Category.QB,
+            age_group=tournament.AgeGroup.SENIOR,
         ),
     ]
     return test_tournaments
@@ -68,25 +81,25 @@ def test_build_tournament_overview(test_tournaments):
     under_test = excel_view_builder.ExcelViewBuilder()
     actual = under_test.build_tournament_overview(test_tournaments)
 
-    # FIXME: Nomenclature for Senior QB should be "QB Reutlingen"
-    # Instead of "QB Senior Reutlingen" (See Ticket#28)
     expected = [
         # U11 Tournaments
-        ("01.04.2000", "RL-U11 Reutlingen", False),
+        ("01./02.04.2000", "RL-U11 Reutlingen", False),
         # U13 Tournaments with optional U15 Tournaments
-        ("01.02.2000", "RL-U15 Reutlingen", True),
-        ("01.03.2000", "RL-U13 Reutlingen", False),
+        ("01./02.02.2000", "RL-U15 Reutlingen", True),
+        ("01./02.03.2000", "RL-U13 Reutlingen", False),
         # U15 Tournaments with optional U17 Tournaments
-        ("01.01.2000", "RL-U17 Reutlingen", True),
-        ("01.02.2000", "RL-U15 Reutlingen", False),
+        ("01./02.01.2000", "RL-U17 Reutlingen", True),
+        ("01./02.02.2000", "RL-U15 Reutlingen", False),
         # U17 Tournaments with optional U20 Tournaments
-        ("01.01.2000", "RL-U17 Reutlingen", False),
-        ("01.05.2000", "RL-U20 Reutlingen", True),
+        ("01./02.01.2000", "RL-U17 Reutlingen", False),
+        ("01./02.05.2000", "RL-U20 Reutlingen", True),
         # U20 Tournaments with optional Senior Tournaments
-        ("01.05.2000", "RL-U20 Reutlingen", False),
-        ("01.06.2000", "QB Senior Reutlingen", True),
+        ("01./02.05.2000", "RL-U20 Reutlingen", False),
+        ("01./02.06.2000", "QB Reutlingen", True),
+        ("31.07./01.08.2000", "QB Reutlingen", True),
         # Senior Tournaments
-        ("01.06.2000", "QB Senior Reutlingen", False),
+        ("01./02.06.2000", "QB Reutlingen", False),
+        ("31.07./01.08.2000", "QB Reutlingen", False),
     ]
 
     assert actual == expected

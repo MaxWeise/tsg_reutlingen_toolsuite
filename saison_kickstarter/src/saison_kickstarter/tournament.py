@@ -36,47 +36,77 @@ class AgeGroup(enum.Enum):
     VETERAN = "Veteran"
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(kw_only=True)
 class Tournament:
     """Representation of a tournament in the database."""
 
-    date: datetime.date
+    first_day: datetime.date
+    second_day: datetime.date
     city: str
     category: Category
     age_group: AgeGroup
 
-    def to_tuple(self) -> tuple[datetime.date, str, str, str]:
+    def to_tuple(self) -> tuple[datetime.date, datetime.date, str, str, str]:
         """Convert a tournament to a tuple.
 
         Returns:
             The data of the tournament object in form of a tuple.
         """
         return (
-            self.date,
+            self.first_day,
+            self.second_day,
             self.city,
             self.category.value,
             self.age_group.value,
         )
 
+    def _get_title_qb(self) -> str:
+        """Construct the title for national qualification tournaments.
+
+        Returns:
+            The title formatted according to the nomenclature.
+        """
+        if self.age_group == AgeGroup.SENIOR:
+            return f"{self.category.value} {self.city}"
+
+        return f"{self.age_group.value}Q {self.city}"
+
     @property
     def title(self) -> str:
         """The full title of the tournament"""
         seperator = "-" if self.category == Category.RL else " "
-        category = self.category.value
-        age_group = self.age_group.value
-        ret = f"{category}{seperator}{age_group} {self.city}"
-        return ret
+
+        if self.category == Category.QB:
+            return self._get_title_qb()
+
+        age_group = self.age_group.value[0:3]  # shortened version for senior
+        return f"{self.category.value}{seperator}{age_group} {self.city}"
 
     def __eq__(self, value: object, /) -> bool:
         return isinstance(value, type(self)) and (
-            self.date,
+            self.first_day,
+            self.second_day,
             self.city,
             self.category.value,
             self.age_group,
-        ) == (value.date, value.city, value.category.value, value.age_group)
+        ) == (
+            value.first_day,
+            value.second_day,
+            value.city,
+            value.category.value,
+            value.age_group,
+        )
 
     def __hash__(self) -> int:
-        return hash((self.date, self.city, self.category.value, self.age_group))
+        return hash(
+            (
+                self.first_day,
+                self.second_day,
+                self.city,
+                self.category.value,
+                self.age_group,
+            )
+        )
 
 
 def _category_from_string(category: str) -> Category:
@@ -131,7 +161,7 @@ def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
 
 
 def tournament_from_tuple(
-    entries: tuple[str, str, str, str], sql_date_format: bool = False
+    entries: tuple[str, str, str, str, str], sql_date_format: bool = False
 ) -> Tournament:
     """Construct a tournament object from a tuple of entries.
 
@@ -144,14 +174,61 @@ def tournament_from_tuple(
     Returns:
         A tournament containing the data from entries.
     """
-    date = _date_from_string(entries[0], sql_date_format)
-    city = entries[1]
-    category = _category_from_string(entries[2])
-    age_groups = _age_group_from_string(entries[3])
+    first_date = _date_from_string(entries[0], sql_date_format)
+    second_date = _date_from_string(entries[1], sql_date_format)
+    city = entries[2]
+    category = _category_from_string(entries[3])
+    age_groups = _age_group_from_string(entries[4])
 
     return Tournament(
-        date=date,
+        first_day=first_date,
+        second_day=second_date,
         city=city,
         category=category,
         age_group=age_groups,
+    )
+
+
+def tournament_from_dict(
+    entries: dict[str, str], sql_date_format: bool = False
+) -> Tournament:
+    """Construct a tournament object from a dictionary of entries.
+
+    Args:
+        entries: A dictionary of data that will be converted
+            into a tournament object.
+        sql_data_format (bool, optional): If the dateformat is yyyy-mm-dd.
+            Defaults to False
+
+    Returns:
+        A tournament containing the data from entries.
+    """
+    first_date_from_dict = entries.get("first_day")
+    second_date_from_dict = entries.get("second_day")
+    city_from_dict = entries.get("city")
+    category_from_dict = entries.get("category")
+    age_group_from_dict = entries.get("age_group")
+
+    if not all(
+        (
+            first_date_from_dict,
+            second_date_from_dict,
+            city_from_dict,
+            category_from_dict,
+            age_group_from_dict,
+        )
+    ):
+        raise ValueError("All entries must have a value!")
+
+    first_day = _date_from_string(str(first_date_from_dict), sql_date_format)
+    second_day = _date_from_string(str(second_date_from_dict), sql_date_format)
+    category = _category_from_string(str(category_from_dict))
+    age_group = _age_group_from_string(str(age_group_from_dict))
+
+    return Tournament(
+        first_day=first_day,
+        second_day=second_day,
+        city=str(city_from_dict),
+        category=category,
+        age_group=age_group,
     )
