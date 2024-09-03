@@ -40,11 +40,11 @@ class _OverviewEntryItem:
         """
         competition_date: str = ""
 
-        first_day = "{:02d}".format(self.first_day.day)
-        first_month = "{:02d}".format(self.first_day.month)
+        first_day = f"{self.first_day.day:02d}"
+        first_month = f"{self.first_day.month:02d}"
 
-        second_day = "{:02d}".format(self.second_day.day)
-        second_month = "{:02d}".format(self.second_day.month)
+        second_day = f"{self.second_day.day:02d}"
+        second_month = f"{self.second_day.month:02d}"
 
         year = self.first_day.year
         if first_month == second_month:

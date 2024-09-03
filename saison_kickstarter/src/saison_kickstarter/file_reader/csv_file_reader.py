@@ -34,7 +34,6 @@ Usage:
 
 import csv
 import pathlib
-import typing
 
 from saison_kickstarter import exceptions
 
@@ -69,10 +68,11 @@ class CsvFileReader:
         ret = {}
         # Parse the dates into two parts
         if len(date) < 14:
-            # TODO: Better error message
-            raise ValueError("Date format seems wrong.")
+            raise ValueError(
+                f"Wrong date-format recieved: {date}."
+                "\nDate should follow either dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format!"
+            )
 
-        # NOTE: (30.08) Der Slash wird nicht replaced.
         parts_uncleaned = date.split(".")
         parts = [part.replace("/", "") for part in parts_uncleaned]
 
@@ -125,7 +125,7 @@ class CsvFileReader:
 
                 # Create dictionaries from tuple data
                 ret: list[dict[str, str]] = [
-                    self._construct_dict_from_tuple(item) for item in data
+                    self._construct_dict_from_tuple(item) for item in data  #type: ignore
                 ]
 
                 # Explicit type cast to silence lsp warning
