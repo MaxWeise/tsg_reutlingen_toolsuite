@@ -29,6 +29,8 @@ class ViewBuilder(Protocol):
 
         Args:
             data: The list of tournaments to be included in the overview.
+            include_optional_tournaments: Set this flag to include or exclude
+                optional tournaments in the overview. Defaults to True.
 
         Returns:
             A list of tuples, structuring the data to be written into rows
