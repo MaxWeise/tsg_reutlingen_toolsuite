@@ -21,12 +21,16 @@ class ViewBuilder(Protocol):
     """
 
     def build_tournament_overview(
-        self, data: list[tournament.Tournament]
+        self,
+        data: list[tournament.Tournament],
+        include_optional_tournaments: bool = True,
     ) -> list[OverviewEntry]:
         """Convert a list of tournaments to be written to an excel file.
 
         Args:
             data: The list of tournaments to be included in the overview.
+            include_optional_tournaments: Set this flag to include or exclude
+                optional tournaments in the overview. Defaults to True.
 
         Returns:
             A list of tuples, structuring the data to be written into rows

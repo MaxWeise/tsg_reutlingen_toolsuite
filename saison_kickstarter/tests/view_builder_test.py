@@ -103,3 +103,39 @@ def test_build_tournament_overview(test_tournaments):
     ]
 
     assert actual == expected
+
+
+def test_build_tournament_overview_without_optional_tournaments(
+    test_tournaments,
+):
+    """Test for the build_tournament_overview method.
+
+    Given a list of tournaments, that have different age groups,
+    When assembling blocks of tournaments and a flag to exclude optional
+        tourmanets is set to false
+    Then the resulting list should be sorted by date and only mandatory
+        tournaments should be included.
+    """
+
+    under_test = excel_view_builder.ExcelViewBuilder()
+    actual = under_test.build_tournament_overview(
+        test_tournaments, include_optional_tournaments=False
+    )
+
+    expected = [
+        # U11 Tournaments
+        ("01./02.04.2000", "RL-U11 Reutlingen", False),
+        # U13 Tournaments with optional U15 Tournaments
+        ("01./02.03.2000", "RL-U13 Reutlingen", False),
+        # U15 Tournaments with optional U17 Tournaments
+        ("01./02.02.2000", "RL-U15 Reutlingen", False),
+        # U17 Tournaments with optional U20 Tournaments
+        ("01./02.01.2000", "RL-U17 Reutlingen", False),
+        # U20 Tournaments with optional Senior Tournaments
+        ("01./02.05.2000", "RL-U20 Reutlingen", False),
+        # Senior Tournaments
+        ("01./02.06.2000", "QB Reutlingen", False),
+        ("31.07./01.08.2000", "QB Reutlingen", False),
+    ]
+
+    assert actual == expected

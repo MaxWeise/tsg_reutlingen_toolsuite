@@ -70,6 +70,7 @@ class ExcelViewBuilder:
         self,
         tournaments: list[tournament.Tournament],
         optional_tournaments: list[tournament.Tournament] | None = None,
+        include_optional_tournaments: bool = True,
     ) -> list[OverviewEntry]:
         """Combine lists of mandatory and optional tournaments.
 
@@ -86,12 +87,16 @@ class ExcelViewBuilder:
             )
             for comp in tournaments
         ]
-        temp2: list[_OverviewEntryItem] = [
-            _OverviewEntryItem(
-                comp.first_day, comp.second_day, comp.title, True
-            )
-            for comp in optional_tournaments_
-        ]
+
+        temp2: list[_OverviewEntryItem] = []
+
+        if include_optional_tournaments:
+            temp2 = [
+                _OverviewEntryItem(
+                    comp.first_day, comp.second_day, comp.title, True
+                )
+                for comp in optional_tournaments_
+            ]
 
         ret: list[OverviewEntry] = [
             comp.to_tuple() for comp in sorted(temp1 + temp2)
@@ -99,7 +104,9 @@ class ExcelViewBuilder:
         return ret
 
     def build_tournament_overview(
-        self, data: list[tournament.Tournament]
+        self,
+        data: list[tournament.Tournament],
+        include_optional_tournaments: bool = True,
     ) -> list[OverviewEntry]:
         """[See base class]."""
         ret: list[OverviewEntry] = []
@@ -126,13 +133,38 @@ class ExcelViewBuilder:
         )
 
         ret = (
-            self._transform_entries(u11_tournaments)
-            + self._transform_entries(u13_tournaments, u15_tournaments)
-            + self._transform_entries(u15_tournaments, u17_tournaments)
-            + self._transform_entries(u17_tournaments, u20_tournaments)
-            + self._transform_entries(u20_tournaments, senior_tournaments)
-            + self._transform_entries(senior_tournaments)
-            + self._transform_entries(veteran_tournaments)
+            self._transform_entries(
+                u11_tournaments,
+                include_optional_tournaments=include_optional_tournaments,
+            )
+            + self._transform_entries(
+                u13_tournaments,
+                u15_tournaments,
+                include_optional_tournaments=include_optional_tournaments,
+            )
+            + self._transform_entries(
+                u15_tournaments,
+                u17_tournaments,
+                include_optional_tournaments=include_optional_tournaments,
+            )
+            + self._transform_entries(
+                u17_tournaments,
+                u20_tournaments,
+                include_optional_tournaments=include_optional_tournaments,
+            )
+            + self._transform_entries(
+                u20_tournaments,
+                senior_tournaments,
+                include_optional_tournaments=include_optional_tournaments,
+            )
+            + self._transform_entries(
+                senior_tournaments,
+                include_optional_tournaments=include_optional_tournaments,
+            )
+            + self._transform_entries(
+                veteran_tournaments,
+                include_optional_tournaments=include_optional_tournaments,
+            )
         )
 
         return ret

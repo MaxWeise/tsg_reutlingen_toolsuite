@@ -64,7 +64,7 @@ def read_data_from_file(data_file: str) -> None:
         )
 
 
-def create_tournament_overview() -> None:
+def create_tournament_overview(include_optional_tourmants: bool) -> None:
     """Create an overview of all tournaments for the comming saison.
 
     This function will create objects to handle requirements set by the
@@ -81,6 +81,7 @@ def create_tournament_overview() -> None:
             data_source,
             view_builder,
             file_writer,
+            include_optional_tournaments=include_optional_tourmants,
         )
     except ValueError:
         logger.warning("There are no values present in the database!")
@@ -104,6 +105,12 @@ def parse_args() -> argparse.Namespace:
         help="Give the path to an existing file.",
     )
 
+    parser.add_argument(
+        "--include-optional",
+        action="store_true",
+        help="If this flag is set, the overview will include optional tournaments",
+    )
+
     return parser.parse_args()
 
 
@@ -118,7 +125,7 @@ def main() -> None:
 
         read_data_from_file(arguments.file)
     if arguments.command == "create-overview":
-        create_tournament_overview()
+        create_tournament_overview(arguments.include_optional)
 
 
 if __name__ == "__main__":

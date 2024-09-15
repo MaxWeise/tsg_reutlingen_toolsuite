@@ -24,6 +24,7 @@ def create_tournament_overview(
     data_source: Database,
     view_builder: ViewBuilder,
     file_writer: ExcelFileWriter,
+    include_optional_tournaments: bool = True,
 ) -> None:
     """Create an overview of all tournaments of a season.
 
@@ -39,7 +40,9 @@ def create_tournament_overview(
 
     if not tournaments:
         raise ValueError("There are no values in the Database!")
-    tournament_view = view_builder.build_tournament_overview(tournaments)
+    tournament_view = view_builder.build_tournament_overview(
+        tournaments, include_optional_tournaments
+    )
     file_writer.write_tournament_overview(
         overview_file, tournament_view, row=2, col=3
     )
