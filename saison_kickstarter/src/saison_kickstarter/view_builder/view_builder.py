@@ -21,7 +21,9 @@ class ViewBuilder(Protocol):
     """
 
     def build_tournament_overview(
-        self, data: list[tournament.Tournament]
+        self,
+        data: list[tournament.Tournament],
+        include_optional_tournaments: bool = True,
     ) -> list[OverviewEntry]:
         """Convert a list of tournaments to be written to an excel file.
 
