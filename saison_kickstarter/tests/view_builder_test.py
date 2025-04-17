@@ -78,8 +78,8 @@ def test_build_tournament_overview(test_tournaments):
     When assembling blocks of tournaments
     Then the resulting list should be sorted by date.
     """
-    under_test = excel_view_builder.ExcelViewBuilder()
-    actual = under_test.build_tournament_overview(test_tournaments)
+    under_test = excel_view_builder.TournamentViewBuilder()
+    actual = under_test.build_view(test_tournaments)
 
     expected = [
         # U11 Tournaments
@@ -117,8 +117,8 @@ def test_build_tournament_overview_without_optional_tournaments(
         tournaments should be included.
     """
 
-    under_test = excel_view_builder.ExcelViewBuilder()
-    actual = under_test.build_tournament_overview(
+    under_test = excel_view_builder.TournamentViewBuilder()
+    actual = under_test.build_view(
         test_tournaments, include_optional_tournaments=False
     )
 

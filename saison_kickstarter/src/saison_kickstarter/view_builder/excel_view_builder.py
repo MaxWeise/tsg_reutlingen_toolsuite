@@ -63,7 +63,7 @@ class _OverviewEntryItem:
         )
 
 
-class ExcelViewBuilder:
+class TournamentViewBuilder:
     """Define the interface for methods to construct a view."""
 
     def _transform_entries(
@@ -103,7 +103,7 @@ class ExcelViewBuilder:
         ]
         return ret
 
-    def build_tournament_overview(
+    def build_view(
         self,
         data: list[tournament.Tournament],
         include_optional_tournaments: bool = True,

@@ -10,16 +10,15 @@ import xlsxwriter  # type: ignore
 import xlsxwriter.exceptions  # type: ignore
 
 from saison_kickstarter import exceptions
-from saison_kickstarter.view_builder import view_builder
 
 
 class ExcelFileWriter:
     """Provide an interface to write data to an excel file."""
 
-    def write_tournament_overview(
+    def write_data(
         self,
         file: pathlib.Path,
-        tournaments: list[view_builder.OverviewEntry],
+        tournaments: list[tuple],
         row: int = 0,
         col: int = 0,
     ) -> None:

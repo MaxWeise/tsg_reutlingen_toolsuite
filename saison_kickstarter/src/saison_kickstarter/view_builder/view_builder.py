@@ -8,8 +8,6 @@ from typing import Protocol
 
 from saison_kickstarter import tournament
 
-OverviewEntry = tuple[str, str, bool]
-
 
 class ViewBuilder(Protocol):
     """An interface to provide methods to structure data.
@@ -20,11 +18,11 @@ class ViewBuilder(Protocol):
     destined locations.
     """
 
-    def build_tournament_overview(
+    def build_view(
         self,
         data: list[tournament.Tournament],
         include_optional_tournaments: bool = True,
-    ) -> list[OverviewEntry]:
+    ) -> list[tuple]:
         """Convert a list of tournaments to be written to an excel file.
 
         Args:

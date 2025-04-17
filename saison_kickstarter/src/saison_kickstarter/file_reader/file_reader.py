@@ -20,18 +20,7 @@ import typing
 
 
 class FileReader(typing.Protocol):
-    """The interface to interact with files.
-
-    Attributes:
-        data_source: The path to an underlying datasource.
-    """
-
-    @property
-    def data_source(self) -> pathlib.Path:
-        """The path to an underlying datasource."""
-        raise NotImplementedError(
-            f"The method is not implemented for type {self}"
-        )
+    """The interface to interact with files."""
 
     def read_data(self) -> list[dict[str, str]]:
         """Read data from a file and return the result.
