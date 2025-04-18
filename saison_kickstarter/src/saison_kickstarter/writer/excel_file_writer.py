@@ -15,10 +15,12 @@ from saison_kickstarter import exceptions
 class ExcelFileWriter:
     """Provide an interface to write data to an excel file."""
 
+    def __init__(self, data_file: pathlib.Path) -> None:
+        self.data_file = data_file
+
     def write_data(
         self,
-        file: pathlib.Path,
-        tournaments: list[tuple],
+        data: list[tuple[str, str, bool]],
         row: int = 0,
         col: int = 0,
     ) -> None:
@@ -29,7 +31,7 @@ class ExcelFileWriter:
             tournaments: List of entries that get written to the file.
 
         """
-        workbook = xlsxwriter.Workbook(file)
+        workbook = xlsxwriter.Workbook(self.data_file)
 
         try:
             tournament_worksheet = workbook.add_worksheet("Turnierübersicht")
@@ -47,7 +49,7 @@ class ExcelFileWriter:
 
         row += 1
 
-        for date, title, is_optional in tournaments:
+        for date, title, is_optional in data:
             tournament_worksheet.write_string(
                 row,
                 col,

@@ -10,8 +10,9 @@ from unittest import mock
 
 import pytest
 
-from saison_kickstarter import exceptions
-from saison_kickstarter.file_reader import csv_file_reader
+from saison_kickstarter import exceptions, tournament
+from saison_kickstarter.reader import csv_file_reader
+from saison_kickstarter.tournament import Tournament
 
 
 @pytest.fixture
@@ -59,7 +60,7 @@ def expected_data():
 
     Use these entries to assert the behaviour of methods.
     """
-    data_dicts = [
+    data_objects = [
         {
             "first_day": "21.02.2001",
             "second_day": "22.02.2001",
@@ -103,7 +104,8 @@ def expected_data():
             "age_group": "Veteranen",
         },
     ]
-    return data_dicts
+
+    return [tournament.tournament_from_dict(t) for t in data_objects]
 
 
 def test_read_data(test_file, mock_data, expected_data):
@@ -118,7 +120,7 @@ def test_read_data(test_file, mock_data, expected_data):
     under_test = csv_file_reader.CsvFileReader(test_file)
 
     with mock.patch(
-        "saison_kickstarter.file_reader.csv_file_reader.csv"
+        "saison_kickstarter.reader.csv_file_reader.csv"
     ) as mock_csv_reader:
         mock_csv_reader.reader.return_value = mock_data
         actual = under_test.read_data()
@@ -138,7 +140,7 @@ def test_read_data_file_with_extra_line(test_file, mock_data, expected_data):
     under_test = csv_file_reader.CsvFileReader(test_file)
 
     with mock.patch(
-        "saison_kickstarter.file_reader.csv_file_reader.csv"
+        "saison_kickstarter.reader.csv_file_reader.csv"
     ) as mock_csv_reader:
         mock_data.append(())
         mock_csv_reader.reader.return_value = mock_data

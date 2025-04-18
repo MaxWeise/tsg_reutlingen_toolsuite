@@ -6,16 +6,6 @@ from CSV files and retrieve their contents.
 Classes:
     CsvFileReader: A class for reading data from CSV files.
 
-Example:
-    To use CsvFileReader to read data from a CSV file:
-
-    >>> reader = CsvFileReader('example.csv')
-    >>> data = reader.read_data()
-    >>> print(data)
-    [('Name', 'Age', 'City'),
-     ('John Doe', '30', 'New York'),
-     ('Jane Smith', '25', 'Los Angeles')]
-
 Note:
     The CsvFileReader class assumes that the CSV file
         has a header row with column names.
@@ -25,7 +15,7 @@ Attributes:
 
 Methods:
     read_data(): Read data from the CSV file and return a list of
-        tuples representing the contents.
+        tournament objects representing the contents.
 
 Usage:
     >>> reader = CsvFileReader('example.csv')
@@ -35,7 +25,7 @@ Usage:
 import csv
 import pathlib
 
-from saison_kickstarter import exceptions
+from saison_kickstarter import exceptions, tournament
 
 
 class CsvFileReader:
@@ -92,11 +82,11 @@ class CsvFileReader:
 
         return ret
 
-    def read_data(self) -> list[dict[str, str]]:
+    def read_data(self) -> list[tournament.Tournament]:
         """Read data from a file and return the result.
 
         Returns:
-            A list of tuples. Each tuple represents one line in the csv file.
+            A list of tournaments, as specified in the csv file.
 
         Raises:
             FileNotFoundError: The file specified by the path can not be found.
@@ -124,11 +114,12 @@ class CsvFileReader:
                 data.pop(0)  # Remove csv header from data
 
                 # Create dictionaries from tuple data
-                ret: list[dict[str, str]] = [
-                    self._construct_dict_from_tuple(item) for item in data  #type: ignore
+                dict_data: list[dict[str, str]] = [
+                    self._construct_dict_from_tuple(item) for item in data  # type: ignore
                 ]
 
-                # Explicit type cast to silence lsp warning
+                ret = [tournament.tournament_from_dict(t) for t in dict_data]
+
                 return ret
         except UnicodeDecodeError as exc:
             raise exceptions.FileEncodingError(

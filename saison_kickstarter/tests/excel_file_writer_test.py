@@ -9,8 +9,8 @@ Created: 03.02.2024
 import pandas as pd
 import pytest
 
-from saison_kickstarter.file_writer import excel_file_writer
-from saison_kickstarter.file_writer.file_writer import FileWriter
+from saison_kickstarter.writer import excel_file_writer
+from saison_kickstarter.writer.file_writer import FileWriter
 
 
 @pytest.fixture
@@ -33,9 +33,9 @@ def testdata() -> list[tuple]:
 
 def test_write_tournament_overview(testfile, testdata):
     """Test that an excel file is written to disk."""
-    under_test: FileWriter = excel_file_writer.ExcelFileWriter()
+    under_test: FileWriter = excel_file_writer.ExcelFileWriter(testfile)
 
-    under_test.write_data(testfile, testdata)
+    under_test.write_data(testdata)
 
     assert testfile.exists()
 

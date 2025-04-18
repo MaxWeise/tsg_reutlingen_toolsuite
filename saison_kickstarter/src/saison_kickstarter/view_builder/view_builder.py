@@ -12,17 +12,16 @@ from saison_kickstarter import tournament
 class ViewBuilder(Protocol):
     """An interface to provide methods to structure data.
 
-    Data that needs to be written in an excel file should follow a structure,
-    that is dependant on the file format and the requirements of the user.
-    ViewBuilder classes provide the formatting to write data into their
-    destined locations.
+    Data needs to be structured according to the output format. Componentes
+    of type ViewBuilder are tasked with organizing in such a way, that the
+    output format can display them in a correct way.
     """
 
     def build_view(
         self,
         data: list[tournament.Tournament],
         include_optional_tournaments: bool = True,
-    ) -> list[tuple]:
+    ) -> list[tuple[str, ...]]:
         """Convert a list of tournaments to be written to an excel file.
 
         Args:
@@ -31,8 +30,7 @@ class ViewBuilder(Protocol):
                 optional tournaments in the overview. Defaults to True.
 
         Returns:
-            A list of tuples, structuring the data to be written into rows
-            of an excel sheet.
+            A structured output format.
         """
         raise NotImplementedError(
             f"This method is not implemented for type {self}"

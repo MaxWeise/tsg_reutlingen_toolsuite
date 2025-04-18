@@ -8,18 +8,15 @@ Created: 11.04.2025
 @author: Max Weise
 """
 
-import pathlib
 from typing import Protocol
 
 
 class FileWriter(Protocol):
-    """Write content to files.
+    """Write content to files."""
 
-    Attributes:
-        data_source: The path to the file.
-    """
-
-    def write_data(self, file_: pathlib.Path, data: list[tuple]) -> None:
+    def write_data(
+        self, data: list[tuple[str, str, bool]], row: int = 0, col: int = 0
+    ) -> None:
         """Write data to a file."""
         raise NotImplementedError(
             f"The method is not implemented for type {self}"
