@@ -7,11 +7,13 @@ Created: 27.01.2024
 # pylint: disable=redefined-outer-name
 
 import datetime
+from datetime import date
 
 import pytest
 
 from saison_kickstarter import tournament
 from saison_kickstarter.view_builder import excel_view_builder
+from saison_kickstarter.view_item import ViewItem
 
 
 @pytest.fixture
@@ -82,24 +84,34 @@ def test_build_tournament_overview(test_tournaments):
     actual = under_test.build_view(test_tournaments)
 
     expected = [
-        # U11 Tournaments
-        ("01./02.04.2000", "RL-U11 Reutlingen", False),
-        # U13 Tournaments with optional U15 Tournaments
-        ("01./02.02.2000", "RL-U15 Reutlingen", True),
-        ("01./02.03.2000", "RL-U13 Reutlingen", False),
-        # U15 Tournaments with optional U17 Tournaments
-        ("01./02.01.2000", "RL-U17 Reutlingen", True),
-        ("01./02.02.2000", "RL-U15 Reutlingen", False),
-        # U17 Tournaments with optional U20 Tournaments
-        ("01./02.01.2000", "RL-U17 Reutlingen", False),
-        ("01./02.05.2000", "RL-U20 Reutlingen", True),
-        # U20 Tournaments with optional Senior Tournaments
-        ("01./02.05.2000", "RL-U20 Reutlingen", False),
-        ("01./02.06.2000", "QB Reutlingen", True),
-        ("31.07./01.08.2000", "QB Reutlingen", True),
-        # Senior Tournaments
-        ("01./02.06.2000", "QB Reutlingen", False),
-        ("31.07./01.08.2000", "QB Reutlingen", False),
+        # U11 Turniere
+        ViewItem(
+            date(2000, 4, 1), date(2000, 4, 2), "RL-U11 Reutlingen", False
+        ),
+        # U13 Turniere
+        ViewItem(date(2000, 2, 1), date(2000, 2, 2), "RL-U15 Reutlingen", True),
+        ViewItem(
+            date(2000, 3, 1), date(2000, 3, 2), "RL-U13 Reutlingen", False
+        ),
+        # U15 Turniere
+        ViewItem(date(2000, 1, 1), date(2000, 1, 2), "RL-U17 Reutlingen", True),
+        ViewItem(
+            date(2000, 2, 1), date(2000, 2, 2), "RL-U15 Reutlingen", False
+        ),
+        # U17 Turniere
+        ViewItem(
+            date(2000, 1, 1), date(2000, 1, 2), "RL-U17 Reutlingen", False
+        ),
+        ViewItem(date(2000, 5, 1), date(2000, 5, 2), "RL-U20 Reutlingen", True),
+        # U20 Turniere
+        ViewItem(
+            date(2000, 5, 1), date(2000, 5, 2), "RL-U20 Reutlingen", False
+        ),
+        ViewItem(date(2000, 6, 1), date(2000, 6, 2), "QB Reutlingen", True),
+        ViewItem(date(2000, 7, 31), date(2000, 8, 1), "QB Reutlingen", True),
+        # Senioren Turniere
+        ViewItem(date(2000, 6, 1), date(2000, 6, 2), "QB Reutlingen", False),
+        ViewItem(date(2000, 7, 31), date(2000, 8, 1), "QB Reutlingen", False),
     ]
 
     assert actual == expected
@@ -123,19 +135,23 @@ def test_build_tournament_overview_without_optional_tournaments(
     )
 
     expected = [
-        # U11 Tournaments
-        ("01./02.04.2000", "RL-U11 Reutlingen", False),
-        # U13 Tournaments with optional U15 Tournaments
-        ("01./02.03.2000", "RL-U13 Reutlingen", False),
-        # U15 Tournaments with optional U17 Tournaments
-        ("01./02.02.2000", "RL-U15 Reutlingen", False),
-        # U17 Tournaments with optional U20 Tournaments
-        ("01./02.01.2000", "RL-U17 Reutlingen", False),
-        # U20 Tournaments with optional Senior Tournaments
-        ("01./02.05.2000", "RL-U20 Reutlingen", False),
-        # Senior Tournaments
-        ("01./02.06.2000", "QB Reutlingen", False),
-        ("31.07./01.08.2000", "QB Reutlingen", False),
+        ViewItem(
+            date(2000, 4, 1), date(2000, 4, 2), "RL-U11 Reutlingen", False
+        ),
+        ViewItem(
+            date(2000, 3, 1), date(2000, 3, 2), "RL-U13 Reutlingen", False
+        ),
+        ViewItem(
+            date(2000, 2, 1), date(2000, 2, 2), "RL-U15 Reutlingen", False
+        ),
+        ViewItem(
+            date(2000, 1, 1), date(2000, 1, 2), "RL-U17 Reutlingen", False
+        ),
+        ViewItem(
+            date(2000, 5, 1), date(2000, 5, 2), "RL-U20 Reutlingen", False
+        ),
+        ViewItem(date(2000, 6, 1), date(2000, 6, 2), "QB Reutlingen", False),
+        ViewItem(date(2000, 7, 31), date(2000, 8, 1), "QB Reutlingen", False),
     ]
 
     assert actual == expected

@@ -6,7 +6,7 @@ Created: 18.02.2024
 
 from typing import Protocol
 
-from saison_kickstarter import tournament
+from saison_kickstarter import tournament, view_item
 
 
 class ViewBuilder(Protocol):
@@ -21,7 +21,7 @@ class ViewBuilder(Protocol):
         self,
         data: list[tournament.Tournament],
         include_optional_tournaments: bool = True,
-    ) -> list[tuple[str, ...]]:
+    ) -> list[view_item.ViewItem]:
         """Convert a list of tournaments to be written to an excel file.
 
         Args:
