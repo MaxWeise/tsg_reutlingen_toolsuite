@@ -10,13 +10,12 @@ import logging
 import logging.config
 import pathlib
 
-from saison_kickstarter import exceptions
-from saison_kickstarter.file_reader import csv_file_reader
-from saison_kickstarter.file_reader.file_reader import FileReader
-from saison_kickstarter.file_writer import excel_file_writer
-from saison_kickstarter.file_writer.file_writer import FileWriter
+from saison_kickstarter.reader import csv_file_reader
+from saison_kickstarter.reader.file_reader import FileReader
 from saison_kickstarter.view_builder import excel_view_builder
 from saison_kickstarter.view_builder.view_builder import ViewBuilder
+from saison_kickstarter.writer import excel_file_writer
+from saison_kickstarter.writer.file_writer import FileWriter
 
 PROJECT_URL: str = r"https://github.com/MaxWeise/tsg_reutlingen_toolsuite"
 PROGRAMM_NAME: str = "saison-kickstarter"
@@ -24,6 +23,8 @@ EPILOG: str = (
     "Project created an maintained by Max Weise, 2024. "
     f"Project lives on {PROJECT_URL}"
 )
+
+EXCEL_FILE: pathlib.Path = pathlib.Path("./tournament-overview-file.xlsx")
 
 
 class SupportedCommands(enum.Enum):
@@ -81,18 +82,19 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> None:
+def main(command: str, csv_file: str, include_optional: bool = False) -> None:
     """Run the main function."""
-    arguments = parse_args()
 
-    file_reader: FileReader = csv_file_reader.CsvFileReader(arguments.file)
+    file_reader: FileReader = csv_file_reader.CsvFileReader(csv_file)
     view_builder: ViewBuilder = excel_view_builder.TournamentViewBuilder()
-    file_writer: FileWriter = excel_file_writer.ExcelFileWriter()
+    file_writer: FileWriter = excel_file_writer.ExcelFileWriter(EXCEL_FILE)
 
-    if arguments.command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value:
+    if command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value:
         data = file_reader.read_data()
-        view_builder.build_view(data, arguments.include_optional)
+        view_data = view_builder.build_view(data, include_optional)
+        file_writer.write_data(view_data)
 
 
 if __name__ == "__main__":
-    main()
+    arguments = parse_args()
+    main(arguments.command, arguments.file, arguments.include_optional)
