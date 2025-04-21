@@ -7,6 +7,7 @@ Created: 20.04.2025
 @author: Max Weise
 """
 
+import logging
 import os
 from unittest import mock
 
@@ -40,6 +41,14 @@ def test_file(tmp_path):
     return tmp_file
 
 
+@pytest.fixture
+def file_wrong_encoding(tmp_path):
+    """A temporary file in utf-16 encoding."""
+    tmp_file = tmp_path / "test_file.csv"
+    tmp_file.write_text("test", encoding="utf-16")  # Ensure file encoding
+    return tmp_file
+
+
 def test_main(mock_data, test_file) -> None:
     """Test the main function.
 
@@ -65,3 +74,60 @@ def test_main(mock_data, test_file) -> None:
     assert len(table.index) == len(mock_data) - 1  # -1 because of csv header
 
     os.remove(EXCEL_FILE)
+
+
+def test_main_file_not_found(caplog) -> None:
+    """Test the main function.
+
+    Given a path that points to a non-existent file,
+    When calling the main function with this argument,
+    Then the programm should exit and a log message should be displayed.
+    """
+    test_file = "./path/does/not/exist.csv"
+    caplog.set_level(logging.INFO)
+    main.main(
+        SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+        test_file,
+    )
+
+    _, level, message = caplog.record_tuples[0]
+    assert level == logging.ERROR
+    assert "File does not exist: " in message
+
+
+def test_main_wrong_file_type(caplog) -> None:
+    """Test the main function.
+
+    Given a path that points to a non-csv file,
+    When calling the main function with this argument,
+    Then the programm should exit and a log message should be displayed.
+    """
+    test_file = "./pyproject.toml"
+    caplog.set_level(logging.INFO)
+    main.main(
+        SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+        test_file,
+    )
+
+    _, level, message = caplog.record_tuples[0]
+    assert level == logging.ERROR
+    assert "This file type is unsuported: " in message
+
+
+def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
+    """Test the main function.
+
+    Given a path that points to a csv-file with non utf8 encoding,
+    When calling the main function with this argument,
+    Then the programm should exit and a log message should be displayed.
+    """
+    test_file = file_wrong_encoding
+    caplog.set_level(logging.INFO)
+    main.main(
+        SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+        test_file,
+    )
+
+    _, level, message = caplog.record_tuples[0]
+    assert level == logging.ERROR
+    assert "This file has the wrong encoding: " in message

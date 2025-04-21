@@ -10,6 +10,7 @@ import logging
 import logging.config
 import pathlib
 
+from saison_kickstarter.exceptions import FileEncodingError
 from saison_kickstarter.reader import csv_file_reader
 from saison_kickstarter.reader.file_reader import FileReader
 from saison_kickstarter.view_builder import excel_view_builder
@@ -90,8 +91,20 @@ def main(command: str, csv_file: str, include_optional: bool = False) -> None:
     file_writer: FileWriter = excel_file_writer.ExcelFileWriter(EXCEL_FILE)
 
     if command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value:
-        data = file_reader.read_data()
+        try:
+            data = file_reader.read_data()
+        except FileNotFoundError:
+            logger.error(f"File does not exist: {csv_file}")
+            return
+        except ValueError:
+            logger.error(f"This file type is unsuported: {csv_file}")
+            return
+        except FileEncodingError:
+            logger.error(f"This file has the wrong encoding: {csv_file}")
+            return
+
         view_data = view_builder.build_view(data, include_optional)
+
         file_writer.write_data(view_data)
 
 
