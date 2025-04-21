@@ -10,7 +10,7 @@ import logging
 import logging.config
 import pathlib
 
-from saison_kickstarter.exceptions import FileEncodingError
+from saison_kickstarter.exceptions import FileEncodingError, WorkbookError
 from saison_kickstarter.reader import csv_file_reader
 from saison_kickstarter.reader.file_reader import FileReader
 from saison_kickstarter.view_builder import excel_view_builder
@@ -105,8 +105,11 @@ def main(command: str, csv_file: str, include_optional: bool = False) -> None:
 
         view_data = view_builder.build_view(data, include_optional)
 
-        file_writer.write_data(view_data)
-
+        try:
+            file_writer.write_data(view_data)
+        except WorkbookError as e:
+            logger.error(f"There has been an error with the workbook: {e}")
+            return
 
 if __name__ == "__main__":
     arguments = parse_args()
