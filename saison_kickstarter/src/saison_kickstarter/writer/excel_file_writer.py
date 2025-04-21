@@ -9,27 +9,31 @@ import pathlib
 import xlsxwriter  # type: ignore
 import xlsxwriter.exceptions  # type: ignore
 
-from saison_kickstarter import exceptions
+from saison_kickstarter import exceptions, view_item
 
 
 class ExcelFileWriter:
-    """Provide an interface to write data to an excel file."""
+    """Provide an interface to write data to an excel file.
+
+    Attributes:
+        data_file (pathlib.Path): The path to the excel file.
+    """
 
     def __init__(self, data_file: pathlib.Path) -> None:
         self.data_file = data_file
 
     def write_data(
         self,
-        data: list[tuple[str, str, bool]],
+        data: list[view_item.ViewItem],
         row: int = 0,
         col: int = 0,
     ) -> None:
         """Write an overview of tournaments to an excel file.
 
         Args:
-            file: The path to the excel file.
-            tournaments: List of entries that get written to the file.
-
+            data (list[ViewItem]): List of entries that get written to the file.
+            row (int): Starting row in the excel workbook. Defaults to 0.
+            col (int): Starting col in the excel workbook. Defaults to 0.
         """
         workbook = xlsxwriter.Workbook(self.data_file)
 
@@ -40,6 +44,7 @@ class ExcelFileWriter:
             xlsxwriter.exceptions.DuplicateWorksheetName,
         ) as exinfo:
             raise exceptions.WorkbookError from exinfo
+
         optional_tournament_format = workbook.add_format(
             {"bg_color": "#fcd5b4"}
         )
@@ -49,18 +54,19 @@ class ExcelFileWriter:
 
         row += 1
 
-        for date, title, is_optional in data:
+        for obj in data:
             tournament_worksheet.write_string(
                 row,
                 col,
-                date,
-                optional_tournament_format if is_optional else None,
+                obj.date,
+                optional_tournament_format if obj.is_optional else None,
             )
+
             tournament_worksheet.write_string(
                 row,
                 col + 1,
-                title,
-                optional_tournament_format if is_optional else None,
+                obj.competition_name,
+                optional_tournament_format if obj.is_optional else None,
             )
             row = row + 1
 

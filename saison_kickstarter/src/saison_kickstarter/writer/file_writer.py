@@ -10,12 +10,14 @@ Created: 11.04.2025
 
 from typing import Protocol
 
+from saison_kickstarter import view_item
+
 
 class FileWriter(Protocol):
     """Write content to files."""
 
     def write_data(
-        self, data: list[tuple[str, str, bool]], row: int = 0, col: int = 0
+        self, data: list[view_item.ViewItem], row: int = 0, col: int = 0
     ) -> None:
         """Write data to a file."""
         raise NotImplementedError(

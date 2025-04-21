@@ -6,9 +6,12 @@ Created: 03.02.2024
 
 # pylint: disable=redefined-outer-name
 
+from datetime import date
+
 import pandas as pd
 import pytest
 
+from saison_kickstarter.view_item import ViewItem
 from saison_kickstarter.writer import excel_file_writer
 from saison_kickstarter.writer.file_writer import FileWriter
 
@@ -21,13 +24,13 @@ def testfile(tmp_path):
 
 
 @pytest.fixture
-def testdata() -> list[tuple]:
+def testdata() -> list[ViewItem]:
     """Testdata to write in the temporary file."""
     return [
-        ("01./02.01.2000", "RL-U13 Reutlingen", False),
-        ("01./02.01.2000", "RL-U13 Reutlingen", False),
-        ("01./02.01.2000", "RL-U13 Reutlingen", False),
-        ("01./02.01.2000", "RL-U15 Reutlingen", True),
+        ViewItem(date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", False),
+        ViewItem(date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", False),
+        ViewItem(date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", False),
+        ViewItem(date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", True),
     ]
 
 
