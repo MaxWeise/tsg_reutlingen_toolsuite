@@ -34,6 +34,10 @@ class ExcelFileWriter:
             data (list[ViewItem]): List of entries that get written to the file.
             row (int): Starting row in the excel workbook. Defaults to 0.
             col (int): Starting col in the excel workbook. Defaults to 0.
+
+        Raises:
+            exceptions.WorkbookError: The active workbook encountered a
+                problem. Contains further information about the error.
         """
         workbook = xlsxwriter.Workbook(self.data_file)
 

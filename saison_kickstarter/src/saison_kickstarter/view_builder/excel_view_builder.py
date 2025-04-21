@@ -50,7 +50,16 @@ class TournamentViewBuilder:
         data: list[tournament.Tournament],
         include_optional_tournaments: bool = True,
     ) -> list[view_item.ViewItem]:
-        """[See base class]."""
+        """Convert a list of tournaments to be written to an excel file.
+
+        Args:
+            data: The list of tournaments to be included in the overview.
+            include_optional_tournaments: Set this flag to include or exclude
+                optional tournaments in the overview. Defaults to True.
+
+        Returns:
+            A structured output format.
+        """
         ret: list[view_item.ViewItem] = []
         u11_tournaments: list[tournament.Tournament] = list(
             filter(lambda t: t.age_group == tournament.AgeGroup.U11, data)
