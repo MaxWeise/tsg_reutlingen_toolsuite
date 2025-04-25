@@ -92,7 +92,7 @@ def test_main_file_not_found(caplog) -> None:
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "File does not exist: " in message
+    assert "does not exist!" in message
 
 
 def test_main_wrong_file_type(caplog) -> None:
@@ -111,7 +111,7 @@ def test_main_wrong_file_type(caplog) -> None:
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "This file type is unsuported: " in message
+    assert "Wrong mime type: " in message
 
 
 def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
@@ -130,4 +130,4 @@ def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "This file has the wrong encoding: " in message
+    assert "The file is not in UTF-8 encoding:" in message

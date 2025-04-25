@@ -93,22 +93,16 @@ def main(command: str, csv_file: str, include_optional: bool = False) -> None:
     if command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value:
         try:
             data = file_reader.read_data()
-        except FileNotFoundError:
-            logger.error(f"File does not exist: {csv_file}")
-            return
-        except ValueError:
-            logger.error(f"This file type is unsuported: {csv_file}")
-            return
-        except FileEncodingError:
-            logger.error(f"This file has the wrong encoding: {csv_file}")
+        except (FileNotFoundError, ValueError, FileEncodingError) as e:
+            logger.error("An error occured while reading the file: %s", e)
             return
 
         view_data = view_builder.build_view(data, include_optional)
 
         try:
-            file_writer.write_data(view_data)
+            file_writer.write_tournament_data(view_data)
         except WorkbookError as e:
-            logger.error(f"There has been an error with the workbook: {e}")
+            logger.error("There has been an error with the workbook: %s", e)
             return
 
 
