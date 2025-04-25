@@ -87,7 +87,7 @@ def main(command: str, csv_file: str, include_optional: bool = False) -> None:
     """Run the main function."""
 
     file_reader: FileReader = csv_file_reader.CsvFileReader(csv_file)
-    view_builder: ViewBuilder = excel_view_builder.TournamentViewBuilder()
+    view_builder: ViewBuilder = excel_view_builder.ExcelViewBuilder()
     file_writer: FileWriter = excel_file_writer.ExcelFileWriter(EXCEL_FILE)
 
     if command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value:
@@ -110,6 +110,7 @@ def main(command: str, csv_file: str, include_optional: bool = False) -> None:
         except WorkbookError as e:
             logger.error(f"There has been an error with the workbook: {e}")
             return
+
 
 if __name__ == "__main__":
     arguments = parse_args()

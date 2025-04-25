@@ -13,6 +13,7 @@ Created: 18.04.2025
 
 import dataclasses
 import datetime
+from typing import Literal
 
 
 @dataclasses.dataclass(order=True)
@@ -66,3 +67,19 @@ class ViewItem:
 
     def __lq__(self, other) -> bool:
         return self._first_day < other._first_day
+
+
+@dataclasses.dataclass(order=True)
+class RefereeViewItem:
+    """Define the structure for the data written in an overview file.
+
+    Attributes:
+        date (datetime.date): The date of the competition date.
+        name (str): The name of the competition.
+        required_licence (Literal["D", "E/D"]): The required licence for a
+            competition.
+    """
+
+    date: datetime.date
+    name: str
+    required_licence: Literal["D", "E/D"]

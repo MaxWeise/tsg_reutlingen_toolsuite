@@ -35,3 +35,21 @@ class ViewBuilder(Protocol):
         raise NotImplementedError(
             f"This method is not implemented for type {self}"
         )
+
+    def build_referee_view(
+        self, data: list[tournament.Tournament]
+    ) -> list[view_item.RefereeViewItem]:
+        """Structure a list of tournaments to be written to an excel file.
+
+        The tournaments get structured so that for each tournament we get
+        two entries, separated by date and map a refereeing licence to it.
+
+        Args:
+            data: The list of tournaments to be included in the overview.
+
+        Returns:
+            A list of structured tournament data.
+        """
+        raise NotImplementedError(
+            f"This method is not implemented for type {self}"
+        )
