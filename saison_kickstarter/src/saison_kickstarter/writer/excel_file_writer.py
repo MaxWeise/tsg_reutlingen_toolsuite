@@ -22,7 +22,7 @@ class ExcelFileWriter:
     def __init__(self, data_file: pathlib.Path) -> None:
         self.data_file = data_file
 
-    def write_data(
+    def write_tournament_data(
         self,
         data: list[view_item.ViewItem],
         row: int = 0,
@@ -71,6 +71,62 @@ class ExcelFileWriter:
                 col + 1,
                 obj.competition_name,
                 optional_tournament_format if obj.is_optional else None,
+            )
+            row = row + 1
+
+        workbook.close()
+
+    def write_referee_data(
+        self,
+        data: list[view_item.RefereeViewItem],
+        row: int = 0,
+        col: int = 0,
+    ) -> None:
+        """Write an overview of referees to an excel file.
+
+        Args:
+            data (list[ViewItem]): List of entries that get written to the file.
+            row (int): Starting row in the excel workbook. Defaults to 0.
+            col (int): Starting col in the excel workbook. Defaults to 0.
+
+        Raises:
+            exceptions.WorkbookError: The active workbook encountered a
+                problem. Contains further information about the error.
+        """
+        workbook = xlsxwriter.Workbook(self.data_file)
+
+        try:
+            tournament_worksheet = workbook.add_worksheet(
+                "Kampfrichterübersicht"
+            )
+        except (
+            xlsxwriter.exceptions.InvalidWorksheetName,
+            xlsxwriter.exceptions.DuplicateWorksheetName,
+        ) as exinfo:
+            raise exceptions.WorkbookError from exinfo
+
+        for offset, header in enumerate(["Datum", "Turnier", "Lizenz"]):
+            tournament_worksheet.write(row, col + offset, header)
+
+        row += 1
+
+        for obj in data:
+            tournament_worksheet.write_string(
+                row,
+                col,
+                obj.date,
+            )
+
+            tournament_worksheet.write_string(
+                row,
+                col + 1,
+                obj.name,
+            )
+
+            tournament_worksheet.write_string(
+                row,
+                col + 2,
+                obj.required_licence,
             )
             row = row + 1
 

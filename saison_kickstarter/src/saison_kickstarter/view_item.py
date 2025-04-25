@@ -74,12 +74,17 @@ class RefereeViewItem:
     """Define the structure for the data written in an overview file.
 
     Attributes:
-        date (datetime.date): The date of the competition date.
+        _date (datetime.date): The date of the competition date.
+        date (str): This is the attribute returned from the property.
         name (str): The name of the competition.
         required_licence (Literal["D", "E/D"]): The required licence for a
             competition.
     """
 
-    date: datetime.date
+    _date: datetime.date
     name: str
     required_licence: Literal["D", "E/D"]
+
+    @property
+    def date(self) -> str:
+        return self._date.strftime("%d.%m.%Y")
