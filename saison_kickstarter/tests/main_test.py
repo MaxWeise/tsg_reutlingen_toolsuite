@@ -11,6 +11,7 @@ import logging
 import os
 from unittest import mock
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -71,7 +72,31 @@ def test_main_create_tournament_overview(mock_data, test_file) -> None:
     assert EXCEL_FILE.exists()
 
     table = pd.read_excel(EXCEL_FILE)
-    assert len(table.index) == len(mock_data) - 1  # -1 because of csv header
+
+    # NOTE: comps are first sorted by age group, then by date
+    expected_df = pd.DataFrame(
+        {
+            "Datum": [
+                "31.03./01.04.2024",
+                "21./22.02.2001",
+                "17./18.02.2024",
+                "28./29.05.2024",
+                "10./11.07.2024",
+                "10./11.07.2024",
+            ],
+            "Ort": [
+                "RL-U13 Heidenheim",
+                "RL-U15 Reutlingen",
+                "RL-U17 Schwäbisch-Hall",
+                "DM U20 Tauberbischofsheim",
+                "DM Sen Leverkusen",
+                "DM Vet Hamburg",
+            ],
+        }
+    )
+
+    assert len(table.index) == len(expected_df)  # -1 because of csv header
+    assert table.equals(expected_df)
 
     os.remove(EXCEL_FILE)
 
@@ -132,6 +157,7 @@ def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
     assert level == logging.ERROR
     assert "The file is not in UTF-8 encoding:" in message
 
+
 def test_main_create_referee_overview(mock_data, test_file) -> None:
     """Test the main function.
 
@@ -153,7 +179,28 @@ def test_main_create_referee_overview(mock_data, test_file) -> None:
     # Assert conditions
     assert EXCEL_FILE.exists()
 
+    expected_df = pd.DataFrame(
+        {
+            "Datum": [
+                "17.02.2024",
+                "18.02.2024",
+                "31.03.2024",
+                "01.04.2024",
+            ],
+            "Turnier": [
+                "Schwäbisch-Hall",
+                "Schwäbisch-Hall",
+                "Heidenheim",
+                "Heidenheim",
+            ],
+            "Lizenz": ["D", "D", "E/D", "E/D"],
+            "1": [np.nan, np.nan, np.nan, np.nan],
+            "2": [np.nan, np.nan, np.nan, np.nan],
+            "3": [np.nan, np.nan, np.nan, np.nan],
+        }
+    )
     table = pd.read_excel(EXCEL_FILE)
-    assert len(table.index) == 4
+    assert len(table.index) == len(expected_df)
+    assert table.equals(expected_df)
 
     os.remove(EXCEL_FILE)

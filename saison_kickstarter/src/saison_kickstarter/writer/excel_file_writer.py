@@ -105,7 +105,9 @@ class ExcelFileWriter:
         ) as exinfo:
             raise exceptions.WorkbookError from exinfo
 
-        for offset, header in enumerate(["Datum", "Turnier", "Lizenz"]):
+        for offset, header in enumerate(
+            ["Datum", "Turnier", "Lizenz", "1", "2", "3"]
+        ):
             tournament_worksheet.write(row, col + offset, header)
 
         row += 1
