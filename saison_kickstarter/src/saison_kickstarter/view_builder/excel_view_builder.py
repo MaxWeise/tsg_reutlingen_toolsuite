@@ -141,6 +141,7 @@ class ExcelViewBuilder:
                 lambda t: not (
                     t.city == "Reutlingen"
                     or t.category == tournament.Category.QB
+                    or t.category == tournament.Category.DM
                 ),
                 data,
             )

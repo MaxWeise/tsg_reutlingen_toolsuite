@@ -49,7 +49,7 @@ def file_wrong_encoding(tmp_path):
     return tmp_file
 
 
-def test_main(mock_data, test_file) -> None:
+def test_main_create_tournament_overview(mock_data, test_file) -> None:
     """Test the main function.
 
     Given a file with csv values,
@@ -131,3 +131,29 @@ def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
     assert "The file is not in UTF-8 encoding:" in message
+
+def test_main_create_referee_overview(mock_data, test_file) -> None:
+    """Test the main function.
+
+    Given a file with csv values,
+    When calling the main function with the create-overview-referee command,
+    Then an excel file should be created with an overview of all
+        competition-days, so so that referees can be assigned to the days.
+    """
+    with mock.patch(
+        "saison_kickstarter.reader.csv_file_reader.csv"
+    ) as mock_csv_reader:
+        mock_csv_reader.reader.return_value = mock_data
+        # Run the test
+        main.main(
+            SupportedCommands.CREATE_REFEREE_OVERVIEW.value,
+            test_file,
+        )
+
+    # Assert conditions
+    assert EXCEL_FILE.exists()
+
+    table = pd.read_excel(EXCEL_FILE)
+    assert len(table.index) == 4
+
+    os.remove(EXCEL_FILE)

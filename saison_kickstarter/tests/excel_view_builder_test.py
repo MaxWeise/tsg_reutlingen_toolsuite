@@ -203,6 +203,13 @@ def test_build_referee_overview(test_tournaments) -> None:
             category=tournament.Category.QB,
             age_group=tournament.AgeGroup.SENIOR,
         ),
+        tournament.Tournament(
+            first_day=datetime.date(2000, 4, 1),
+            second_day=datetime.date(2000, 4, 2),
+            city="Heidelberg",
+            category=tournament.Category.DM,
+            age_group=tournament.AgeGroup.U13,
+        ),
     ]
     under_test = excel_view_builder.ExcelViewBuilder()
     actual = under_test.build_referee_view(test_tournaments)
