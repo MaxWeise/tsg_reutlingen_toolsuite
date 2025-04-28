@@ -12,17 +12,5 @@ class FileEncodingError(Exception):
     """A file is not in UTF-8 encoding."""
 
 
-class FileReadError(Exception):
-    """An error occured while trying to read a file."""
-
-
-class DatabaseWriteError(Exception):
-    """An error occured while trying to write to a database."""
-
-
 class WorkbookError(Exception):
     """The active workbook encoountered a problem."""
-
-
-class DuplicateEntryError(Exception):
-    """When trying to write a list with duplicate tournament entries."""

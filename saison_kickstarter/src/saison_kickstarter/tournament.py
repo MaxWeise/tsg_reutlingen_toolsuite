@@ -46,20 +46,6 @@ class Tournament:
     category: Category
     age_group: AgeGroup
 
-    def to_tuple(self) -> tuple[datetime.date, datetime.date, str, str, str]:
-        """Convert a tournament to a tuple.
-
-        Returns:
-            The data of the tournament object in form of a tuple.
-        """
-        return (
-            self.first_day,
-            self.second_day,
-            self.city,
-            self.category.value,
-            self.age_group.value,
-        )
-
     def _get_title_qb(self) -> str:
         """Construct the title for national qualification tournaments.
 
@@ -81,21 +67,6 @@ class Tournament:
 
         age_group = self.age_group.value[0:3]  # shortened version for senior
         return f"{self.category.value}{seperator}{age_group} {self.city}"
-
-    def __eq__(self, value: object, /) -> bool:
-        return isinstance(value, type(self)) and (
-            self.first_day,
-            self.second_day,
-            self.city,
-            self.category.value,
-            self.age_group,
-        ) == (
-            value.first_day,
-            value.second_day,
-            value.city,
-            value.category.value,
-            value.age_group,
-        )
 
     def __hash__(self) -> int:
         return hash(
@@ -158,35 +129,6 @@ def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
 
     day, month, year = parts
     return datetime.date(year=int(year), month=int(month), day=int(day))
-
-
-def tournament_from_tuple(
-    entries: tuple[str, str, str, str, str], sql_date_format: bool = False
-) -> Tournament:
-    """Construct a tournament object from a tuple of entries.
-
-    Args:
-        entries: A tuple of data that will be converted
-            into a tournament object.
-        sql_data_format (bool, optional): If the dateformat is yyyy-mm-dd.
-            Defaults to False
-
-    Returns:
-        A tournament containing the data from entries.
-    """
-    first_date = _date_from_string(entries[0], sql_date_format)
-    second_date = _date_from_string(entries[1], sql_date_format)
-    city = entries[2]
-    category = _category_from_string(entries[3])
-    age_groups = _age_group_from_string(entries[4])
-
-    return Tournament(
-        first_day=first_date,
-        second_day=second_date,
-        city=city,
-        category=category,
-        age_group=age_groups,
-    )
 
 
 def tournament_from_dict(
