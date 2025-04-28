@@ -4,10 +4,12 @@ Created: 10.02.2024
 @author: Max Weise
 """
 
+from typing import Literal
+
 from saison_kickstarter import tournament, view_item
 
 
-class TournamentViewBuilder:
+class ExcelViewBuilder:
     """Define the interface for methods to construct a view."""
 
     def _transform_entries(
@@ -119,3 +121,47 @@ class TournamentViewBuilder:
         )
 
         return ret
+
+    def build_referee_view(
+        self, data: list[tournament.Tournament]
+    ) -> list[view_item.RefereeViewItem]:
+        """Structure a list of tournaments to be written to an excel file.
+
+        The tournaments get structured so that for each tournament we get
+        two entries, separated by date and map a refereeing licence to it.
+
+        Args:
+            data: The list of tournaments to be included in the overview.
+
+        Returns:
+            A list of structured tournament data.
+        """
+        filtered_data: list[tournament.Tournament] = list(
+            filter(
+                lambda t: not (
+                    t.city == "Reutlingen"
+                    or t.category == tournament.Category.QB
+                    or t.category == tournament.Category.DM
+                ),
+                data,
+            )
+        )
+
+        overview_items = []
+        for t in filtered_data:
+            required_license: Literal["D", "E/D"] = (
+                "E/D"
+                if t.age_group
+                in (tournament.AgeGroup.U11, tournament.AgeGroup.U13)
+                else "D"
+            )
+            entry_day_one = view_item.RefereeViewItem(
+                t.first_day, t.city, required_license
+            )
+            entry_day_two = view_item.RefereeViewItem(
+                t.second_day, t.city, required_license
+            )
+            overview_items.append(entry_day_one)
+            overview_items.append(entry_day_two)
+
+        return sorted(overview_items)

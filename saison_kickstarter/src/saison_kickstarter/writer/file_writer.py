@@ -16,8 +16,16 @@ from saison_kickstarter import view_item
 class FileWriter(Protocol):
     """Write content to files."""
 
-    def write_data(
+    def write_tournament_data(
         self, data: list[view_item.ViewItem], row: int = 0, col: int = 0
+    ) -> None:
+        """Write data to a file."""
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+    def write_referee_data(
+        self, data: list[view_item.RefereeViewItem], row: int = 0, col: int = 0
     ) -> None:
         """Write data to a file."""
         raise NotImplementedError(

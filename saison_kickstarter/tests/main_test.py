@@ -11,6 +11,7 @@ import logging
 import os
 from unittest import mock
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -49,7 +50,7 @@ def file_wrong_encoding(tmp_path):
     return tmp_file
 
 
-def test_main(mock_data, test_file) -> None:
+def test_main_create_tournament_overview(mock_data, test_file) -> None:
     """Test the main function.
 
     Given a file with csv values,
@@ -71,7 +72,31 @@ def test_main(mock_data, test_file) -> None:
     assert EXCEL_FILE.exists()
 
     table = pd.read_excel(EXCEL_FILE)
-    assert len(table.index) == len(mock_data) - 1  # -1 because of csv header
+
+    # NOTE: comps are first sorted by age group, then by date
+    expected_df = pd.DataFrame(
+        {
+            "Datum": [
+                "31.03./01.04.2024",
+                "21./22.02.2001",
+                "17./18.02.2024",
+                "28./29.05.2024",
+                "10./11.07.2024",
+                "10./11.07.2024",
+            ],
+            "Ort": [
+                "RL-U13 Heidenheim",
+                "RL-U15 Reutlingen",
+                "RL-U17 Schwäbisch-Hall",
+                "DM U20 Tauberbischofsheim",
+                "DM Sen Leverkusen",
+                "DM Vet Hamburg",
+            ],
+        }
+    )
+
+    assert len(table.index) == len(expected_df)  # -1 because of csv header
+    assert table.equals(expected_df)
 
     os.remove(EXCEL_FILE)
 
@@ -92,7 +117,7 @@ def test_main_file_not_found(caplog) -> None:
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "File does not exist: " in message
+    assert "does not exist!" in message
 
 
 def test_main_wrong_file_type(caplog) -> None:
@@ -111,7 +136,7 @@ def test_main_wrong_file_type(caplog) -> None:
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "This file type is unsuported: " in message
+    assert "Wrong mime type: " in message
 
 
 def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
@@ -130,4 +155,52 @@ def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "This file has the wrong encoding: " in message
+    assert "The file is not in UTF-8 encoding:" in message
+
+
+def test_main_create_referee_overview(mock_data, test_file) -> None:
+    """Test the main function.
+
+    Given a file with csv values,
+    When calling the main function with the create-overview-referee command,
+    Then an excel file should be created with an overview of all
+        competition-days, so so that referees can be assigned to the days.
+    """
+    with mock.patch(
+        "saison_kickstarter.reader.csv_file_reader.csv"
+    ) as mock_csv_reader:
+        mock_csv_reader.reader.return_value = mock_data
+        # Run the test
+        main.main(
+            SupportedCommands.CREATE_REFEREE_OVERVIEW.value,
+            test_file,
+        )
+
+    # Assert conditions
+    assert EXCEL_FILE.exists()
+
+    expected_df = pd.DataFrame(
+        {
+            "Datum": [
+                "17.02.2024",
+                "18.02.2024",
+                "31.03.2024",
+                "01.04.2024",
+            ],
+            "Turnier": [
+                "Schwäbisch-Hall",
+                "Schwäbisch-Hall",
+                "Heidenheim",
+                "Heidenheim",
+            ],
+            "Lizenz": ["D", "D", "E/D", "E/D"],
+            "1": [np.nan, np.nan, np.nan, np.nan],
+            "2": [np.nan, np.nan, np.nan, np.nan],
+            "3": [np.nan, np.nan, np.nan, np.nan],
+        }
+    )
+    table = pd.read_excel(EXCEL_FILE)
+    assert len(table.index) == len(expected_df)
+    assert table.equals(expected_df)
+
+    os.remove(EXCEL_FILE)

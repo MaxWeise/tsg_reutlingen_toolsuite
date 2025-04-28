@@ -10,7 +10,7 @@ import logging
 import logging.config
 import pathlib
 
-from saison_kickstarter.exceptions import FileEncodingError
+from saison_kickstarter.exceptions import FileEncodingError, WorkbookError
 from saison_kickstarter.reader import csv_file_reader
 from saison_kickstarter.reader.file_reader import FileReader
 from saison_kickstarter.view_builder import excel_view_builder
@@ -30,6 +30,7 @@ EXCEL_FILE: pathlib.Path = pathlib.Path("./tournament-overview-file.xlsx")
 
 class SupportedCommands(enum.Enum):
     CREATE_TOURNAMENT_OVERVIEW = "create-overview-tournament"
+    CREATE_REFEREE_OVERVIEW = "create-overview-referee"
 
 
 # Logging config goes here
@@ -87,25 +88,38 @@ def main(command: str, csv_file: str, include_optional: bool = False) -> None:
     """Run the main function."""
 
     file_reader: FileReader = csv_file_reader.CsvFileReader(csv_file)
-    view_builder: ViewBuilder = excel_view_builder.TournamentViewBuilder()
+    view_builder: ViewBuilder = excel_view_builder.ExcelViewBuilder()
     file_writer: FileWriter = excel_file_writer.ExcelFileWriter(EXCEL_FILE)
 
     if command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value:
         try:
             data = file_reader.read_data()
-        except FileNotFoundError:
-            logger.error(f"File does not exist: {csv_file}")
-            return
-        except ValueError:
-            logger.error(f"This file type is unsuported: {csv_file}")
-            return
-        except FileEncodingError:
-            logger.error(f"This file has the wrong encoding: {csv_file}")
+        except (FileNotFoundError, ValueError, FileEncodingError) as e:
+            logger.error("An error occured while reading the file: %s", e)
             return
 
         view_data = view_builder.build_view(data, include_optional)
 
-        file_writer.write_data(view_data)
+        try:
+            file_writer.write_tournament_data(view_data)
+        except WorkbookError as e:
+            logger.error("There has been an error with the workbook: %s", e)
+            return
+
+    if command == SupportedCommands.CREATE_REFEREE_OVERVIEW.value:
+        try:
+            data = file_reader.read_data()
+        except (FileNotFoundError, ValueError, FileEncodingError) as e:
+            logger.error("An error occured while reading the file: %s", e)
+            return
+
+        view_data = view_builder.build_referee_view(data)
+
+        try:
+            file_writer.write_referee_data(view_data)
+        except WorkbookError as e:
+            logger.error("There has been an error with the workbook: %s", e)
+            return
 
 
 if __name__ == "__main__":
