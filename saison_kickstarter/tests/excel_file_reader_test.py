@@ -108,4 +108,40 @@ def test_read_data(test_file, mock_data, expected_data):
 
     expected = expected_data
     assert actual
-    assert actual[0] == expected[0]
+    assert actual == expected
+
+
+def test_read_data_file_does_not_exist():
+    """Test for the read_data method.
+
+    Given a path that points to a non-existent file,
+    When calling the read_data method,
+    Then a FileNotFoundError should be raised.
+    """
+
+    under_test = ExcelFileReader("./file/does/not/exist.xlsx")
+
+    with pytest.raises(FileNotFoundError, match="The file does not exist: "):
+        _ = under_test.read_data()
+
+
+@pytest.fixture
+def test_file_wrong_extention(tmp_path):
+    """A temporary testfile provided by pytest."""
+    tmp_file = tmp_path / "test_file.csv"
+    tmp_file.write_text("test", encoding="utf-8")  # Ensure file encoding
+    return tmp_file
+
+
+def test_read_data_file_has_wrong_extention(test_file_wrong_extention):
+    """Test for the read_data method.
+
+    Given a path that points to a file without xlsx extention,
+    When calling the read_data method,
+    Then a ValueError should be raised.
+    """
+
+    under_test = ExcelFileReader(test_file_wrong_extention)
+
+    with pytest.raises(ValueError, match="File extention is not supported: "):
+        _ = under_test.read_data()

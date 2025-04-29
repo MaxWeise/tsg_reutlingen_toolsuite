@@ -7,6 +7,8 @@ Created: 28.04.2025
 @author: Max Weise
 """
 
+import pathlib
+
 import pandas as pd
 
 from saison_kickstarter import tournament
@@ -15,7 +17,7 @@ from saison_kickstarter import tournament
 class ExcelFileReader:
 
     def __init__(self, file_path: str) -> None:
-        self._file_path = file_path
+        self._file_path = pathlib.Path(file_path)
 
     def _get_two_dates_from_string(self, date: str) -> dict[str, str]:
         if len(date) < 14:
@@ -51,6 +53,17 @@ class ExcelFileReader:
             ValueError: The mime type of the file is not correct .
             FileEncodingError: The file is not UTF-8 encoded.
         """
+
+        if not self._file_path.exists():
+            raise FileNotFoundError(
+                f"The file does not exist: {self._file_path}"
+            )
+
+        if self._file_path.suffix != ".xlsx":
+            raise ValueError(
+                f"File extention is not supported: {self._file_path}"
+            )
+
         df = pd.read_excel(self._file_path)
 
         ret = []
