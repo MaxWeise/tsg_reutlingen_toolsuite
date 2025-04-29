@@ -3,23 +3,7 @@
 This module provides a CsvFileReader class that allows users to read data
 from CSV files and retrieve their contents.
 
-Classes:
-    CsvFileReader: A class for reading data from CSV files.
-
-Note:
-    The CsvFileReader class assumes that the CSV file
-        has a header row with column names.
-
-Attributes:
-    data_source (Path): The path to the CSV file.
-
-Methods:
-    read_data(): Read data from the CSV file and return a list of
-        tournament objects representing the contents.
-
-Usage:
-    >>> reader = CsvFileReader('example.csv')
-    >>> data = reader.read()
+@author: Max Weise
 """
 
 import csv
@@ -60,7 +44,8 @@ class CsvFileReader:
         if len(date) < 14:
             raise ValueError(
                 f"Wrong date-format recieved: {date}."
-                "\nDate should follow either dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format!"
+                "\nDate should follow either"
+                " dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format!"
             )
 
         parts_uncleaned = date.split(".")

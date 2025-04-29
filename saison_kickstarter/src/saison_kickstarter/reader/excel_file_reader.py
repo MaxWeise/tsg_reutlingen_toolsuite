@@ -45,7 +45,8 @@ class ExcelFileReader:
         if len(date) < 14:
             raise ValueError(
                 f"Wrong date-format recieved: {date}."
-                "\nDate should follow either dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format!"
+                "\nDate should follow either"
+                " dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format!"
             )
 
         parts_uncleaned = date.split(".")

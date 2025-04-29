@@ -13,7 +13,6 @@ import pytest
 
 from saison_kickstarter.view_item import RefereeViewItem, ViewItem
 from saison_kickstarter.writer import excel_file_writer
-from saison_kickstarter.writer.file_writer import FileWriter
 
 
 @pytest.fixture
@@ -42,7 +41,7 @@ def test_tournament_view_items() -> list[ViewItem]:
 
 def test_write_tournament_overview(testfile, test_tournament_view_items):
     """Test that an excel file is written to disk."""
-    under_test: FileWriter = excel_file_writer.ExcelFileWriter(testfile)
+    under_test = excel_file_writer.ExcelFileWriter(testfile)
 
     under_test.write_tournament_data(test_tournament_view_items)
 
@@ -68,7 +67,7 @@ def test_referee_view_items() -> list[RefereeViewItem]:
 def test_write_referee_overview(testfile, test_referee_view_items):
     """Test that an excel file is written to disk."""
     test_data = test_referee_view_items
-    under_test: FileWriter = excel_file_writer.ExcelFileWriter(testfile)
+    under_test = excel_file_writer.ExcelFileWriter(testfile)
 
     under_test.write_referee_data(test_data)
 

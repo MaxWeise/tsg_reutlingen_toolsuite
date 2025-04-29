@@ -7,6 +7,8 @@ Created: 20.04.2025
 @author: Max Weise
 """
 
+# pylint: disable=redefined-outer-name
+
 import logging
 import os
 from unittest import mock

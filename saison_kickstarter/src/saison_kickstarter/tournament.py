@@ -127,9 +127,7 @@ def date_from_string(date: str) -> datetime.date:
     return datetime.date(year=int(year), month=int(month), day=int(day))
 
 
-def tournament_from_dict(
-    entries: dict[str, str], sql_date_format: bool = False
-) -> Tournament:
+def tournament_from_dict(entries: dict[str, str]) -> Tournament:
     """Construct a tournament object from a dictionary of entries.
 
     Args:
