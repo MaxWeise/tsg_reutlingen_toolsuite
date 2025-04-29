@@ -11,7 +11,12 @@ from datetime import date
 import pytest
 
 from saison_kickstarter import tournament
-from saison_kickstarter.tournament import AgeGroup, Category, Tournament
+from saison_kickstarter.tournament import (
+    AgeGroup,
+    Category,
+    Tournament,
+    tournament_from_tuple,
+)
 
 standart_date = date(2000, 1, 1)
 
@@ -252,7 +257,7 @@ def test_tournament_from_dict():
     assert actual == expected
 
 
-def test_tournament_from_tuple_table_header_senioren():
+def test_tournament_from_dict_table_header_senioren():
     """Test for the correct contruction of a tournament object.
 
     Given the age group "senioren"
@@ -280,7 +285,7 @@ def test_tournament_from_tuple_table_header_senioren():
     assert actual_en == actual_de
 
 
-def test_tournament_from_tuple_table_header_veteranen():
+def test_tournament_from_dict_table_header_veteranen():
     """Test for the correct contruction of a tournament object.
 
     Given the age group "veteranen"
@@ -306,3 +311,39 @@ def test_tournament_from_tuple_table_header_veteranen():
     actual_de = tournament.tournament_from_dict(test_dict_de)
 
     assert actual_en == actual_de
+
+
+standart_date = date(2000, 1, 1)
+
+
+@pytest.mark.parametrize(
+    ("data", "expected_tournament"),
+    [
+        (
+            ("01./02.01.2000", "Reutlingen", "RL", "U11"),
+            Tournament(
+                first_day=date(2000, 1, 1),
+                second_day=date(2000, 1, 2),
+                city="Reutlingen",
+                category=Category.RL,
+                age_group=AgeGroup.U11,
+            ),
+        ),
+        (
+            ("31.01./01.02.2000", "Reutlingen", "RL", "U11"),
+            Tournament(
+                first_day=date(2000, 1, 31),
+                second_day=date(2000, 2, 1),
+                city="Reutlingen",
+                category=Category.RL,
+                age_group=AgeGroup.U11,
+            ),
+        ),
+    ],
+)
+def test_tournament_from_tuple(data, expected_tournament):
+    """Test for the tournament_from_tuple method."""
+    test_data = data
+    actual = tournament_from_tuple(test_data)
+
+    assert actual == expected_tournament
