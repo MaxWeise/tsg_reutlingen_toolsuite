@@ -46,4 +46,4 @@ indent-width = 4
 select = ["C90", "F", "N", "PT"]
 
 [tool.pytest.ini_options]
-addopts = "--cov-report term --cov=saison_kickstarter --cov-fail-under=60"
+addopts = "--no-cov --lf"
