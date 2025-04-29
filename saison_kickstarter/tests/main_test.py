@@ -50,7 +50,7 @@ def file_wrong_encoding(tmp_path):
     return tmp_file
 
 
-def test_main_create_tournament_overview(mock_data, test_file) -> None:
+def test_main_create_tournament_overview_from_csv(mock_data, test_file) -> None:
     """Test the main function.
 
     Given a file with csv values,
@@ -66,6 +66,85 @@ def test_main_create_tournament_overview(mock_data, test_file) -> None:
         main.main(
             SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
             test_file,
+        )
+
+    # Assert conditions
+    assert EXCEL_FILE.exists()
+
+    table = pd.read_excel(EXCEL_FILE)
+
+    # NOTE: comps are first sorted by age group, then by date
+    expected_df = pd.DataFrame(
+        {
+            "Datum": [
+                "31.03./01.04.2024",
+                "21./22.02.2001",
+                "17./18.02.2024",
+                "28./29.05.2024",
+                "10./11.07.2024",
+                "10./11.07.2024",
+            ],
+            "Ort": [
+                "RL-U13 Heidenheim",
+                "RL-U15 Reutlingen",
+                "RL-U17 Schwäbisch-Hall",
+                "DM U20 Tauberbischofsheim",
+                "DM Sen Leverkusen",
+                "DM Vet Hamburg",
+            ],
+        }
+    )
+
+    assert len(table.index) == len(expected_df)  # -1 because of csv header
+    assert table.equals(expected_df)
+
+    os.remove(EXCEL_FILE)
+
+
+@pytest.fixture
+def test_file_xlsx(tmp_path):
+    """A temporary testfile provided by pytest."""
+    tmp_file = tmp_path / "test_file.xlsx"
+    tmp_file.write_text("test", encoding="utf-8")  # Ensure file encoding
+    return tmp_file
+
+
+@pytest.fixture
+def mock_data_xlsx() -> pd.DataFrame:
+    """Example entries that can be used to mock the contents of excel files."""
+    df = pd.DataFrame.from_records(
+        [
+            ("21./22.02.2001", "Reutlingen", "RL", "U15"),
+            ("31.03./01.04.2024", "Heidenheim", "RL", "U13"),
+            ("17./18.02.2024", "Schwäbisch-Hall", "RL", "U17"),
+            ("28./29.05.2024", "Tauberbischofsheim", "DM", "U20"),
+            ("10./11.07.2024", "Leverkusen", "DM", "Senioren"),
+            ("10./11.07.2024", "Hamburg", "DM", "Veteranen"),
+        ],
+        columns=["Datum", "Ort", "Kategorie", "Altersklasse"],
+    )
+
+    return df
+
+
+def test_main_create_tournament_overview_from_xlsx(
+    mock_data_xlsx, test_file_xlsx
+) -> None:
+    """Test the main function.
+
+    Given an excel file with values,
+    When calling the main function,
+    Then an excel file should be created with an overview of all competitions.
+    """
+
+    with mock.patch(
+        "saison_kickstarter.reader.excel_file_reader.pd"
+    ) as mock_excel_reader:
+        mock_excel_reader.read_excel.return_value = mock_data_xlsx
+        # Run the test
+        main.main(
+            SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+            test_file_xlsx,
         )
 
     # Assert conditions
@@ -136,7 +215,7 @@ def test_main_wrong_file_type(caplog) -> None:
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "Wrong mime type: " in message
+    assert "File type not supported: " in message
 
 
 def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:

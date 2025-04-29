@@ -11,7 +11,7 @@ import logging.config
 import pathlib
 
 from saison_kickstarter.exceptions import FileEncodingError, WorkbookError
-from saison_kickstarter.reader import csv_file_reader
+from saison_kickstarter.reader import csv_file_reader, excel_file_reader
 from saison_kickstarter.reader.file_reader import FileReader
 from saison_kickstarter.view_builder import excel_view_builder
 from saison_kickstarter.view_builder.view_builder import ViewBuilder
@@ -84,10 +84,17 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main(command: str, csv_file: str, include_optional: bool = False) -> None:
+def main(command: str, data_file: str, include_optional: bool = False) -> None:
     """Run the main function."""
 
-    file_reader: FileReader = csv_file_reader.CsvFileReader(csv_file)
+    if pathlib.Path(data_file).suffix == ".xlsx":
+        file_reader: FileReader = excel_file_reader.ExcelFileReader(data_file)
+    elif pathlib.Path(data_file).suffix == ".csv":
+        file_reader: FileReader = csv_file_reader.CsvFileReader(data_file)
+    else:
+        logger.error(f"File type not supported: {data_file}")
+        return
+
     view_builder: ViewBuilder = excel_view_builder.ExcelViewBuilder()
     file_writer: FileWriter = excel_file_writer.ExcelFileWriter(EXCEL_FILE)
 
