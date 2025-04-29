@@ -12,7 +12,6 @@ import pytest
 
 from saison_kickstarter import exceptions, tournament
 from saison_kickstarter.reader import csv_file_reader
-from saison_kickstarter.tournament import Tournament
 
 
 @pytest.fixture

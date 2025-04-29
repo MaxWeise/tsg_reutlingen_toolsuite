@@ -11,7 +11,7 @@ import logging.config
 import pathlib
 
 from saison_kickstarter.exceptions import FileEncodingError, WorkbookError
-from saison_kickstarter.reader import csv_file_reader
+from saison_kickstarter.reader import csv_file_reader, excel_file_reader
 from saison_kickstarter.reader.file_reader import FileReader
 from saison_kickstarter.view_builder import excel_view_builder
 from saison_kickstarter.view_builder.view_builder import ViewBuilder
@@ -78,16 +78,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--include-optional",
         action="store_true",
-        help="If this flag is set, the overview will include optional tournaments",
+        help=(
+            "If this flag is set,"
+            " the overview will include optional tournaments"
+        ),
     )
 
     return parser.parse_args()
 
 
-def main(command: str, csv_file: str, include_optional: bool = False) -> None:
+def main(command: str, data_file: str, include_optional: bool = False) -> None:
     """Run the main function."""
+    file_reader: FileReader
+    if pathlib.Path(data_file).suffix == ".xlsx":
+        file_reader = excel_file_reader.ExcelFileReader(data_file)
+    elif pathlib.Path(data_file).suffix == ".csv":
+        file_reader = csv_file_reader.CsvFileReader(data_file)
+    else:
+        logger.error("File type not supported: %s", data_file)
+        return
 
-    file_reader: FileReader = csv_file_reader.CsvFileReader(csv_file)
     view_builder: ViewBuilder = excel_view_builder.ExcelViewBuilder()
     file_writer: FileWriter = excel_file_writer.ExcelFileWriter(EXCEL_FILE)
 
@@ -113,10 +123,10 @@ def main(command: str, csv_file: str, include_optional: bool = False) -> None:
             logger.error("An error occured while reading the file: %s", e)
             return
 
-        view_data = view_builder.build_referee_view(data)
+        ref_view_data = view_builder.build_referee_view(data)
 
         try:
-            file_writer.write_referee_data(view_data)
+            file_writer.write_referee_data(ref_view_data)
         except WorkbookError as e:
             logger.error("There has been an error with the workbook: %s", e)
             return

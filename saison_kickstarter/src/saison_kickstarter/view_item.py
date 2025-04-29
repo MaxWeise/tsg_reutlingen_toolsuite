@@ -65,8 +65,12 @@ class ViewItem:
             # Handle long date format
             self.date = f"{day_one}.{month_one}./{day_two}.{month_two}.{year}"
 
+    @property
+    def first_day(self) -> datetime.date:
+        return self._first_day
+
     def __lq__(self, other) -> bool:
-        return self._first_day < other._first_day
+        return self._first_day < other.first_day
 
 
 @dataclasses.dataclass(order=True)

@@ -80,7 +80,7 @@ class Tournament:
         )
 
 
-def _category_from_string(category: str) -> Category:
+def category_from_string(category: str) -> Category:
     categories = {
         "BNWM": Category.BNWM,
         "DM": Category.DM,
@@ -91,7 +91,7 @@ def _category_from_string(category: str) -> Category:
     return categories[category]
 
 
-def _age_group_from_string(age_group: str) -> AgeGroup:
+def age_group_from_string(age_group: str) -> AgeGroup:
     age_groups = {
         "u11": AgeGroup.U11,
         "u13": AgeGroup.U13,
@@ -107,7 +107,7 @@ def _age_group_from_string(age_group: str) -> AgeGroup:
     return age_groups[age_group.lower()]
 
 
-def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
+def date_from_string(date: str) -> datetime.date:
     """Construct a datetime object from a string.
 
     SQL saves the date as yyyy-mm-dd. To handle this special case, a flag
@@ -116,24 +116,92 @@ def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
 
     Args:
         date (str): The date as string.
-        sql_date_format (bool): Wether the date is in yyyy-mm-dd format.
 
     Returns:
         A datetime object that holds the data from the string.
     """
-    date_seperator = "-" if sql_date_format else "."
+    date_seperator = "."
     parts = date.split(date_seperator)
-
-    if sql_date_format:
-        parts.reverse()
 
     day, month, year = parts
     return datetime.date(year=int(year), month=int(month), day=int(day))
 
 
-def tournament_from_dict(
-    entries: dict[str, str], sql_date_format: bool = False
-) -> Tournament:
+def _get_two_dates_from_string(date: str) -> tuple[str, str]:
+    """Parse the date from a combined view to two seperate dates.
+
+    Normally the input will be in a dd./dd.mm.yyyy or in a dd.mm/dd.mm.yyyy
+    format. This needs to be parsed to two seperate entrys for the
+    tournament object.
+
+    Args:
+        date (str): The date in the combined dd./dd.mm.yyyy or
+            dd.mm/dd.mm.yyyy format.
+
+    Returns:
+        A tuple containing the two date entrys.
+
+    Raises:
+        ValueError: The date is in the wrong format.
+    """
+
+    if len(date) < 14:
+        raise ValueError(
+            f"Wrong date-format recieved: {date}."
+            "\nDate should follow either"
+            " dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format!"
+        )
+
+    parts_uncleaned = date.split(".")
+    parts = [part.replace("/", "") for part in parts_uncleaned]
+
+    if len(date) == 14:
+        # Handle Weekend in same month
+        first_day, second_day, month, year = parts
+
+        return (
+            f"{first_day}.{month}.{year}",
+            f"{second_day}.{month}.{year}",
+        )
+    else:
+        first_day, first_month, second_day, second_month, year = parts
+        return (
+            f"{first_day}.{first_month}.{year}",
+            f"{second_day}.{second_month}.{year}",
+        )
+
+
+def tournament_from_tuple(data: tuple[str, str, str, str]) -> Tournament:
+    """Construct a tournament from a tuple object.
+
+    This function is used as a helper function and converts the arguments
+    from the tuple to the needed types.
+
+    Args:
+        data (tuple[str, str, str, str]): A tuple containing the data for
+            the tournaments.
+
+    Returns:
+        A tournament object holding the data of the tuple.
+    """
+    date, city, category, age_group = data
+    dates = _get_two_dates_from_string(date)
+    fd = date_from_string(dates[0])
+    sd = date_from_string(dates[1])
+
+    cat = category_from_string(category)
+    age = age_group_from_string(age_group)
+
+    return Tournament(
+        first_day=fd,
+        second_day=sd,
+        city=city,
+        category=cat,
+        age_group=age,
+    )
+
+
+def tournament_from_dict(entries: dict[str, str]) -> Tournament:
     """Construct a tournament object from a dictionary of entries.
 
     Args:
@@ -162,10 +230,10 @@ def tournament_from_dict(
     ):
         raise ValueError("All entries must have a value!")
 
-    first_day = _date_from_string(str(first_date_from_dict), sql_date_format)
-    second_day = _date_from_string(str(second_date_from_dict), sql_date_format)
-    category = _category_from_string(str(category_from_dict))
-    age_group = _age_group_from_string(str(age_group_from_dict))
+    first_day = date_from_string(str(first_date_from_dict))
+    second_day = date_from_string(str(second_date_from_dict))
+    category = category_from_string(str(category_from_dict))
+    age_group = age_group_from_string(str(age_group_from_dict))
 
     return Tournament(
         first_day=first_day,
