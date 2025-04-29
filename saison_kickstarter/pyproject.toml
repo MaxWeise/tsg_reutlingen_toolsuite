@@ -1,6 +1,6 @@
 [project]
 name = "saison-kickstarter"
-version = "2.1.0-dev"
+version = "2.2.0"
 authors = [
     {name = "Max Weise", email = "fencingmax21@gmail.com"}
 ]
