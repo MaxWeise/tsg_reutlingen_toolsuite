@@ -80,7 +80,7 @@ class Tournament:
         )
 
 
-def _category_from_string(category: str) -> Category:
+def category_from_string(category: str) -> Category:
     categories = {
         "BNWM": Category.BNWM,
         "DM": Category.DM,
@@ -91,7 +91,7 @@ def _category_from_string(category: str) -> Category:
     return categories[category]
 
 
-def _age_group_from_string(age_group: str) -> AgeGroup:
+def age_group_from_string(age_group: str) -> AgeGroup:
     age_groups = {
         "u11": AgeGroup.U11,
         "u13": AgeGroup.U13,
@@ -107,7 +107,7 @@ def _age_group_from_string(age_group: str) -> AgeGroup:
     return age_groups[age_group.lower()]
 
 
-def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
+def date_from_string(date: str) -> datetime.date:
     """Construct a datetime object from a string.
 
     SQL saves the date as yyyy-mm-dd. To handle this special case, a flag
@@ -116,16 +116,12 @@ def _date_from_string(date: str, sql_date_format: bool) -> datetime.date:
 
     Args:
         date (str): The date as string.
-        sql_date_format (bool): Wether the date is in yyyy-mm-dd format.
 
     Returns:
         A datetime object that holds the data from the string.
     """
-    date_seperator = "-" if sql_date_format else "."
+    date_seperator = "."
     parts = date.split(date_seperator)
-
-    if sql_date_format:
-        parts.reverse()
 
     day, month, year = parts
     return datetime.date(year=int(year), month=int(month), day=int(day))
@@ -162,10 +158,10 @@ def tournament_from_dict(
     ):
         raise ValueError("All entries must have a value!")
 
-    first_day = _date_from_string(str(first_date_from_dict), sql_date_format)
-    second_day = _date_from_string(str(second_date_from_dict), sql_date_format)
-    category = _category_from_string(str(category_from_dict))
-    age_group = _age_group_from_string(str(age_group_from_dict))
+    first_day = date_from_string(str(first_date_from_dict))
+    second_day = date_from_string(str(second_date_from_dict))
+    category = category_from_string(str(category_from_dict))
+    age_group = age_group_from_string(str(age_group_from_dict))
 
     return Tournament(
         first_day=first_day,
