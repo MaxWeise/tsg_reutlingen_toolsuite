@@ -10,8 +10,7 @@ from unittest import mock
 
 import pytest
 
-from saison_kickstarter import exceptions, tournament
-from saison_kickstarter.reader import csv_file_reader
+from saison_kickstarter import exceptions, file_reader, tournament
 
 
 @pytest.fixture
@@ -116,11 +115,9 @@ def test_read_data(test_file, mock_data, expected_data):
         Then the file should return the data from the file
             as a list of tuples. schauen wir mal was wird
     """
-    under_test = csv_file_reader.CsvFileReader(test_file)
+    under_test = file_reader.CsvFileReader(test_file)
 
-    with mock.patch(
-        "saison_kickstarter.reader.csv_file_reader.csv"
-    ) as mock_csv_reader:
+    with mock.patch("saison_kickstarter.file_reader.csv") as mock_csv_reader:
         mock_csv_reader.reader.return_value = mock_data
         actual = under_test.read_data()
 
@@ -136,11 +133,9 @@ def test_read_data_file_with_extra_line(test_file, mock_data, expected_data):
         When calling the read_data function on the file
         Then the fuction should ignore the empty line.
     """
-    under_test = csv_file_reader.CsvFileReader(test_file)
+    under_test = file_reader.CsvFileReader(test_file)
 
-    with mock.patch(
-        "saison_kickstarter.reader.csv_file_reader.csv"
-    ) as mock_csv_reader:
+    with mock.patch("saison_kickstarter.file_reader.csv") as mock_csv_reader:
         mock_data.append(())
         mock_csv_reader.reader.return_value = mock_data
         actual = under_test.read_data()
@@ -158,7 +153,7 @@ def test_read_data_wrong_file_encoding(file_worng_encoding):
         Then the file should raise a WrongEncodingError to signify a
             non valid csv-file.
     """
-    under_test = csv_file_reader.CsvFileReader(file_worng_encoding)
+    under_test = file_reader.CsvFileReader(file_worng_encoding)
 
     with pytest.raises(
         exceptions.FileEncodingError, match="The file is not in UTF-8 encoding:"
@@ -175,7 +170,7 @@ def test_read_data_file_not_found():
         Then the file should raise an FileNotFoundError
             to signify that the file is not found.
     """
-    under_test = csv_file_reader.CsvFileReader("./bitte/helfen_sie.mir")
+    under_test = file_reader.CsvFileReader("./bitte/helfen_sie.mir")
 
     with pytest.raises(FileNotFoundError):
         under_test.read_data()
@@ -189,6 +184,6 @@ def test_read_data_wrong_mime_type(file_wrong_mime_type):
     Then the method should raise a ValueError to signify that
         the mime type should be .csv
     """
-    under_test = csv_file_reader.CsvFileReader(file_wrong_mime_type)
+    under_test = file_reader.CsvFileReader(file_wrong_mime_type)
     with pytest.raises(ValueError, match="Wrong mime type"):
         under_test.read_data()
