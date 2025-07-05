@@ -11,8 +11,7 @@ from datetime import date
 
 import pytest
 
-from saison_kickstarter import tournament
-from saison_kickstarter.view_builder import excel_view_builder
+from saison_kickstarter import tournament, view_builder
 from saison_kickstarter.view_item import RefereeViewItem, ViewItem
 
 
@@ -80,7 +79,7 @@ def test_build_tournament_overview(test_tournaments):
     When assembling blocks of tournaments
     Then the resulting list should be sorted by date.
     """
-    under_test = excel_view_builder.ExcelViewBuilder()
+    under_test = view_builder.TournamentViewBuilder(False)
     actual = under_test.build_view(test_tournaments)
 
     expected = [
@@ -129,7 +128,7 @@ def test_build_tournament_overview_without_optional_tournaments(
         tournaments should be included.
     """
 
-    under_test = excel_view_builder.ExcelViewBuilder()
+    under_test = view_builder.ExcelViewBuilder()
     actual = under_test.build_view(
         test_tournaments, include_optional_tournaments=False
     )

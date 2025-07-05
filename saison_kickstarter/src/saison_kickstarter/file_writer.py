@@ -1,15 +1,40 @@
-"""Define a component that writes data to excel files.
+"""An interface to write data to files.
 
-Created: 10.02.2024
+The file-writer interface encapsules common attributes and operations
+to handle a datasource and writing data to it.
+
+
+Created: 11.04.2025
 @author: Max Weise
 """
 
 import pathlib
+from typing import Protocol
 
 import xlsxwriter  # type: ignore
 import xlsxwriter.exceptions  # type: ignore
 
 from saison_kickstarter import exceptions, view_item
+
+
+class FileWriter(Protocol):
+    """Write content to files."""
+
+    def write_tournament_data(
+        self, data: list[view_item.ViewItem], row: int = 0, col: int = 0
+    ) -> None:
+        """Write data to a file."""
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
+
+    def write_referee_data(
+        self, data: list[view_item.RefereeViewItem], row: int = 0, col: int = 0
+    ) -> None:
+        """Write data to a file."""
+        raise NotImplementedError(
+            f"The method is not implemented for type {self}"
+        )
 
 
 class ExcelFileWriter:
@@ -24,7 +49,7 @@ class ExcelFileWriter:
 
     def write_tournament_data(
         self,
-        data: list[view_item.ViewItem],
+        data: list[view_item.TournamentViewItem],
         row: int = 0,
         col: int = 0,
     ) -> None:
@@ -69,7 +94,7 @@ class ExcelFileWriter:
             tournament_worksheet.write_string(
                 row,
                 col + 1,
-                obj.competition_name,
+                obj.name,
                 optional_tournament_format if obj.is_optional else None,
             )
             row = row + 1

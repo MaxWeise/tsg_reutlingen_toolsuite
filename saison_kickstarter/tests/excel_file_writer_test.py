@@ -11,8 +11,14 @@ from datetime import date
 import pandas as pd
 import pytest
 
-from saison_kickstarter.view_item import RefereeViewItem, ViewItem
+from saison_kickstarter.view_item import (
+    RefereeViewItem,
+    TournamentViewItem,
+    ViewItem,
+)
 from saison_kickstarter.writer import excel_file_writer
+
+# TODO: Test Fixtures anpassen
 
 
 @pytest.fixture
@@ -23,19 +29,21 @@ def testfile(tmp_path):
 
 
 @pytest.fixture
-def test_tournament_view_items() -> list[ViewItem]:
+def test_tournament_view_items() -> list[TournamentViewItem]:
     """Testdata to write in the temporary file."""
     return [
-        ViewItem(
+        TournamentViewItem(
             date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", False
         ),
-        ViewItem(
+        TournamentViewItem(
             date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", False
         ),
-        ViewItem(
+        TournamentViewItem(
             date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", False
         ),
-        ViewItem(date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", True),
+        TournamentViewItem(
+            date(2000, 1, 1), date(2000, 1, 2), "RL-U13 Reutlingen", True
+        ),
     ]
 
 

@@ -1,56 +1,40 @@
-"""Define a common structure for different overview formats.
+# TODO: Include docstring for the file
 
-The data provided by the overview does not change with the format. Everytime,
-the overview communicates the date(s) of a tournamant, the name of the
-tournament, which includes the category, age group and city, and if the
-tournament is optional for the current age group.
-
-These informations will be structured in one class in this file.
-
-Created: 18.04.2025
-@author: Max Weise
-"""
-
-import dataclasses
+import abc
 import datetime
+from dataclasses import dataclass
 from typing import Literal
 
+from saison_kickstarter import tournament
 
-@dataclasses.dataclass(order=True)
-class ViewItem:
-    """Helper class to define order an order for the entry items.
+
+@dataclass(order=True)
+class ViewItem(abc.ABC):
+    """Base class that provides a common parent for overview items.
 
     Attributes:
-        date (str): Date of the competition.
-        competition_name (str): Name of the competition, must adhere to
-            nomenclature.
-        is_optional (bool): Whether or not the tournament is optional
-            for the current age group.
+        date (str): The date in string format.
+        name (str): The name of the tournament. Is either a city or title of
+            the tournament.
     """
 
-    def __init__(
-        self,
-        first_day: datetime.date,
-        second_day: datetime.date,
-        competitin_name: str,
-        is_optional: bool,
-    ) -> None:
-        """Initialize the class.
+    date: str
+    name: str
 
-        The date gets combined in a representation that shows two dates at once.
 
-        Args:
-            first_day (datetime.date): The first day of the competition.
-            second_day (datetime.date): The second day of the competition.
-            city (str): The city the competition takes place in.
-            category (Category): Whether the competition is a Championshitp or
-                Qualifier tournament.
-            age_group (AgeGroup): The primary age group for the competition.
-        """
-        self._first_day = first_day
-        self.competition_name = competitin_name
+@dataclass(order=True)
+class TournamentViewItem(ViewItem):
+
+    def __init__(self, t: tournament.Tournament, is_optional: bool) -> None:
+        """Initialize a view item from a tournament."""
+        self.date = self._parse_date(t.first_day, t.second_day)
+        self.name = t.title
         self.is_optional = is_optional
 
+    def _parse_date(
+        self, first_day: datetime.date, second_day: datetime.date
+    ) -> str:
+        """Parse the combined day format from two seperate date entries."""
         day_one = f"{first_day.day:02d}"
         month_one = f"{first_day.month:02d}"
 
@@ -60,35 +44,19 @@ class ViewItem:
         year = first_day.year
         if month_one == month_two:
             # Short date format
-            self.date = f"{day_one}./{day_two}.{month_one}.{year}"
+            return f"{day_one}./{day_two}.{month_one}.{year}"
         else:
             # Handle long date format
-            self.date = f"{day_one}.{month_one}./{day_two}.{month_two}.{year}"
-
-    @property
-    def first_day(self) -> datetime.date:
-        return self._first_day
-
-    def __lq__(self, other) -> bool:
-        return self._first_day < other.first_day
+            return f"{day_one}.{month_one}./{day_two}.{month_two}.{year}"
 
 
-@dataclasses.dataclass(order=True)
-class RefereeViewItem:
-    """Define the structure for the data written in an overview file.
+@dataclass(order=True)
+class RefereeViewItem(ViewItem):
 
-    Attributes:
-        _date (datetime.date): The date of the competition date.
-        date (str): This is the attribute returned from the property.
-        name (str): The name of the competition.
-        required_licence (Literal["D", "E/D"]): The required licence for a
-            competition.
-    """
-
-    _date: datetime.date
-    name: str
-    required_licence: Literal["D", "E/D"]
-
-    @property
-    def date(self) -> str:
-        return self._date.strftime("%d.%m.%Y")
+    def __init__(
+        self, day: str, city: str, required_licence: Literal["D", "E/D"]
+    ) -> None:
+        """Initialize a view item from a tournament."""
+        self.date = day
+        self.name = city
+        self.required_licence = required_licence
