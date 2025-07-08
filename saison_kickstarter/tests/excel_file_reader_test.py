@@ -10,9 +10,9 @@ from unittest import mock
 
 import pandas as pd
 import pytest
+from saison_kickstarter.file_reader import ExcelFileReader
 
 from saison_kickstarter import tournament
-from saison_kickstarter.reader.excel_file_reader import ExcelFileReader
 
 
 @pytest.fixture
@@ -101,7 +101,7 @@ def test_read_data(test_file, mock_data, expected_data):
     under_test = ExcelFileReader(test_file)
 
     with mock.patch(
-        "saison_kickstarter.reader.excel_file_reader.pd"
+        "saison_kickstarter.file_reader.pd"
     ) as mock_excel_reader:
         mock_excel_reader.read_excel.return_value = mock_data
         actual = under_test.read_data()
