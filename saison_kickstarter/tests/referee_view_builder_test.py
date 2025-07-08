@@ -1,4 +1,4 @@
-"""Tests for the View-builder class.
+"""Tests for the Referee-View-builder class.
 
 Created: 27.01.2024
 @author: Max Weise
@@ -10,9 +10,9 @@ import datetime
 from datetime import date
 
 import pytest
+from saison_kickstarter.view_item import RefereeViewItem, ViewItem
 
 from saison_kickstarter import tournament, view_builder
-from saison_kickstarter.view_item import RefereeViewItem, ViewItem
 
 
 @pytest.fixture
@@ -126,17 +126,17 @@ def test_build_referee_overview(test_tournaments) -> None:
             age_group=tournament.AgeGroup.U13,
         ),
     ]
-    under_test = excel_view_builder.ExcelViewBuilder()
-    actual = under_test.build_referee_view(test_tournaments)
+    under_test = view_builder.RefereeViewBuilder()
+    actual = under_test.build_view(test_tournaments)
 
     # List is smaller, because not every tournament needs to be included
     expected = [
-        RefereeViewItem(datetime.date(2000, 1, 1), "Heidenheim", "E/D"),
-        RefereeViewItem(datetime.date(2000, 1, 2), "Heidenheim", "E/D"),
-        RefereeViewItem(datetime.date(2000, 3, 1), "Backnang", "D"),
-        RefereeViewItem(datetime.date(2000, 3, 2), "Backnang", "D"),
-        RefereeViewItem(datetime.date(2000, 4, 1), "Heidelberg", "E/D"),
-        RefereeViewItem(datetime.date(2000, 4, 2), "Heidelberg", "E/D"),
+        RefereeViewItem(datetime.date(2000, 1, 1).strftime("dd.mm.yyyy"), "Heidenheim", "E/D"),
+        RefereeViewItem(datetime.date(2000, 1, 2).strftime("dd.mm.yyyy"), "Heidenheim", "E/D"),
+        RefereeViewItem(datetime.date(2000, 3, 1).strftime("dd.mm.yyyy"), "Backnang", "D"),
+        RefereeViewItem(datetime.date(2000, 3, 2).strftime("dd.mm.yyyy"), "Backnang", "D"),
+        RefereeViewItem(datetime.date(2000, 4, 1).strftime("dd.mm.yyyy"), "Heidelberg", "E/D"),
+        RefereeViewItem(datetime.date(2000, 4, 2).strftime("dd.mm.yyyy"), "Heidelberg", "E/D"),
     ]
 
     assert actual == expected
