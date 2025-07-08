@@ -7,10 +7,9 @@ Created: 27.01.2024
 # pylint: disable=redefined-outer-name
 
 import datetime
-from datetime import date
 
 import pytest
-from saison_kickstarter.view_item import RefereeViewItem, ViewItem
+from saison_kickstarter.view_item import RefereeViewItem
 
 from saison_kickstarter import tournament, view_builder
 
@@ -131,12 +130,12 @@ def test_build_referee_overview(test_tournaments) -> None:
 
     # List is smaller, because not every tournament needs to be included
     expected = [
-        RefereeViewItem(datetime.date(2000, 1, 1).strftime("dd.mm.yyyy"), "Heidenheim", "E/D"),
-        RefereeViewItem(datetime.date(2000, 1, 2).strftime("dd.mm.yyyy"), "Heidenheim", "E/D"),
-        RefereeViewItem(datetime.date(2000, 3, 1).strftime("dd.mm.yyyy"), "Backnang", "D"),
-        RefereeViewItem(datetime.date(2000, 3, 2).strftime("dd.mm.yyyy"), "Backnang", "D"),
-        RefereeViewItem(datetime.date(2000, 4, 1).strftime("dd.mm.yyyy"), "Heidelberg", "E/D"),
-        RefereeViewItem(datetime.date(2000, 4, 2).strftime("dd.mm.yyyy"), "Heidelberg", "E/D"),
+        RefereeViewItem("01.01.2000", "Heidenheim", "E/D"),
+        RefereeViewItem("02.01.2000", "Heidenheim", "E/D"),
+        RefereeViewItem("01.03.2000", "Backnang", "D"),
+        RefereeViewItem("02.03.2000", "Backnang", "D"),
+        RefereeViewItem("01.04.2000", "Heidelberg", "E/D"),
+        RefereeViewItem("02.04.2000", "Heidelberg", "E/D"),
     ]
 
     assert actual == expected

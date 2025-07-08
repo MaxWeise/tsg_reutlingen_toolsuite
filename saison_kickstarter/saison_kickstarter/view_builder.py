@@ -191,11 +191,12 @@ class RefereeViewBuilder:
                 else "D"
             )
             entry_day_one = view_item.RefereeViewItem(
-                t.first_day.strftime("dd.mm.yyyy"), t.city, required_license
+                t.first_day.strftime("%d.%m.%Y"), t.city, required_license
             )
             entry_day_two = view_item.RefereeViewItem(
-                t.second_day.strftime("dd.mm.yyyy"), t.city, required_license
+                t.second_day.strftime("%d.%m.%Y"), t.city, required_license
             )
+
             overview_items.append(entry_day_one)
             overview_items.append(entry_day_two)
 

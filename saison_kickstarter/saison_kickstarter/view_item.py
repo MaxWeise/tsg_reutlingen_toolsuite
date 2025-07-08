@@ -50,7 +50,6 @@ class TournamentViewItem(ViewItem):
             return f"{day_one}.{month_one}./{day_two}.{month_two}.{year}"
 
 
-@dataclass(order=True)
 class RefereeViewItem(ViewItem):
 
     def __init__(
@@ -60,3 +59,14 @@ class RefereeViewItem(ViewItem):
         self.date = day
         self.name = city
         self.required_licence = required_licence
+
+    # Implement custom ordering functions, as strings don't order dates well
+    def __lt__(self, other) -> bool:
+        own_date = datetime.datetime.strptime(self.date, "%d.%m.%Y")
+        other_date = datetime.datetime.strptime(other.date, "%d.%m.%Y")
+        return own_date < other_date
+
+    def __eq__(self, other) -> bool:
+        own_date = datetime.datetime.strptime(self.date, "%d.%m.%Y")
+        other_date = datetime.datetime.strptime(other.date, "%d.%m.%Y")
+        return own_date == other_date
