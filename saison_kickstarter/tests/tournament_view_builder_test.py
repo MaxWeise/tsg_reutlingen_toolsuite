@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from saison_kickstarter import tournament, view_item
+from saison_kickstarter import tournament, view_builder, view_item
 
 
 @pytest.fixture
@@ -69,41 +69,129 @@ def test_build_tournament_overview(test_tournaments):
     When assembling blocks of tournaments
     Then the resulting list should be sorted by date.
     """
-    under_test = view_builder.TournamentViewBuilder(False)
+    under_test = view_builder.TournamentViewBuilder(True)
     actual = under_test.build_view(test_tournaments)
 
     expected = [
         # U11 Turniere
         view_item.TournamentViewItem(
-            datetime.date(2000, 4, 1),
-            datetime.date(2000, 4, 2),
-            "RL-U11 Reutlingen",
+            tournament.Tournament(
+                first_day=datetime.date(2000, 4, 1),
+                second_day=datetime.date(2000, 4, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U11"),
+            ),
             False,
         ),
         # U13 Turniere
-        ViewItem(date(2000, 2, 1), date(2000, 2, 2), "RL-U15 Reutlingen", True),
-        ViewItem(
-            date(2000, 3, 1), date(2000, 3, 2), "RL-U13 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 2, 1),
+                second_day=datetime.date(2000, 2, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U15"),
+            ),
+            True,
+        ),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 3, 1),
+                second_day=datetime.date(2000, 3, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U13"),
+            ),
+            False,
         ),
         # U15 Turniere
-        ViewItem(date(2000, 1, 1), date(2000, 1, 2), "RL-U17 Reutlingen", True),
-        ViewItem(
-            date(2000, 2, 1), date(2000, 2, 2), "RL-U15 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 1, 1),
+                second_day=datetime.date(2000, 1, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U17"),
+            ),
+            True,
+        ),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 2, 1),
+                second_day=datetime.date(2000, 2, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U15"),
+            ),
+            False,
         ),
         # U17 Turniere
-        ViewItem(
-            date(2000, 1, 1), date(2000, 1, 2), "RL-U17 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 1, 1),
+                second_day=datetime.date(2000, 1, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U17"),
+            ), False
         ),
-        ViewItem(date(2000, 5, 1), date(2000, 5, 2), "RL-U20 Reutlingen", True),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 5, 1),
+                second_day=datetime.date(2000, 5, 2), 
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U20"),
+            ), True
+        ),
         # U20 Turniere
-        ViewItem(
-            date(2000, 5, 1), date(2000, 5, 2), "RL-U20 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 5, 1),
+                second_day=datetime.date(2000, 5, 2), 
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U20"),
+            ), False
         ),
-        ViewItem(date(2000, 6, 1), date(2000, 6, 2), "QB Reutlingen", True),
-        ViewItem(date(2000, 7, 31), date(2000, 8, 1), "QB Reutlingen", True),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 6, 1),
+                second_day=datetime.date(2000, 6, 2), 
+                city="Reutlingen",
+                category=tournament.category_from_string("QB"),
+                age_group=tournament.age_group_from_string("Senior"),
+            ), True
+        ),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 7, 31),
+                second_day=datetime.date(2000, 8, 1),
+                city="Reutlingen",
+                category=tournament.category_from_string("QB"),
+                age_group=tournament.age_group_from_string("Senior"),
+            ), True
+        ),
         # Senioren Turniere
-        ViewItem(date(2000, 6, 1), date(2000, 6, 2), "QB Reutlingen", False),
-        ViewItem(date(2000, 7, 31), date(2000, 8, 1), "QB Reutlingen", False),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 6, 1),
+                second_day=datetime.date(2000, 6, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("QB"),
+                age_group=tournament.age_group_from_string("Senior"),
+            ), False
+        ),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 7, 31),
+                second_day=datetime.date(2000, 8, 1), 
+                city="Reutlingen",
+                category=tournament.category_from_string("QB"),
+                age_group=tournament.age_group_from_string("Senior"),
+            ), False
+        ),
     ]
 
     assert actual == expected
@@ -121,29 +209,75 @@ def test_build_tournament_overview_without_optional_tournaments(
         tournaments should be included.
     """
 
-    under_test = view_builder.ExcelViewBuilder()
+    under_test = view_builder.TournamentViewBuilder(False)
     actual = under_test.build_view(
         test_tournaments, include_optional_tournaments=False
     )
 
     expected = [
-        ViewItem(
-            date(2000, 4, 1), date(2000, 4, 2), "RL-U11 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 4, 1),
+                second_day=datetime.date(2000, 4, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U11"),
+            ), False
         ),
-        ViewItem(
-            date(2000, 3, 1), date(2000, 3, 2), "RL-U13 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 3, 1),
+                second_day=datetime.date(2000, 3, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U13"),
+            ), False
         ),
-        ViewItem(
-            date(2000, 2, 1), date(2000, 2, 2), "RL-U15 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 2, 1),
+                second_day=datetime.date(2000, 2, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U15"),
+            ), False
         ),
-        ViewItem(
-            date(2000, 1, 1), date(2000, 1, 2), "RL-U17 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 1, 1),
+                second_day=datetime.date(2000, 1, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U17"),
+            ), False
         ),
-        ViewItem(
-            date(2000, 5, 1), date(2000, 5, 2), "RL-U20 Reutlingen", False
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 5, 1),
+                second_day=datetime.date(2000, 5, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("RL"),
+                age_group=tournament.age_group_from_string("U20"),
+            ), False
         ),
-        ViewItem(date(2000, 6, 1), date(2000, 6, 2), "QB Reutlingen", False),
-        ViewItem(date(2000, 7, 31), date(2000, 8, 1), "QB Reutlingen", False),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 6, 1),
+                second_day=datetime.date(2000, 6, 2),
+                city="Reutlingen",
+                category=tournament.category_from_string("QB"),
+                age_group=tournament.age_group_from_string("Senior"),
+            ), False
+        ),
+        view_item.TournamentViewItem(
+            tournament.Tournament(
+                first_day=datetime.date(2000, 7, 31),
+                second_day=datetime.date(2000, 8, 1),
+                city="Reutlingen",
+                category=tournament.category_from_string("QB"),
+                age_group=tournament.age_group_from_string("Senior"),
+            ), False
+        ),
     ]
 
     assert actual == expected
