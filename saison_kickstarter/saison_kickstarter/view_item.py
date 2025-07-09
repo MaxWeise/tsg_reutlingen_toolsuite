@@ -2,13 +2,13 @@
 
 import abc
 import datetime
-from dataclasses import dataclass
+import dataclasses
 from typing import Literal
 
 from saison_kickstarter import tournament
 
 
-@dataclass(order=True)
+@dataclasses.dataclass
 class ViewItem(abc.ABC):
     """Base class that provides a common parent for overview items.
 
@@ -21,8 +21,18 @@ class ViewItem(abc.ABC):
     date: str
     name: str
 
+    def __lt__(self, other) -> bool:
+        own_date = datetime.datetime.strptime(self.date, "%d.%m.%Y")
+        other_date = datetime.datetime.strptime(other.date, "%d.%m.%Y")
+        return own_date < other_date
 
-@dataclass(order=True)
+    def __eq__(self, other) -> bool:
+        own_date = datetime.datetime.strptime(self.date, "%d.%m.%Y")
+        other_date = datetime.datetime.strptime(other.date, "%d.%m.%Y")
+        return own_date == other_date
+
+
+@dataclasses.dataclass
 class TournamentViewItem(ViewItem):
 
     def __init__(self, t: tournament.Tournament, is_optional: bool) -> None:
@@ -59,14 +69,3 @@ class RefereeViewItem(ViewItem):
         self.date = day
         self.name = city
         self.required_licence = required_licence
-
-    # Implement custom ordering functions, as strings don't order dates well
-    def __lt__(self, other) -> bool:
-        own_date = datetime.datetime.strptime(self.date, "%d.%m.%Y")
-        other_date = datetime.datetime.strptime(other.date, "%d.%m.%Y")
-        return own_date < other_date
-
-    def __eq__(self, other) -> bool:
-        own_date = datetime.datetime.strptime(self.date, "%d.%m.%Y")
-        other_date = datetime.datetime.strptime(other.date, "%d.%m.%Y")
-        return own_date == other_date

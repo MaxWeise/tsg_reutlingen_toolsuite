@@ -8,6 +8,12 @@ from typing import Literal, Protocol
 
 from saison_kickstarter import tournament, view_item
 
+NO_OPTIONAL_TOURNAMENTS: set[tournament.AgeGroup] = {
+    tournament.AgeGroup.U11,
+    tournament.AgeGroup.SENIOR,
+    tournament.AgeGroup.VETERAN,
+}
+
 
 class ViewBuilder(Protocol):
     """An interface to provide methods to structure data.
@@ -64,15 +70,35 @@ class TournamentViewBuilder:
         Returns:
             A structured output format.
         """
-        # TODO: Implement method. Work incrementally by implementing for one age group + optional
-        #       and then implementing for all agegroups + optional
+        age_groups = [ag for ag in tournament.AgeGroup]
 
-        # Filter tournaments nach Altersklasse
+        ret = []
+        for index, age_group in enumerate(age_groups):
+            filtered_tournaments = list(
+                sorted(filter(lambda t: t.age_group == age_group, data))
+            )
+            ret = [
+                view_item.TournamentViewItem(t, False)
+                for t in filtered_tournaments
+            ]
 
-        # Füge optionale hinzu, falls nötig
+            if (
+                include_optional_tournaments
+                and age_group not in NO_OPTIONAL_TOURNAMENTS
+            ):
+                filtered_optional_tournaments = list(
+                    sorted(
+                        filter(
+                            lambda t: t.age_group == age_groups[index + 1], data
+                        )
+                    )
+                )
+                ret = ret + [
+                    view_item.TournamentViewItem(t, True)
+                    for t in filtered_tournaments
+                ]
 
-        # Erstelle viewItems aus der erhaltenen Turnierliste
-        ... 
+        return sorted(ret)
 
 
 class RefereeViewBuilder:

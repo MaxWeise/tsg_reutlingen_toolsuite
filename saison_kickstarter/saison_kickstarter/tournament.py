@@ -36,7 +36,7 @@ class AgeGroup(enum.Enum):
     VETERAN = "Veteran"
 
 
-@dataclasses.dataclass(kw_only=True)
+@dataclasses.dataclass(order=True, kw_only=True)
 class Tournament:
     """Representation of a tournament in the database."""
 
