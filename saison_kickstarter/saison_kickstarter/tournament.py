@@ -80,6 +80,7 @@ class Tournament:
         )
 
 
+# TODO: Remove unnecessary constructor function
 def category_from_string(category: str) -> Category:
     categories = {
         "BNWM": Category.BNWM,
@@ -91,6 +92,7 @@ def category_from_string(category: str) -> Category:
     return categories[category]
 
 
+# TODO: Remove unnecessary constructor function
 def age_group_from_string(age_group: str) -> AgeGroup:
     age_groups = {
         "u11": AgeGroup.U11,

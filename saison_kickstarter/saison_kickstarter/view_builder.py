@@ -4,6 +4,7 @@ Created: 18.02.2024
 @author: Max Weise
 """
 
+import itertools
 from typing import Literal, Protocol
 
 from saison_kickstarter import tournament, view_item
@@ -54,27 +55,35 @@ class TournamentViewBuilder:
                 included in the view.
         """
         self._include_optonal = include_optional
-
-    def _get_tournaments(self, data: list[tournament.Tournament], age_group: tournament.AgeGroup) -> list[view_item.TournamentViewItem]:
-        ret = []
-        for t in data:
-            ret.append(
-                view_item.TournamentViewItem(
-                    t.first_day,
-                    t.second_day,
-                    t.title,
-                    False if t.age_group == age_group else True
-                )
-            )
-
-        return sorted(ret)
+        self._inclusion_criteria_nonoptional: dict[tournament.AgeGroup, tuple[tournament.AgeGroup, ...]] = {
+            tournament.AgeGroup.U11: (tournament.AgeGroup.U11,),
+            tournament.AgeGroup.U13: (tournament.AgeGroup.U13,),
+            tournament.AgeGroup.U15: (tournament.AgeGroup.U15,),
+            tournament.AgeGroup.U17: (tournament.AgeGroup.U17,),
+            tournament.AgeGroup.U20: (tournament.AgeGroup.U20,),
+            tournament.AgeGroup.SENIOR: (tournament.AgeGroup.SENIOR, ),
+            tournament.AgeGroup.VETERAN: (tournament.AgeGroup.VETERAN,),
+        }
+        self._inclusion_criteria_optional: dict[tournament.AgeGroup, tuple[tournament.AgeGroup, ...]] = {
+            tournament.AgeGroup.U11: (tournament.AgeGroup.U11,),
+            tournament.AgeGroup.U13: (tournament.AgeGroup.U13,tournament.AgeGroup.U15),
+            tournament.AgeGroup.U15: (tournament.AgeGroup.U15,tournament.AgeGroup.U17),
+            tournament.AgeGroup.U17: (tournament.AgeGroup.U17,tournament.AgeGroup.U20),
+            tournament.AgeGroup.U20: (tournament.AgeGroup.U20,tournament.AgeGroup.SENIOR),
+            tournament.AgeGroup.SENIOR: (tournament.AgeGroup.SENIOR, ),
+            tournament.AgeGroup.VETERAN: (tournament.AgeGroup.VETERAN,),
+        }
 
     def build_view(
         self,
         data: list[tournament.Tournament],
         include_optional_tournaments: bool = True,
     ) -> list[view_item.TournamentViewItem]:
-        """Convert a list of tournaments to be written to an excel file.
+        """Create a list of TournamentViewItems from a list of tournaments.
+
+        The ViewItems can be used by a writer class and be written to an excel
+        file. The method also sets the is_optional flag for each tournament
+        according to the age group.
 
         Args:
             data: The list of tournaments to be included in the overview.
@@ -84,63 +93,24 @@ class TournamentViewBuilder:
         Returns:
             A structured output format.
         """
-        u11_view_items: list[view_item.TournamentViewItem] = [
-            view_item.TournamentViewItem(
-                t.first_day,
-                t.second_day,
-                t.title,
-                False
-            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U11, data))]
+        ret = []
+        age_group_lut = (
+            self._inclusion_criteria_optional
+            if include_optional_tournaments
+            else self._inclusion_criteria_nonoptional
+        )
 
-        u13_view_items: list[view_item.TournamentViewItem] = [
-            view_item.TournamentViewItem(
-                t.first_day,
-                t.second_day,
-                t.title,
-                False
-            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U13, data))]
+        for ag in tournament.AgeGroup:
+            vi: list[view_item.TournamentViewItem] = [
+                view_item.TournamentViewItem(
+                    t.first_day,
+                    t.second_day,
+                    t.title,
+                    False if ag == t.age_group else True
+                ) for t in list(filter(lambda t: t.age_group in age_group_lut[ag], data))]
+            ret.append(sorted(vi))
 
-        u15_view_items: list[view_item.TournamentViewItem] = [
-            view_item.TournamentViewItem(
-                t.first_day,
-                t.second_day,
-                t.title,
-                False
-            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U15, data))]
-
-        u17_view_items: list[view_item.TournamentViewItem] = [
-            view_item.TournamentViewItem(
-                t.first_day,
-                t.second_day,
-                t.title,
-                False
-            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U17, data))]
-
-        u20_view_items: list[view_item.TournamentViewItem] = [
-            view_item.TournamentViewItem(
-                t.first_day,
-                t.second_day,
-                t.title,
-                False
-            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U20, data))]
-
-        senior_view_items: list[view_item.TournamentViewItem] = [
-            view_item.TournamentViewItem(
-                t.first_day,
-                t.second_day,
-                t.title,
-                False
-            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.SENIOR, data))]
-
-        veteran_view_items: list[view_item.TournamentViewItem] = [
-            view_item.TournamentViewItem(
-                t.first_day,
-                t.second_day,
-                t.title,
-                False
-            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.VETERAN, data))]
-
-        return u11_view_items + u13_view_items + u15_view_items + u17_view_items + u20_view_items + senior_view_items + veteran_view_items
+        return list(itertools.chain(*ret))
 
 
 class RefereeViewBuilder:

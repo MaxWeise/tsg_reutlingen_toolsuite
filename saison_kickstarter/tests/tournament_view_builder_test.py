@@ -90,7 +90,7 @@ def test_build_tournament_overview(test_tournaments):
         view_item.TournamentViewItem(
             datetime.date(2000, 3, 1),
             datetime.date(2000, 3, 2),
-            "RL-U15 Reutlingen",
+            "RL-U13 Reutlingen",
             False
         ),
         # U15 Turniere

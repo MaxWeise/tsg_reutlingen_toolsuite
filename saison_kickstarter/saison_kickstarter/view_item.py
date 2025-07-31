@@ -2,13 +2,21 @@
 
 import dataclasses
 import datetime
-from typing import Literal
+import typing
+from typing import Any, Literal
+
+
+class ViewItem(typing.Protocol):
+    """A protocoll to make a reference point for ViewItem classes."""
+
+    def to_tuple(self) -> tuple[str, str, Any]:
+        raise NotImplementedError()
 
 
 @dataclasses.dataclass(order=True, frozen=True)
 class TournamentViewItem:
-    first_day: datetime.datetime
-    second_day: datetime.datetime
+    first_day: datetime.date
+    second_day: datetime.date
     title: str
     is_optional: bool
 
@@ -64,7 +72,7 @@ class TournamentViewItem:
 
 @dataclasses.dataclass(order=True, frozen=True)
 class RefereeViewItem:
-    day: datetime.datetime
+    day: datetime.date
     city: str
     required_licence: Literal["E/D", "D"]
 
