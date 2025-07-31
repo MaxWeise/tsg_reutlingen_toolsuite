@@ -12,9 +12,7 @@ import pandas as pd
 import pytest
 from saison_kickstarter.view_item import RefereeViewItem, TournamentViewItem
 
-from saison_kickstarter import file_writer, tournament
-
-# TODO: Test Fixtures anpassen
+from saison_kickstarter import file_writer
 
 
 @pytest.fixture
@@ -29,43 +27,27 @@ def test_tournament_view_items() -> list[TournamentViewItem]:
     """Testdata to write in the temporary file."""
     return [
         TournamentViewItem(
-            tournament.Tournament(
-                first_day=date(2000, 1, 1),
-                second_day=date(2000, 1, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U13"),
-            ),
+            date(2000, 1, 1),
+            date(2000, 1, 2),
+            "RL-U13 Reutlingen",
             False
         ),
         TournamentViewItem(
-            tournament.Tournament(
-                first_day=date(2000, 1, 1),
-                second_day=date(2000, 1, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U13"),
-            ),
+            date(2000, 1, 1),
+            date(2000, 1, 2),
+            "RL-U13 Reutlingen",
             False
         ),
         TournamentViewItem(
-            tournament.Tournament(
-                first_day=date(2000, 1, 1),
-                second_day=date(2000, 1, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U13"),
-            ),
+            date(2000, 1, 1),
+            date(2000, 1, 2),
+            "RL-U13 Reutlingen",
             False
         ),
         TournamentViewItem(
-            tournament.Tournament(
-                first_day=date(2000, 1, 1),
-                second_day=date(2000, 1, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U13"),
-            ),
+            date(2000, 1, 1),
+            date(2000, 1, 2),
+            "RL-U13 Reutlingen",
             True
         ),
     ]
@@ -87,12 +69,12 @@ def test_write_tournament_overview(testfile, test_tournament_view_items):
 def test_referee_view_items() -> list[RefereeViewItem]:
     """Testdata to write in the temporary file."""
     return [
-        RefereeViewItem(date(2000, 1, 1).strftime("dd.mm.yyyy"), "Heidenheim", "E/D"),
-        RefereeViewItem(date(2000, 1, 2).strftime("dd.mm.yyyy"), "Heidenheim", "E/D"),
-        RefereeViewItem(date(2000, 3, 1).strftime("dd.mm.yyyy"), "Backnang", "D"),
-        RefereeViewItem(date(2000, 3, 2).strftime("dd.mm.yyyy"), "Backnang", "D"),
-        RefereeViewItem(date(2000, 4, 1).strftime("dd.mm.yyyy"), "Heidelberg", "E/D"),
-        RefereeViewItem(date(2000, 4, 2).strftime("dd.mm.yyyy"), "Heidelberg", "E/D"),
+        RefereeViewItem(date(2000, 1, 1), "Heidenheim", "E/D"),
+        RefereeViewItem(date(2000, 1, 2), "Heidenheim", "E/D"),
+        RefereeViewItem(date(2000, 3, 1), "Backnang", "D"),
+        RefereeViewItem(date(2000, 3, 2), "Backnang", "D"),
+        RefereeViewItem(date(2000, 4, 1), "Heidelberg", "E/D"),
+        RefereeViewItem(date(2000, 4, 2), "Heidelberg", "E/D"),
     ]
 
 
