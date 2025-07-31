@@ -22,14 +22,6 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 development = [
-    "mypy>=1.6.1",
-    "mypy-extensions>=1.0.0",
-    "pytest>=7.4.3",
-    "pylint>=3.0",
-    "tox>=4.12",
-    "pandas==2.2.0",
-    "openpyxl==3.1.2",
-    "pyarrow==15.0.0",
 ]
 
 [project.scripts]
@@ -44,6 +36,18 @@ indent-width = 4
 
 [tool.ruff.lint]
 select = ["C90", "F", "N", "PT"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "mypy>=1.6.1",
+    "mypy-extensions>=1.0.0",
+    "pylint>=3.0",
+    "tox>=4.12",
+    "pandas==2.2.0",
+    "openpyxl==3.1.2",
+    "pyarrow==15.0.0",
+]
 
 # [tool.pytest.ini_options]
 # addopts = "--no-cov --lf"
