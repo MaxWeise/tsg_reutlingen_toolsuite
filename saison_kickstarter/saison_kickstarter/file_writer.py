@@ -84,18 +84,19 @@ class ExcelFileWriter:
         row += 1
 
         for obj in data:
+            date, title, is_optional = obj.to_tuple()
             tournament_worksheet.write_string(
                 row,
                 col,
-                obj.date,
-                optional_tournament_format if obj.is_optional else None,
+                date,
+                optional_tournament_format if is_optional else None,
             )
 
             tournament_worksheet.write_string(
                 row,
                 col + 1,
-                obj.name,
-                optional_tournament_format if obj.is_optional else None,
+                title,
+                optional_tournament_format if is_optional else None,
             )
             row = row + 1
 
@@ -138,22 +139,23 @@ class ExcelFileWriter:
         row += 1
 
         for obj in data:
+            day, city, required_license = obj.to_tuple()
             tournament_worksheet.write_string(
                 row,
                 col,
-                obj.date,
+                day,
             )
 
             tournament_worksheet.write_string(
                 row,
                 col + 1,
-                obj.name,
+                city,
             )
 
             tournament_worksheet.write_string(
                 row,
                 col + 2,
-                obj.required_licence,
+                required_license,
             )
             row = row + 1
 
