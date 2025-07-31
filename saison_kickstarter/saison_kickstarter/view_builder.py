@@ -129,33 +129,28 @@ class RefereeViewBuilder:
         Returns:
             A list of structured tournament data.
         """
-        filtered_data: list[tournament.Tournament] = list(
-            filter(
-                lambda t: not (
-                    t.city == "Reutlingen"
-                    or t.category == tournament.Category.QB
-                    or t.category == tournament.Category.DM
-                ),
-                data,
-            )
+
+        filter_condition = lambda t: not (
+            t.city == "Reutlingen"
+            or t.category == tournament.Category.QB
+            or t.category == tournament.Category.DM
         )
 
-        overview_items = []
-        for t in filtered_data:
-            required_license: Literal["D", "E/D"] = (
+        ret = []
+        for t in filter(filter_condition, data):
+            required_licence: Literal["D", "E/D"] = (
                 "E/D"
                 if t.age_group
                 in (tournament.AgeGroup.U11, tournament.AgeGroup.U13)
                 else "D"
             )
-            entry_day_one = view_item.RefereeViewItem(
-                t.first_day.strftime("%d.%m.%Y"), t.city, required_license
+            entry_one = view_item.RefereeViewItem(
+                t.first_day, t.city, required_licence
             )
-            entry_day_two = view_item.RefereeViewItem(
-                t.second_day.strftime("%d.%m.%Y"), t.city, required_license
+            entry_two = view_item.RefereeViewItem(
+                t.second_day, t.city, required_licence
             )
+            ret.append(entry_one)
+            ret.append(entry_two)
 
-            overview_items.append(entry_day_one)
-            overview_items.append(entry_day_two)
-
-        return sorted(overview_items)
+        return sorted(ret)
