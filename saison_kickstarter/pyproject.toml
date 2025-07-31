@@ -45,5 +45,5 @@ indent-width = 4
 [tool.ruff.lint]
 select = ["C90", "F", "N", "PT"]
 
-[tool.pytest.ini_options]
-addopts = "--no-cov --lf"
+# [tool.pytest.ini_options]
+# addopts = "--no-cov --lf"
