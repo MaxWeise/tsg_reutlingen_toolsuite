@@ -75,122 +75,81 @@ def test_build_tournament_overview(test_tournaments):
     expected = [
         # U11 Turniere
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 4, 1),
-                second_day=datetime.date(2000, 4, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U11"),
-            ),
-            False,
+            datetime.date(2000, 4, 1),
+            datetime.date(2000, 4, 2),
+            "RL-U11 Reutlingen",
+            False
         ),
         # U13 Turniere
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 2, 1),
-                second_day=datetime.date(2000, 2, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U15"),
-            ),
-            True,
+            datetime.date(2000, 2, 1),
+            datetime.date(2000, 2, 2),
+            "RL-U15 Reutlingen",
+            True
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 3, 1),
-                second_day=datetime.date(2000, 3, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U13"),
-            ),
-            False,
+            datetime.date(2000, 3, 1),
+            datetime.date(2000, 3, 2),
+            "RL-U15 Reutlingen",
+            False
         ),
         # U15 Turniere
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 1, 1),
-                second_day=datetime.date(2000, 1, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U17"),
-            ),
-            True,
+            datetime.date(2000, 1, 1),
+            datetime.date(2000, 1, 2),
+            "RL-U17 Reutlingen",
+            True
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 2, 1),
-                second_day=datetime.date(2000, 2, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U15"),
-            ),
-            False,
+            datetime.date(2000, 2, 1),
+            datetime.date(2000, 2, 2),
+            "RL-U15 Reutlingen",
+            False
         ),
         # U17 Turniere
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 1, 1),
-                second_day=datetime.date(2000, 1, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U17"),
-            ), False
+            datetime.date(2000, 1, 1),
+            datetime.date(2000, 1, 2),
+            "RL-U17 Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 5, 1),
-                second_day=datetime.date(2000, 5, 2), 
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U20"),
-            ), True
+            datetime.date(2000, 5, 1),
+            datetime.date(2000, 5, 2),
+            "RL-U20 Reutlingen",
+            True
         ),
         # U20 Turniere
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 5, 1),
-                second_day=datetime.date(2000, 5, 2), 
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U20"),
-            ), False
+            datetime.date(2000, 5, 1),
+            datetime.date(2000, 5, 2),
+            "RL-U20 Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 6, 1),
-                second_day=datetime.date(2000, 6, 2), 
-                city="Reutlingen",
-                category=tournament.category_from_string("QB"),
-                age_group=tournament.age_group_from_string("Senior"),
-            ), True
+            datetime.date(2000, 6, 1),
+            datetime.date(2000, 6, 2),
+            "QB Reutlingen",
+            True
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 7, 31),
-                second_day=datetime.date(2000, 8, 1),
-                city="Reutlingen",
-                category=tournament.category_from_string("QB"),
-                age_group=tournament.age_group_from_string("Senior"),
-            ), True
+            datetime.date(2000, 7, 31),
+            datetime.date(2000, 8, 1),
+            "QB Reutlingen",
+            True
         ),
         # Senioren Turniere
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 6, 1),
-                second_day=datetime.date(2000, 6, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("QB"),
-                age_group=tournament.age_group_from_string("Senior"),
-            ), False
+            datetime.date(2000, 6, 1),
+            datetime.date(2000, 6, 2),
+            "QB Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 7, 31),
-                second_day=datetime.date(2000, 8, 1), 
-                city="Reutlingen",
-                category=tournament.category_from_string("QB"),
-                age_group=tournament.age_group_from_string("Senior"),
-            ), False
+            datetime.date(2000, 7, 31),
+            datetime.date(2000, 8, 1),
+            "QB Reutlingen",
+            False
         ),
     ]
 
@@ -216,67 +175,46 @@ def test_build_tournament_overview_without_optional_tournaments(
 
     expected = [
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 4, 1),
-                second_day=datetime.date(2000, 4, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U11"),
-            ), False
+            datetime.date(2000, 4, 1),
+            datetime.date(2000, 4, 2),
+            "RL-U11 Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 3, 1),
-                second_day=datetime.date(2000, 3, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U13"),
-            ), False
+            datetime.date(2000, 3, 1),
+            datetime.date(2000, 3, 2),
+            "RL-U13 Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 2, 1),
-                second_day=datetime.date(2000, 2, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U15"),
-            ), False
+            datetime.date(2000, 2, 1),
+            datetime.date(2000, 2, 2),
+            "RL-U15 Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 1, 1),
-                second_day=datetime.date(2000, 1, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U17"),
-            ), False
+            datetime.date(2000, 1, 1),
+            datetime.date(2000, 1, 2),
+            "RL-U17 Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 5, 1),
-                second_day=datetime.date(2000, 5, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("RL"),
-                age_group=tournament.age_group_from_string("U20"),
-            ), False
+            datetime.date(2000, 5, 1),
+            datetime.date(2000, 5, 2),
+            "RL-U20 Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 6, 1),
-                second_day=datetime.date(2000, 6, 2),
-                city="Reutlingen",
-                category=tournament.category_from_string("QB"),
-                age_group=tournament.age_group_from_string("Senior"),
-            ), False
+            datetime.date(2000, 6, 1),
+            datetime.date(2000, 6, 2),
+            "QB Reutlingen",
+            False
         ),
         view_item.TournamentViewItem(
-            tournament.Tournament(
-                first_day=datetime.date(2000, 7, 31),
-                second_day=datetime.date(2000, 8, 1),
-                city="Reutlingen",
-                category=tournament.category_from_string("QB"),
-                age_group=tournament.age_group_from_string("Senior"),
-            ), False
+            datetime.date(2000, 7, 31),
+            datetime.date(2000, 8, 1),
+            "QB Reutlingen",
+            False
         ),
     ]
 

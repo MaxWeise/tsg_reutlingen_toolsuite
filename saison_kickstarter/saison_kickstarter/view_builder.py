@@ -55,6 +55,20 @@ class TournamentViewBuilder:
         """
         self._include_optonal = include_optional
 
+    def _get_tournaments(self, data: list[tournament.Tournament], age_group: tournament.AgeGroup) -> list[view_item.TournamentViewItem]:
+        ret = []
+        for t in data:
+            ret.append(
+                view_item.TournamentViewItem(
+                    t.first_day,
+                    t.second_day,
+                    t.title,
+                    False if t.age_group == age_group else True
+                )
+            )
+
+        return sorted(ret)
+
     def build_view(
         self,
         data: list[tournament.Tournament],
@@ -70,35 +84,63 @@ class TournamentViewBuilder:
         Returns:
             A structured output format.
         """
-        age_groups = [ag for ag in tournament.AgeGroup]
+        u11_view_items: list[view_item.TournamentViewItem] = [
+            view_item.TournamentViewItem(
+                t.first_day,
+                t.second_day,
+                t.title,
+                False
+            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U11, data))]
 
-        ret = []
-        for index, age_group in enumerate(age_groups):
-            filtered_tournaments = list(
-                sorted(filter(lambda t: t.age_group == age_group, data))
-            )
-            ret = [
-                view_item.TournamentViewItem(t, False)
-                for t in filtered_tournaments
-            ]
+        u13_view_items: list[view_item.TournamentViewItem] = [
+            view_item.TournamentViewItem(
+                t.first_day,
+                t.second_day,
+                t.title,
+                False
+            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U13, data))]
 
-            if (
-                include_optional_tournaments
-                and age_group not in NO_OPTIONAL_TOURNAMENTS
-            ):
-                filtered_optional_tournaments = list(
-                    sorted(
-                        filter(
-                            lambda t: t.age_group == age_groups[index + 1], data
-                        )
-                    )
-                )
-                ret = ret + [
-                    view_item.TournamentViewItem(t, True)
-                    for t in filtered_tournaments
-                ]
+        u15_view_items: list[view_item.TournamentViewItem] = [
+            view_item.TournamentViewItem(
+                t.first_day,
+                t.second_day,
+                t.title,
+                False
+            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U15, data))]
 
-        return sorted(ret)
+        u17_view_items: list[view_item.TournamentViewItem] = [
+            view_item.TournamentViewItem(
+                t.first_day,
+                t.second_day,
+                t.title,
+                False
+            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U17, data))]
+
+        u20_view_items: list[view_item.TournamentViewItem] = [
+            view_item.TournamentViewItem(
+                t.first_day,
+                t.second_day,
+                t.title,
+                False
+            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.U20, data))]
+
+        senior_view_items: list[view_item.TournamentViewItem] = [
+            view_item.TournamentViewItem(
+                t.first_day,
+                t.second_day,
+                t.title,
+                False
+            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.SENIOR, data))]
+
+        veteran_view_items: list[view_item.TournamentViewItem] = [
+            view_item.TournamentViewItem(
+                t.first_day,
+                t.second_day,
+                t.title,
+                False
+            ) for t in list(filter(lambda t: t.age_group == tournament.AgeGroup.VETERAN, data))]
+
+        return u11_view_items + u13_view_items + u15_view_items + u17_view_items + u20_view_items + senior_view_items + veteran_view_items
 
 
 class RefereeViewBuilder:
