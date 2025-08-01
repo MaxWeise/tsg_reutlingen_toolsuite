@@ -185,5 +185,5 @@ def test_read_data_wrong_mime_type(file_wrong_mime_type):
         the mime type should be .csv
     """
     under_test = file_reader.CsvFileReader(file_wrong_mime_type)
-    with pytest.raises(ValueError, match="Wrong mime type"):
+    with pytest.raises(ValueError, match="Filetype not supported"):
         under_test.read_data()

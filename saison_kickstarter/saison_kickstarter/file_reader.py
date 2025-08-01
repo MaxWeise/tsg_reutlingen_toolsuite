@@ -111,7 +111,7 @@ class CsvFileReader:
 
         file_suffix: str = self._data_source.suffix
         if file_suffix != ".csv":
-            raise ValueError(f"Wrong mime type: {file_suffix}")
+            raise ValueError(f"Filetype not supported: {file_suffix}")
 
         try:
             with open(

@@ -49,7 +49,7 @@ class ExcelFileWriter:
 
     def write_tournament_data(
         self,
-        data: list[view_item.TournamentViewItem],
+        data: list[view_item.ViewItem],
         row: int = 0,
         col: int = 0,
     ) -> None:
@@ -104,7 +104,7 @@ class ExcelFileWriter:
 
     def write_referee_data(
         self,
-        data: list[view_item.RefereeViewItem],
+        data: list[view_item.ViewItem],
         row: int = 0,
         col: int = 0,
     ) -> None:

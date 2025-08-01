@@ -87,7 +87,7 @@ class TournamentViewBuilder:
     def build_view(
         self,
         data: list[tournament.Tournament],
-    ) -> list[view_item.TournamentViewItem]:
+    ) -> list[view_item.ViewItem]:
         """Create a list of TournamentViewItems from a list of tournaments.
 
         The ViewItems can be used by a writer class and be written to an excel
