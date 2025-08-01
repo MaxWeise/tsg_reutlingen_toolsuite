@@ -11,17 +11,16 @@ Created: 20.04.2025
 
 import logging
 import os
+import pathlib
 from unittest import mock
 
 import numpy as np
 import pandas as pd
 import pytest
 
-# from saison_kickstarter.main import EXCEL_FILE, SupportedCommands
+from saison_kickstarter import main
+from saison_kickstarter.main import SupportedCommands
 
-# from saison_kickstarter import main
-
-pytest.skip(reason="Fixed later when project structure is stable again!", allow_module_level=True)
 
 @pytest.fixture
 def mock_data():
@@ -54,7 +53,7 @@ def file_wrong_encoding(tmp_path):
     return tmp_file
 
 
-def test_main_create_tournament_overview_from_csv(mock_data, test_file) -> None:
+def test_main_create_tournament_overview_from_csv(mock_data, test_file, tmp_path) -> None:
     """Test the main function.
 
     Given a file with csv values,
@@ -62,20 +61,21 @@ def test_main_create_tournament_overview_from_csv(mock_data, test_file) -> None:
     Then an excel file should be created with an overview of all competitions.
     """
 
+    tmp_out_file = tmp_path / pathlib.Path("temporary-tournament-file.xlsx")
     with mock.patch(
-        "saison_kickstarter.reader.csv_file_reader.csv"
+        "saison_kickstarter.file_reader.csv"
     ) as mock_csv_reader:
         mock_csv_reader.reader.return_value = mock_data
         # Run the test
-        main.main(
-            SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+        main._create_tournament_overview(
             test_file,
+            tmp_out_file,
         )
 
     # Assert conditions
-    assert EXCEL_FILE.exists()
+    assert tmp_out_file.exists()
 
-    table = pd.read_excel(EXCEL_FILE)
+    table = pd.read_excel(tmp_out_file)
 
     # NOTE: comps are first sorted by age group, then by date
     expected_df = pd.DataFrame(
@@ -101,8 +101,6 @@ def test_main_create_tournament_overview_from_csv(mock_data, test_file) -> None:
 
     assert len(table.index) == len(expected_df)  # -1 because of csv header
     assert table.equals(expected_df)
-
-    os.remove(EXCEL_FILE)
 
 
 @pytest.fixture
@@ -132,7 +130,7 @@ def mock_data_xlsx() -> pd.DataFrame:
 
 
 def test_main_create_tournament_overview_from_xlsx(
-    mock_data_xlsx, test_file_xlsx
+    mock_data_xlsx, test_file_xlsx, tmp_path
 ) -> None:
     """Test the main function.
 
@@ -141,20 +139,22 @@ def test_main_create_tournament_overview_from_xlsx(
     Then an excel file should be created with an overview of all competitions.
     """
 
+    tmp_out_file = tmp_path / pathlib.Path("temporary-tournament-file.xlsx")
+
     with mock.patch(
-        "saison_kickstarter.reader.excel_file_reader.pd"
+        "saison_kickstarter.file_reader.pd"
     ) as mock_excel_reader:
         mock_excel_reader.read_excel.return_value = mock_data_xlsx
         # Run the test
-        main.main(
-            SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+        main._create_tournament_overview(
             test_file_xlsx,
+            tmp_out_file,
         )
 
     # Assert conditions
-    assert EXCEL_FILE.exists()
+    assert tmp_out_file.exists()
 
-    table = pd.read_excel(EXCEL_FILE)
+    table = pd.read_excel(tmp_out_file)
 
     # NOTE: comps are first sorted by age group, then by date
     expected_df = pd.DataFrame(
@@ -181,8 +181,6 @@ def test_main_create_tournament_overview_from_xlsx(
     assert len(table.index) == len(expected_df)  # -1 because of csv header
     assert table.equals(expected_df)
 
-    os.remove(EXCEL_FILE)
-
 
 def test_main_file_not_found(caplog) -> None:
     """Test the main function.
@@ -193,9 +191,9 @@ def test_main_file_not_found(caplog) -> None:
     """
     test_file = "./path/does/not/exist.csv"
     caplog.set_level(logging.INFO)
-    main.main(
-        SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+    main._create_tournament_overview(
         test_file,
+        pathlib.Path("out_file.xlsx")
     )
 
     _, level, message = caplog.record_tuples[0]
@@ -212,14 +210,14 @@ def test_main_wrong_file_type(caplog) -> None:
     """
     test_file = "./pyproject.toml"
     caplog.set_level(logging.INFO)
-    main.main(
-        SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+    main._create_tournament_overview(
         test_file,
+        pathlib.Path("out_file.xlsx")
     )
 
     _, level, message = caplog.record_tuples[0]
     assert level == logging.ERROR
-    assert "File type not supported: " in message
+    assert "Filetype not supported" in message
 
 
 def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
@@ -231,9 +229,9 @@ def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
     """
     test_file = file_wrong_encoding
     caplog.set_level(logging.INFO)
-    main.main(
-        SupportedCommands.CREATE_TOURNAMENT_OVERVIEW.value,
+    main._create_tournament_overview(
         test_file,
+        pathlib.Path("out_file.xlsx")
     )
 
     _, level, message = caplog.record_tuples[0]
@@ -241,7 +239,7 @@ def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
     assert "The file is not in UTF-8 encoding:" in message
 
 
-def test_main_create_referee_overview(mock_data, test_file) -> None:
+def test_main_create_referee_overview(mock_data, test_file, tmp_path) -> None:
     """Test the main function.
 
     Given a file with csv values,
@@ -249,18 +247,19 @@ def test_main_create_referee_overview(mock_data, test_file) -> None:
     Then an excel file should be created with an overview of all
         competition-days, so so that referees can be assigned to the days.
     """
+    tmp_out_file = tmp_path / pathlib.Path("temp-referee-file.xlsx")
     with mock.patch(
-        "saison_kickstarter.reader.csv_file_reader.csv"
+        "saison_kickstarter.file_reader.csv"
     ) as mock_csv_reader:
         mock_csv_reader.reader.return_value = mock_data
         # Run the test
-        main.main(
-            SupportedCommands.CREATE_REFEREE_OVERVIEW.value,
+        main._create_referee_overview(
             test_file,
+            tmp_out_file,
         )
 
     # Assert conditions
-    assert EXCEL_FILE.exists()
+    assert tmp_out_file.exists()
 
     expected_df = pd.DataFrame(
         {
@@ -282,8 +281,7 @@ def test_main_create_referee_overview(mock_data, test_file) -> None:
             "3": [np.nan, np.nan, np.nan, np.nan],
         }
     )
-    table = pd.read_excel(EXCEL_FILE)
+
+    table = pd.read_excel(tmp_out_file)
     assert len(table.index) == len(expected_df)
     assert table.equals(expected_df)
-
-    os.remove(EXCEL_FILE)
