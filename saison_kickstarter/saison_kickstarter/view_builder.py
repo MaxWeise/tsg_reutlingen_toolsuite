@@ -5,7 +5,7 @@ Created: 18.02.2024
 """
 
 import itertools
-from typing import Literal, Protocol
+from typing import Literal, Protocol, Sequence
 
 from saison_kickstarter import tournament, view_item
 
@@ -22,7 +22,7 @@ class ViewBuilder(Protocol):
         self,
         data: list[tournament.Tournament],
         include_optional_tournaments: bool = True,
-    ) -> list[view_item.ViewItem]:
+    ) -> Sequence[view_item.ViewItem]:
         """Convert a list of tournaments to be written to an excel file.
 
         Args:
@@ -87,7 +87,7 @@ class TournamentViewBuilder:
     def build_view(
         self,
         data: list[tournament.Tournament],
-    ) -> list[view_item.ViewItem]:
+    ) -> Sequence[view_item.ViewItem]:
         """Create a list of TournamentViewItems from a list of tournaments.
 
         The ViewItems can be used by a writer class and be written to an excel
@@ -127,10 +127,9 @@ class TournamentViewBuilder:
 
 
 class RefereeViewBuilder:
-
     def build_view(
         self, data: list[tournament.Tournament]
-    ) -> list[view_item.ViewItem]:
+    ) -> Sequence[view_item.ViewItem]:
         """Structure a list of tournaments to be written to an excel file.
 
         The tournaments get structured so that for each tournament we get

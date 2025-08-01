@@ -9,7 +9,7 @@ Created: 11.04.2025
 """
 
 import pathlib
-from typing import Protocol
+from typing import Protocol, Sequence
 
 import xlsxwriter  # type: ignore
 import xlsxwriter.exceptions  # type: ignore
@@ -21,7 +21,7 @@ class FileWriter(Protocol):
     """Write content to files."""
 
     def write_tournament_data(
-        self, data: list[view_item.ViewItem], row: int = 0, col: int = 0
+        self, data: Sequence[view_item.ViewItem], row: int = 0, col: int = 0
     ) -> None:
         """Write data to a file."""
         raise NotImplementedError(
@@ -29,7 +29,7 @@ class FileWriter(Protocol):
         )
 
     def write_referee_data(
-        self, data: list[view_item.RefereeViewItem], row: int = 0, col: int = 0
+        self, data: list[view_item.ViewItem], row: int = 0, col: int = 0
     ) -> None:
         """Write data to a file."""
         raise NotImplementedError(
@@ -49,7 +49,7 @@ class ExcelFileWriter:
 
     def write_tournament_data(
         self,
-        data: list[view_item.ViewItem],
+        data: Sequence[view_item.ViewItem],
         row: int = 0,
         col: int = 0,
     ) -> None:
@@ -104,7 +104,7 @@ class ExcelFileWriter:
 
     def write_referee_data(
         self,
-        data: list[view_item.ViewItem],
+        data: Sequence[view_item.ViewItem],
         row: int = 0,
         col: int = 0,
     ) -> None:
