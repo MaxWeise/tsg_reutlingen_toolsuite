@@ -9,12 +9,6 @@ from typing import Literal, Protocol
 
 from saison_kickstarter import tournament, view_item
 
-NO_OPTIONAL_TOURNAMENTS: set[tournament.AgeGroup] = {
-    tournament.AgeGroup.U11,
-    tournament.AgeGroup.SENIOR,
-    tournament.AgeGroup.VETERAN,
-}
-
 
 class ViewBuilder(Protocol):
     """An interface to provide methods to structure data.
@@ -55,29 +49,44 @@ class TournamentViewBuilder:
                 included in the view.
         """
         self._include_optonal = include_optional
-        self._inclusion_criteria_nonoptional: dict[tournament.AgeGroup, tuple[tournament.AgeGroup, ...]] = {
+        self._inclusion_criteria_nonoptional: dict[
+            tournament.AgeGroup, tuple[tournament.AgeGroup, ...]
+        ] = {
             tournament.AgeGroup.U11: (tournament.AgeGroup.U11,),
             tournament.AgeGroup.U13: (tournament.AgeGroup.U13,),
             tournament.AgeGroup.U15: (tournament.AgeGroup.U15,),
             tournament.AgeGroup.U17: (tournament.AgeGroup.U17,),
             tournament.AgeGroup.U20: (tournament.AgeGroup.U20,),
-            tournament.AgeGroup.SENIOR: (tournament.AgeGroup.SENIOR, ),
+            tournament.AgeGroup.SENIOR: (tournament.AgeGroup.SENIOR,),
             tournament.AgeGroup.VETERAN: (tournament.AgeGroup.VETERAN,),
         }
-        self._inclusion_criteria_optional: dict[tournament.AgeGroup, tuple[tournament.AgeGroup, ...]] = {
+        self._inclusion_criteria_optional: dict[
+            tournament.AgeGroup, tuple[tournament.AgeGroup, ...]
+        ] = {
             tournament.AgeGroup.U11: (tournament.AgeGroup.U11,),
-            tournament.AgeGroup.U13: (tournament.AgeGroup.U13,tournament.AgeGroup.U15),
-            tournament.AgeGroup.U15: (tournament.AgeGroup.U15,tournament.AgeGroup.U17),
-            tournament.AgeGroup.U17: (tournament.AgeGroup.U17,tournament.AgeGroup.U20),
-            tournament.AgeGroup.U20: (tournament.AgeGroup.U20,tournament.AgeGroup.SENIOR),
-            tournament.AgeGroup.SENIOR: (tournament.AgeGroup.SENIOR, ),
+            tournament.AgeGroup.U13: (
+                tournament.AgeGroup.U13,
+                tournament.AgeGroup.U15,
+            ),
+            tournament.AgeGroup.U15: (
+                tournament.AgeGroup.U15,
+                tournament.AgeGroup.U17,
+            ),
+            tournament.AgeGroup.U17: (
+                tournament.AgeGroup.U17,
+                tournament.AgeGroup.U20,
+            ),
+            tournament.AgeGroup.U20: (
+                tournament.AgeGroup.U20,
+                tournament.AgeGroup.SENIOR,
+            ),
+            tournament.AgeGroup.SENIOR: (tournament.AgeGroup.SENIOR,),
             tournament.AgeGroup.VETERAN: (tournament.AgeGroup.VETERAN,),
         }
 
     def build_view(
         self,
         data: list[tournament.Tournament],
-        include_optional_tournaments: bool = True,
     ) -> list[view_item.TournamentViewItem]:
         """Create a list of TournamentViewItems from a list of tournaments.
 
@@ -96,7 +105,7 @@ class TournamentViewBuilder:
         ret = []
         age_group_lut = (
             self._inclusion_criteria_optional
-            if include_optional_tournaments
+            if self._include_optonal
             else self._inclusion_criteria_nonoptional
         )
 
@@ -106,8 +115,12 @@ class TournamentViewBuilder:
                     t.first_day,
                     t.second_day,
                     t.title,
-                    False if ag == t.age_group else True
-                ) for t in list(filter(lambda t: t.age_group in age_group_lut[ag], data))]
+                    False if ag == t.age_group else True,
+                )
+                for t in list(
+                    filter(lambda t: t.age_group in age_group_lut[ag], data)
+                )
+            ]
             ret.append(sorted(vi))
 
         return list(itertools.chain(*ret))

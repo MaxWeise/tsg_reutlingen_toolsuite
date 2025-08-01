@@ -78,78 +78,78 @@ def test_build_tournament_overview(test_tournaments):
             datetime.date(2000, 4, 1),
             datetime.date(2000, 4, 2),
             "RL-U11 Reutlingen",
-            False
+            False,
         ),
         # U13 Turniere
         view_item.TournamentViewItem(
             datetime.date(2000, 2, 1),
             datetime.date(2000, 2, 2),
             "RL-U15 Reutlingen",
-            True
+            True,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 3, 1),
             datetime.date(2000, 3, 2),
             "RL-U13 Reutlingen",
-            False
+            False,
         ),
         # U15 Turniere
         view_item.TournamentViewItem(
             datetime.date(2000, 1, 1),
             datetime.date(2000, 1, 2),
             "RL-U17 Reutlingen",
-            True
+            True,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 2, 1),
             datetime.date(2000, 2, 2),
             "RL-U15 Reutlingen",
-            False
+            False,
         ),
         # U17 Turniere
         view_item.TournamentViewItem(
             datetime.date(2000, 1, 1),
             datetime.date(2000, 1, 2),
             "RL-U17 Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 5, 1),
             datetime.date(2000, 5, 2),
             "RL-U20 Reutlingen",
-            True
+            True,
         ),
         # U20 Turniere
         view_item.TournamentViewItem(
             datetime.date(2000, 5, 1),
             datetime.date(2000, 5, 2),
             "RL-U20 Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 6, 1),
             datetime.date(2000, 6, 2),
             "QB Reutlingen",
-            True
+            True,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 7, 31),
             datetime.date(2000, 8, 1),
             "QB Reutlingen",
-            True
+            True,
         ),
         # Senioren Turniere
         view_item.TournamentViewItem(
             datetime.date(2000, 6, 1),
             datetime.date(2000, 6, 2),
             "QB Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 7, 31),
             datetime.date(2000, 8, 1),
             "QB Reutlingen",
-            False
+            False,
         ),
     ]
 
@@ -169,52 +169,50 @@ def test_build_tournament_overview_without_optional_tournaments(
     """
 
     under_test = view_builder.TournamentViewBuilder(False)
-    actual = under_test.build_view(
-        test_tournaments, include_optional_tournaments=False
-    )
+    actual = under_test.build_view(test_tournaments)
 
     expected = [
         view_item.TournamentViewItem(
             datetime.date(2000, 4, 1),
             datetime.date(2000, 4, 2),
             "RL-U11 Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 3, 1),
             datetime.date(2000, 3, 2),
             "RL-U13 Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 2, 1),
             datetime.date(2000, 2, 2),
             "RL-U15 Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 1, 1),
             datetime.date(2000, 1, 2),
             "RL-U17 Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 5, 1),
             datetime.date(2000, 5, 2),
             "RL-U20 Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 6, 1),
             datetime.date(2000, 6, 2),
             "QB Reutlingen",
-            False
+            False,
         ),
         view_item.TournamentViewItem(
             datetime.date(2000, 7, 31),
             datetime.date(2000, 8, 1),
             "QB Reutlingen",
-            False
+            False,
         ),
     ]
 
