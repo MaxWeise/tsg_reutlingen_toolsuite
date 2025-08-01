@@ -8,11 +8,12 @@ Created: 03.02.2024
 
 from datetime import date
 
+import numpy
 import pandas as pd
 import pytest
-from saison_kickstarter.view_item import RefereeViewItem, TournamentViewItem
 
 from saison_kickstarter import file_writer
+from saison_kickstarter.view_item import RefereeViewItem, TournamentViewItem
 
 
 @pytest.fixture
@@ -87,5 +88,15 @@ def test_write_referee_overview(testfile, test_referee_view_items):
 
     assert testfile.exists()
 
+    expected = pd.DataFrame(data={
+        "Datum": ["01.01.2000", "02.01.2000", "01.03.2000","02.03.2000","01.04.2000","02.04.2000"],
+        "Turnier": ["Heidenheim", "Heidenheim", "Backnang", "Backnang", "Heidelberg", "Heidelberg"],
+        "Lizenz": ["E/D", "E/D", "D", "D", "E/D", "E/D"],
+        "1": [numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan],
+        "2": [numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan],
+        "3": [numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan],
+    })
+
     table = pd.read_excel(testfile)
     assert len(table.index) == len(test_data)
+    assert table.equals(expected)
