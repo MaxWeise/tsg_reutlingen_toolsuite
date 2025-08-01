@@ -48,7 +48,5 @@ dev = [
     "openpyxl==3.1.2",
     "pyarrow==15.0.0",
     "pytest-sugar>=1.0.0",
+    "numpy>=1.26.4",
 ]
-
-# [tool.pytest.ini_options]
-# addopts = "--no-cov --lf"
