@@ -10,6 +10,7 @@ The repository currently contains these projects:
 
 + ophardt_to_excel: Convert data-files from the ophartd system to excel files.
 + saison-kickstarter: Automate the creation of overviews that are used to plan the saison.
++ kickstart-gui: A graphical, web-based user interface to interact with the saison-kickstarter software.
 
 ## Tooling
 Following is a table that lists the tools and their usecases in the project. Please note, that this only lists tools that are used across sub-projects. Other tools like for example test-frameworks and / or third-party libraries are listed in their respective subdirectories.
@@ -19,3 +20,6 @@ Following is a table that lists the tools and their usecases in the project. Ple
 | Python         | Dynamically typed programming language. Used to develop scripts and automate tasks.                                                   |
 | github         | The platform used to host the source code.                                                                                            |
 | github actions | Define 'workflows' as CI pipelines.<br>These pipelines can be used to build excecutable artifacts and run quality checks on the code. |
+| Typescript     | A programing language based of JavaScript that provides types annotations. Used in different frameworks to develop web interfaces.    |
+| ReactJS        | Framework to build UI components for web-based guis. Uses typescript as its programing language.                                      |
+
