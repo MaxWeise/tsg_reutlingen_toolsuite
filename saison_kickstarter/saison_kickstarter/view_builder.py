@@ -21,7 +21,6 @@ class ViewBuilder(Protocol):
     def build_view(
         self,
         data: list[tournament.Tournament],
-        include_optional_tournaments: bool = True,
     ) -> Sequence[view_item.ViewItem]:
         """Convert a list of tournaments to be written to an excel file.
 
