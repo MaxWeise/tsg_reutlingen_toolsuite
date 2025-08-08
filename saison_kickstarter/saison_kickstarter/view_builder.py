@@ -7,6 +7,8 @@ Created: 18.02.2024
 import itertools
 from typing import Literal, Protocol, Sequence
 
+import pandas as pd
+
 from saison_kickstarter import tournament, view_item
 
 
@@ -31,6 +33,24 @@ class ViewBuilder(Protocol):
 
         Returns:
             A structured output format.
+        """
+        raise NotImplementedError(
+            f"This method is not implemented for type {self}"
+        )
+
+    def create_dataframe(
+        self,
+        data: list[tournament.Tournament],
+    ) -> pd.DataFrame:
+        """Build the view as a pandas.DataFrame object.
+
+        Args:
+            data: The list of tournaments to be included in the overview.
+            include_optional_tournaments: Set this flag to include or exclude
+                optional tournaments in the overview. Defaults to True.
+
+        Returns:
+            The data structured in a dataframe.
         """
         raise NotImplementedError(
             f"This method is not implemented for type {self}"
