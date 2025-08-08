@@ -6,6 +6,8 @@ Created: 06.08.2025
 
 import fastapi
 
+from saison_kickstarter import tournament
+
 app = fastapi.FastAPI()
 
 
@@ -15,10 +17,15 @@ def root():
     return {"message": "The api is live"}
 
 
-@app.get("/overview/tournament")
-def create_tournament_overview():
-    """Create an overview for all tournaments for the season."""
-    return ...
+@app.post("/overview/tournament")
+def create_tournament_overview(items: list[tournament.Tournament]) -> None:
+    """Create an overview for all tournaments for the season.
 
-
-
+    Args:
+        items (list[tournaments]): A list of tournament items that form the
+            data basis of the overviews.
+    """
+    # NOTE: Refer to the obsidian entry for more specific info
+    # The Overview needs to be created as a dataframe, which then can be
+    # written to an excel file via the pandas library.
+    ...
