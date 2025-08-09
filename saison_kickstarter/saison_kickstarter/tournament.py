@@ -8,6 +8,8 @@ import dataclasses
 import datetime
 import enum
 
+import pydantic
+
 
 class Category(enum.Enum):
     """Different kinds of tournaments.
@@ -36,8 +38,7 @@ class AgeGroup(enum.Enum):
     VETERAN = "Veteranen"
 
 
-@dataclasses.dataclass(order=True, kw_only=True)
-class Tournament:
+class Tournament(pydantic.BaseModel):
     """Representation of a tournament in the database."""
 
     first_day: datetime.date
@@ -112,7 +113,7 @@ def _get_two_dates_from_string(date: str) -> tuple[str, str]:
             dd.mm/dd.mm.yyyy format.
 
     Returns:
-        A tuple containing the two date entrys.
+        A tuple containing the two date entrys in dd.mm.yyyy format.
 
     Raises:
         ValueError: The date is in the wrong format.
