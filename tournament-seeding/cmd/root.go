@@ -9,6 +9,7 @@ import (
 	"tsg-toolsuite/tournament-seeding/algorithms"
 
 	"github.com/spf13/cobra"
+	"github.com/xuri/excelize/v2"
 )
 
 var rootCmd = &cobra.Command{
@@ -26,7 +27,13 @@ var seedingRoundRobin = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Read list from excel file
-		testList := []string{"Max", "Basti", "Olaf", "Kerim", "Luis", "Jan", "Cornelius", "Alex", "Jussi", "Achim"}
+		// testList := []string{"Max", "Basti", "Olaf", "Kerim", "Luis", "Jan", "Cornelius", "Alex", "Jussi", "Achim"}
+
+		testList, err := getNamesFromExcel("test-rangliste.xlsx")
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
 
 		numberOfPools, poolSize, err := validateSeedingArgs(args[0], args[1], len(testList))
 		if err != nil {
@@ -47,6 +54,29 @@ var seedingRoundRobin = &cobra.Command{
 			fmt.Printf("Runde %d: %v\n", index, pool)
 		}
 	},
+}
+
+func getNamesFromExcel(fileName string) ([]string, error) {
+	file, err := excelize.OpenFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := file.GetRows("Tabelle1")
+	if err != nil {
+		return nil, err
+	}
+
+	names := []string{}
+
+	for _, row := range rows {
+		if len(row) == 0 {
+			continue
+		}
+		names = append(names, row[2])
+	}
+
+	return names, nil
 }
 
 func validateSeedingArgs(numberOfPools string, poolSize string, lenTestList int) (int, int, error) {
