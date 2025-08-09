@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -26,34 +25,54 @@ var seedingRoundRobin = &cobra.Command{
 	Long:  "Create pools acording to the specified arguments. Supply in this order: number of pools, pool size.",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Read list from excel file
-		// testList := []string{"Max", "Basti", "Olaf", "Kerim", "Luis", "Jan", "Cornelius", "Alex", "Jussi", "Achim"}
-
-		testList, err := getNamesFromExcel("test-rangliste.xlsx")
+		nameList, err := getNamesFromExcel("test-rangliste.xlsx")
 		if err != nil {
 			fmt.Println("Error:", err)
 			return
 		}
 
-		numberOfPools, poolSize, err := validateSeedingArgs(args[0], args[1], len(testList))
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-
-		pools := make(map[int][]string)
-
-		// Create for each pool an empty slice with the reserved pool size.
-		for index := range numberOfPools {
-			pools[index] = make([]string, 0, poolSize)
-		}
-
-		algorithms.RoundRobin(numberOfPools, poolSize, &pools, &testList)
-
-		for index, pool := range pools {
-			fmt.Printf("Runde %d: %v\n", index, pool)
-		}
+		r := algorithms.RoundRobin{}
+		runSeedingLogic(args[0], args[1], nameList, r)
 	},
+}
+
+var seedingBlockwise = &cobra.Command{
+	Use:   "blockwise",
+	Short: "Seeding in blocks.",
+	Long:  "Create pools acording to the specified arguments. Supply in this order: number of pools, pool size.",
+	Args:  cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		nameList, err := getNamesFromExcel("test-rangliste.xlsx")
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		r := algorithms.BlockwiseSeeding{}
+		runSeedingLogic(args[0], args[1], nameList, r)
+	},
+}
+
+func runSeedingLogic(numOfPools string, size string, nameList []string, strategy algorithms.Strategy) error {
+	numberOfPools, poolSize, err := validateSeedingArgs(numOfPools, size, len(nameList))
+	if err != nil {
+		return err
+	}
+
+	pools := make(map[int][]string)
+
+	// Create for each pool an empty slice with the reserved pool size.
+	for index := range numberOfPools {
+		pools[index] = make([]string, 0, poolSize)
+	}
+
+	strategy.Seeding(numberOfPools, poolSize, &pools, &nameList)
+
+	for index, pool := range pools {
+		fmt.Printf("Runde %d: %v\n", index, pool)
+	}
+
+	return nil
 }
 
 func getNamesFromExcel(fileName string) ([]string, error) {
@@ -76,6 +95,8 @@ func getNamesFromExcel(fileName string) ([]string, error) {
 		names = append(names, row[2])
 	}
 
+	// Remove header from list
+	names = names[1:]
 	return names, nil
 }
 
@@ -90,7 +111,7 @@ func validateSeedingArgs(numberOfPools string, poolSize string, lenTestList int)
 	}
 
 	if i_numberOfPools*i_poolSize < lenTestList {
-		return 0, 0, errors.New("Not all fencers can be placed in a pool.")
+		return 0, 0, fmt.Errorf("Not all fencers can be placed in a pool. You have %d fencers.", lenTestList)
 	}
 
 	return i_numberOfPools, i_poolSize, nil
@@ -98,6 +119,7 @@ func validateSeedingArgs(numberOfPools string, poolSize string, lenTestList int)
 
 func init() {
 	rootCmd.AddCommand(seedingRoundRobin)
+	rootCmd.AddCommand(seedingBlockwise)
 }
 
 func Execute() {
