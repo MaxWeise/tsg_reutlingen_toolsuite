@@ -1,57 +1,66 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import TournamentTable from "./TournamentTable";
+import axios from "axios";
 
-interface Tournament {
-    firstDay: string
-    secondDay: string
+export interface Tournament {
+    first_day: string
+    second_day: string
     city: string
-    ageGroup: string
     category: string
+    age_group: string
 }
 
 const TournamentForm = () => {
 
-    const [firstDay, setFirstDay] = useState("");
-    const [secondDay, setSecondDay] = useState("");
+    const [first_day, setFirstDay] = useState("");
+    const [second_day, setSecondDay] = useState("");
     const [city, setCity] = useState("");
-    const [ageGroup, setAgeGroup] = useState("");
     const [category, setCategory] = useState("");
+    const [age_group, setAgeGroup] = useState("");
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleAddTournament = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (firstDay && secondDay && city && ageGroup && category) {
+        if (first_day && second_day && city && age_group && category) {
             const newTournament: Tournament = {
-                firstDay,
-                secondDay,
+                first_day,
+                second_day,
                 city,
-                ageGroup,
-                category
+                category,
+                age_group,
             };
             setTournaments([...tournaments, newTournament]);
             // Clear form fields
             setFirstDay("");
             setSecondDay("");
             setCity("");
-            setAgeGroup("");
             setCategory("");
+            setAgeGroup("");
         }
     };
+
+    const handleSubmit = (_: React.FormEvent<HTMLButtonElement>) => {
+        console.log(tournaments);
+        axios.post("http://127.0.0.1:8000/overview/tournament", tournaments)
+            .then((response) => { console.info(response) })
+            .catch((error) => { console.info(error) });
+    };
+
 
     return (
         <>
             <h1>Input tournament data</h1>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleAddTournament}>
                 <div className="container">
                     <div className="row">
                         <div className="col input-group m-2">
                             <span className="input-group-text">Erster Tag</span>
-                            <input type="date" className="form-control" value={firstDay} onChange={(e) => { setFirstDay(e.target.value) }} />
+                            <input type="date" className="form-control" value={first_day} onChange={(e) => { setFirstDay(e.target.value) }} />
                         </div>
                         <div className="col input-group m-2">
                             <span className="input-group-text">Zweiter Tag</span>
-                            <input type="date" className="form-control" value={secondDay} onChange={(e) => { setSecondDay(e.target.value) }} />
+                            <input type="date" className="form-control" value={second_day} onChange={(e) => { setSecondDay(e.target.value) }} />
                         </div>
                     </div>
                     <div className="row">
@@ -62,8 +71,18 @@ const TournamentForm = () => {
                     </div>
                     <div className="row">
                         <div className="col input-group m-2">
+                            <label className="input-group-text">Kategorie</label>
+                            <select className="form-select" id="inputGroupSelect01" value={category} onChange={(e) => { setCategory(e.target.value) }}>
+                                <option selected>Kategorie</option>
+                                <option>RL</option>
+                                <option>QB</option>
+                                <option>BNWM</option>
+                                <option>DM</option>
+                            </select>
+                        </div>
+                        <div className="col input-group m-2">
                             <label className="input-group-text">Altersklasse</label>
-                            <select className="form-select" id="inputGroupSelect01" value={ageGroup} onChange={(e) => { setAgeGroup(e.target.value) }}>
+                            <select className="form-select" id="inputGroupSelect01" value={age_group} onChange={(e) => { setAgeGroup(e.target.value) }}>
                                 <option selected>Altersklasse</option>
                                 <option>U11</option>
                                 <option>U13</option>
@@ -74,18 +93,9 @@ const TournamentForm = () => {
                                 <option>Veteranen</option>
                             </select>
                         </div>
-                        <div className="col input-group m-2">
-                            <label className="input-group-text">Kategorie</label>
-                            <select className="form-select" id="inputGroupSelect01" value={category} onChange={(e) => { setCategory(e.target.value) }}>
-                                <option selected>Kategorie</option>
-                                <option>RL</option>
-                                <option>QB</option>
-                                <option>BNWM</option>
-                                <option>DM</option>
-                            </select>
-                        </div>
                     </div>
-                    <Button type="submit" className="btn-primary m-2">Submit</Button>
+                    <Button type="submit" className="btn-primary m-2">Add</Button>
+                    <Button className="btn-primary m-2" onClick={handleSubmit}>Submit</Button>
                 </div>
             </Form >
             <TournamentTable tournaments={tournaments} />

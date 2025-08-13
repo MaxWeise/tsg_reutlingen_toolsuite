@@ -1,12 +1,6 @@
 import { Table } from "react-bootstrap";
+import type { Tournament } from "./TournamentForm";
 
-interface Tournament {
-    firstDay: string;
-    secondDay: string;
-    city: string;
-    ageGroup: string;
-    category: string;
-}
 
 interface TournamentTableProps {
     tournaments: Tournament[];
@@ -20,18 +14,18 @@ const TournamentTable = ({ tournaments }: TournamentTableProps) => {
                     <th>First Day</th>
                     <th>Second Day</th>
                     <th>City</th>
-                    <th>Age Group</th>
                     <th>Category</th>
+                    <th>Age Group</th>
                 </tr>
             </thead>
             <tbody>
                 {tournaments.map((tournament, index) => (
                     <tr key={index}>
-                        <td>{tournament.firstDay}</td>
-                        <td>{tournament.secondDay}</td>
+                        <td>{tournament.first_day}</td>
+                        <td>{tournament.second_day}</td>
                         <td>{tournament.city}</td>
-                        <td>{tournament.ageGroup}</td>
                         <td>{tournament.category}</td>
+                        <td>{tournament.age_group}</td>
                     </tr>
                 ))}
             </tbody>
