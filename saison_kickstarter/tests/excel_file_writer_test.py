@@ -6,6 +6,7 @@ Created: 03.02.2024
 
 # pylint: disable=redefined-outer-name
 
+import io
 from datetime import date
 
 import numpy
@@ -64,6 +65,23 @@ def test_write_tournament_overview(testfile, test_tournament_view_items):
 
     table = pd.read_excel(testfile)
     assert len(table.index) == len(test_tournament_view_items)
+
+
+def test_write_tournament_overview_with_buffer_object(test_tournament_view_items) -> None:
+    """Test the functionality of the method when passing a buffer object to the class.
+
+    To be 100 % sure of the correctness of the data in the buffer, it would be
+    necessary to convert the expected contents of the buffer to a bytes
+    representation and compare the data against the contents of the buffer.
+    However, as the code to writer to an exel file and the code to write to the
+    buffer object are identical, we just assume the method to work correctly,
+    as long as there is _any_ data in the buffer. This method is simpler,
+    although not fully correct.
+    """
+    with io.BytesIO() as test_buffer:
+        under_test = file_writer.ExcelFileWriter(test_buffer)
+        under_test.write_tournament_data(test_tournament_view_items)
+        assert test_buffer.getvalue() 
 
 
 @pytest.fixture

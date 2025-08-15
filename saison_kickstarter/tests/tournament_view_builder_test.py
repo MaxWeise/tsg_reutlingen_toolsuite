@@ -217,8 +217,3 @@ def test_build_tournament_overview_without_optional_tournaments(
     ]
 
     assert actual == expected
-
-
-def test_create_tournament_dataframe() -> None:
-    """Create a dataframe that holds data to be written to an excel file."""
-    ...

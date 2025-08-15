@@ -8,6 +8,7 @@ Created: 11.04.2025
 @author: Max Weise
 """
 
+import io
 import pathlib
 from typing import Protocol, Sequence
 
@@ -23,7 +24,7 @@ class FileWriter(Protocol):
     def write_tournament_data(
         self, data: Sequence[view_item.ViewItem], row: int = 0, col: int = 0
     ) -> None:
-        """Write data to a file."""
+        """Create a structured tournament overview in a (temporary) file object."""
         raise NotImplementedError(
             f"The method is not implemented for type {self}"
         )
@@ -31,7 +32,7 @@ class FileWriter(Protocol):
     def write_referee_data(
         self, data: list[view_item.ViewItem], row: int = 0, col: int = 0
     ) -> None:
-        """Write data to a file."""
+        """Create a structured referee overview in a (temporary) file object."""
         raise NotImplementedError(
             f"The method is not implemented for type {self}"
         )
@@ -41,11 +42,14 @@ class ExcelFileWriter:
     """Provide an interface to write data to an excel file.
 
     Attributes:
-        data_file (pathlib.Path): The path to the excel file.
+        destination (pathlib.Path | io.BytesIO): The destination to write the
+            data to. In case of a path, an excel file will be created. In case
+            of buffer object, the buffer will be modified and can be worked
+            with later on.
     """
 
-    def __init__(self, data_file: pathlib.Path) -> None:
-        self.data_file = data_file
+    def __init__(self, destination: pathlib.Path | io.BytesIO) -> None:
+        self.destination = destination
 
     def write_tournament_data(
         self,
@@ -64,7 +68,7 @@ class ExcelFileWriter:
             exceptions.WorkbookError: The active workbook encountered a
                 problem. Contains further information about the error.
         """
-        workbook = xlsxwriter.Workbook(self.data_file)
+        workbook = xlsxwriter.Workbook(self.destination)
 
         try:
             tournament_worksheet = workbook.add_worksheet("Turnierübersicht")
@@ -119,7 +123,7 @@ class ExcelFileWriter:
             exceptions.WorkbookError: The active workbook encountered a
                 problem. Contains further information about the error.
         """
-        workbook = xlsxwriter.Workbook(self.data_file)
+        workbook = xlsxwriter.Workbook(self.destination)
 
         try:
             tournament_worksheet = workbook.add_worksheet(
