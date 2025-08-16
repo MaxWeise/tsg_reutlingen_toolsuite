@@ -41,6 +41,10 @@ def create_tournament_overview(items: list[tournament.Tournament], include_optio
     Args:
         items (list[tournaments]): A list of tournament items that form the
             data basis of the overviews.
+        include_optional (bool, optional): Include optional tournaments for
+            each age group. Defaults to False.
+        file_name (str, Optional): The name of the created excel file.
+            Defaults to user_overview.xlsx.
     """
     io_buffer = io.BytesIO()
 
