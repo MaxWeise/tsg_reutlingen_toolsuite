@@ -3,6 +3,8 @@ import { Button, Form } from "react-bootstrap";
 import TournamentTable from "./TournamentTable";
 import axios from "axios";
 
+const SERVER: string = "http://127.0.0.1:8000"
+
 export interface Tournament {
     first_day: string
     second_day: string
@@ -42,12 +44,35 @@ const TournamentForm = () => {
 
     const handleSubmit = (_: React.FormEvent<HTMLButtonElement>) => {
         console.log(tournaments);
-        axios.post("http://127.0.0.1:8000/overview/tournament", tournaments)
-            .then((response) => { console.info(response) })
-            .catch((error) => { console.info(error) });
+        axios.post(
+            `${SERVER}/overview/tournament`,
+            tournaments,
+            {
+                headers: { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+                responseType: "blob",
+            },
+        )
+            .then((response) => {
+                console.log(response)
+                const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                const url = window.URL.createObjectURL(blob);
+
+                // Construct a hidden link object and click it automatically
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', "tournament_overview_file.xlsx");
+                document.body.appendChild(link);
+                link.click();
+
+                // Clean up
+                link.parentNode?.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch((error) => { alert(`There has been an error while sending a request: ${error}`) });
     };
 
 
+    // TODO: Add checkbox to include optional tournaments
     return (
         <>
             <h1>Input tournament data</h1>
