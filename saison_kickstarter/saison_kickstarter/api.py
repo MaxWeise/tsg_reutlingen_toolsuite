@@ -11,6 +11,7 @@ import fastapi
 import starlette.responses
 from fastapi.middleware.cors import CORSMiddleware
 
+import saison_kickstarter.exceptions
 from saison_kickstarter import file_writer, tournament, view_builder
 
 app = fastapi.FastAPI()
@@ -36,15 +37,23 @@ def root():
 
 @app.post("/overview/tournament")
 def create_tournament_overview(items: list[tournament.Tournament], include_optional: bool | None = None, file_name: str | None = None) -> Any:
-    """Create an overview for all tournaments for the season.
+    """ ## Create an overview for all tournaments for the season in an excel file.
 
-    Args:
-        items (list[tournaments]): A list of tournament items that form the
-            data basis of the overviews.
-        include_optional (bool, optional): Include optional tournaments for
-            each age group. Defaults to False.
-        file_name (str, Optional): The name of the created excel file.
-            Defaults to user_overview.xlsx.
+    ### Args:
+    - **items** _(list[tournament.Tournament])_: A list of tournament items that
+        form the data basis of the overviews.
+    - **include_optional** _(bool, Optional)_: Include optional tournaments for
+        each age group. Defaults to _False_.
+    - **file_name** _(str, Optional)_: The name of the created excel file.
+        Defaults to _user_overview.xlsx_.
+
+    ### Returns:
+    A StreamingResponse containing the Excel file.
+
+    ### Raises:
+    **saison_kickstarter.exceptions.WorkbookError**: Something went wrong while
+        trying to write the excel file. Please refer to the error message
+        for further information.
     """
     io_buffer = io.BytesIO()
 
