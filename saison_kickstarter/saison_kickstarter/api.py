@@ -35,7 +35,7 @@ def root():
 
 
 @app.post("/overview/tournament")
-def create_tournament_overview(items: list[tournament.Tournament]) -> Any:
+def create_tournament_overview(items: list[tournament.Tournament], include_optional: bool | None = None, file_name: str | None = None) -> Any:
     """Create an overview for all tournaments for the season.
 
     Args:
@@ -44,8 +44,7 @@ def create_tournament_overview(items: list[tournament.Tournament]) -> Any:
     """
     io_buffer = io.BytesIO()
 
-    # TODO: Make it possible to turn on optional tournaments
-    builder = view_builder.TournamentViewBuilder(False)
+    builder = view_builder.TournamentViewBuilder(include_optional if include_optional else False)
     writer = file_writer.ExcelFileWriter(io_buffer)
 
     view = builder.build_view(items)
@@ -56,7 +55,8 @@ def create_tournament_overview(items: list[tournament.Tournament]) -> Any:
 
     # Return the file as a StreamingResponse
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    fn = file_name if file_name else "user_overview.xlsx"
     headers = {
-        "Content-Disposition": 'attachment; filename="user_overview.xlsx"'
+        "Content-Disposition": "attachment; filename={}".format(fn), 
     }
     return starlette.responses.StreamingResponse(io_buffer, media_type=media_type, headers=headers)
