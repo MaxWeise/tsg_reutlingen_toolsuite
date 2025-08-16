@@ -63,8 +63,11 @@ def create_tournament_overview(items: list[tournament.Tournament], include_optio
     view = builder.build_view(items)
 
     # Buffer object gets modified
-    writer.write_tournament_data(view)
-    io_buffer.seek(0)
+    try:
+        writer.write_tournament_data(view)
+        io_buffer.seek(0)
+    except saison_kickstarter.exceptions.WorkbookError as e:
+        raise fastapi.HTTPException(status_code=500, detail=e)
 
     # Return the file as a StreamingResponse
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
