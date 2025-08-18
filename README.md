@@ -11,6 +11,7 @@ The repository currently contains these projects:
 + ophardt_to_excel: Convert data-files from the ophartd system to excel files.
 + saison-kickstarter: Automate the creation of overviews that are used to plan the saison.
 + kickstart-gui: A graphical, web-based user interface to interact with the saison-kickstarter software.
++ tournament-seeding: A small script that can be used to seed pools for a fencing competition.
 
 ## Tooling
 Following is a table that lists the tools and their usecases in the project. Please note, that this only lists tools that are used across sub-projects. Other tools like for example test-frameworks and / or third-party libraries are listed in their respective subdirectories.
