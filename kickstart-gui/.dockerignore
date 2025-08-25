@@ -1,0 +1,20 @@
+# .dockerignore
+
+# Git and node dependencies
+.git
+node_modules
+
+# IDE and OS files
+.vscode
+.idea
+*.DS_Store
+
+# Build output (not needed in source copy)
+dist
+build
+
+# Local config and documentation
+.env
+README.md
+GEMINI.md
+Dockerfile
