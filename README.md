@@ -23,4 +23,5 @@ Following is a table that lists the tools and their usecases in the project. Ple
 | github actions | Define 'workflows' as CI pipelines.<br>These pipelines can be used to build excecutable artifacts and run quality checks on the code. |
 | Typescript     | A programing language based of JavaScript that provides types annotations. Used in different frameworks to develop web interfaces.    |
 | ReactJS        | Framework to build UI components for web-based guis. Uses typescript as its programing language.                                      |
+| Go             | Statically typed, compiled programming language. Used to develop small, efficient command-line tools.                                   |
 
