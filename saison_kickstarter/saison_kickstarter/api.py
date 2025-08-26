@@ -17,7 +17,10 @@ from saison_kickstarter import file_writer, tournament, view_builder
 app = fastapi.FastAPI()
 
 origins = [
-    "http://localhost:5173",
+    "http://localhost:5173",    # Allow requests from dev server
+    "http://127.0.0.1:5173",    # Allow requests from dev server
+    "http://localhost:8080",    # Allow requests from prod server
+    "http://127.0.0.1:8080",    # Allow requests from prod server
 ]
 
 app.add_middleware(
