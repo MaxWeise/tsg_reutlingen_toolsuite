@@ -3,8 +3,6 @@ import { Button, Form } from "react-bootstrap";
 import TournamentTable from "./TournamentTable";
 import axios from "axios";
 
-const SERVER: string = "http://127.0.0.1:8000"
-
 export interface Tournament {
     first_day: string
     second_day: string
@@ -13,7 +11,7 @@ export interface Tournament {
     age_group: string
 }
 
-const TournamentForm = () => {
+const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
     const [first_day, setFirstDay] = useState("");
     const [second_day, setSecondDay] = useState("");
@@ -21,6 +19,8 @@ const TournamentForm = () => {
     const [category, setCategory] = useState("");
     const [age_group, setAgeGroup] = useState("");
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
+
+    const [includeOptional, setIncludeOptional] = useState(false);
 
     const handleAddTournament = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -42,14 +42,29 @@ const TournamentForm = () => {
         }
     };
 
-    const handleSubmit = (_: React.FormEvent<HTMLButtonElement>) => {
-        console.log(tournaments);
+    const handleCreateTournamentOverview = (_: React.FormEvent<HTMLButtonElement>) => {
+        const endpoint = includeOptional
+            ? `${serverUrl}/overview/tournament?include_optional=true`
+            : `${serverUrl}/overview/tournament`;
+        const header = { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+        const responseType = "blob"
+
+        // Used for logging
+        const request = {
+            "Endpoint": endpoint,
+            "Header": header,
+            "responseType": responseType,
+            "Data": tournaments,
+            "IncludeOptional": includeOptional,
+        };
+        console.info(`Making the following request ${JSON.stringify(request)}`)
+
         axios.post(
-            `${SERVER}/overview/tournament`,
+            endpoint,
             tournaments,
             {
-                headers: { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
-                responseType: "blob",
+                headers: header,
+                responseType: responseType
             },
         )
             .then((response) => {
@@ -68,11 +83,18 @@ const TournamentForm = () => {
                 link.parentNode?.removeChild(link);
                 window.URL.revokeObjectURL(url);
             })
-            .catch((error) => { alert(`There has been an error while sending a request: ${error}`) });
+            .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
     };
 
+    const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.info(`Checkbox is now ${event.target.checked}`)
+        setIncludeOptional(event.target.checked);
+    };
 
-    // TODO: Add checkbox to include optional tournaments
+    const handleCreateRefereeOverview = (_: React.FormEvent<HTMLButtonElement>) => {
+        // TODO: Handle button click
+    };
+
     return (
         <>
             <h1>Input tournament data</h1>
@@ -119,8 +141,19 @@ const TournamentForm = () => {
                             </select>
                         </div>
                     </div>
-                    <Button type="submit" className="btn-primary m-2">Add</Button>
-                    <Button className="btn-primary m-2" onClick={handleSubmit}>Submit</Button>
+                    <div className="container row">
+                        <div className="col-6">
+                            <Button type="submit" className="btn-primary mb-2">Turnier Hinzufügen</Button>
+                            <Button className="btn-primary mb-2" onClick={handleCreateTournamentOverview}>Turnierübersicht erstellen</Button>
+                            <Button className="btn-primary mb-2" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
+                        </div>
+                        <div className="col-8">
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" checked={includeOptional} onChange={handleCheck} id="optional-checkbox" />
+                                <label className="form-check-label" htmlFor="optional-checkbox">Optionale Turniere einfügen</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </Form >
             <TournamentTable tournaments={tournaments} />
