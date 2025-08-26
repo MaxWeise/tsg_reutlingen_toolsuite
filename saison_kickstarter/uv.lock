@@ -1014,6 +1014,7 @@ version = "3.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "pandas" },
     { name = "xlsxwriter" },
 ]
 
@@ -1034,6 +1035,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.116.1" },
+    { name = "pandas", specifier = ">=2.2.0" },
     { name = "xlsxwriter", specifier = "==3.1.9" },
 ]
 provides-extras = ["development"]
