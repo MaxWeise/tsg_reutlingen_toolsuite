@@ -38,24 +38,6 @@ class ViewBuilder(Protocol):
             f"This method is not implemented for type {self}"
         )
 
-    def create_dataframe(
-        self,
-        data: list[tournament.Tournament],
-    ) -> pd.DataFrame:
-        """Build the view as a pandas.DataFrame object.
-
-        Args:
-            data: The list of tournaments to be included in the overview.
-            include_optional_tournaments: Set this flag to include or exclude
-                optional tournaments in the overview. Defaults to True.
-
-        Returns:
-            The data structured in a dataframe.
-        """
-        raise NotImplementedError(
-            f"This method is not implemented for type {self}"
-        )
-
 
 class TournamentViewBuilder:
     """Define the interface for methods to construct a view."""
@@ -184,4 +166,4 @@ class RefereeViewBuilder:
             ret.append(entry_one)
             ret.append(entry_two)
 
-        return sorted(ret)
+        return sorted(set(ret))
