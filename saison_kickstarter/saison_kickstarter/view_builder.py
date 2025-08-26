@@ -7,8 +7,6 @@ Created: 18.02.2024
 import itertools
 from typing import Literal, Protocol, Sequence
 
-import pandas as pd
-
 from saison_kickstarter import tournament, view_item
 
 
