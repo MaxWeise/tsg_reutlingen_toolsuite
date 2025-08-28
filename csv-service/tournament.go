@@ -11,11 +11,11 @@ const (
 )
 
 type Tournament struct {
-	FirstDay  time.Time
-	SecondDay time.Time
-	City      string
-	Category  string // TODO: Add validation in constructor
-	AgeGroup  string // TODO: Add validation in constructor
+	FirstDay  time.Time `json:"first_day"`
+	SecondDay time.Time `json:"second_day"`
+	City      string    `json:"city"`
+	Category  string    `json:"category"`  // TODO: Add validation in constructor
+	AgeGroup  string    `json:"age_group"` // TODO: Add validation in constructor
 }
 
 // / Create a tournament object from a parameter list of strings and return the adress of the said object.
