@@ -2,15 +2,15 @@ package main
 
 import (
 	"encoding/csv"
-	"os"
+	"io"
 )
 
 type Writer interface {
-	write(data []*Tournament) error
+	Write(data []Tournament) error
 }
 
 type CsvWriter struct {
-	destination *os.File
+	destination io.Writer
 }
 
 // treat as constant
@@ -18,7 +18,7 @@ var CSV_HEADERS = []string{"Datum", "Ort", "Kategorie", "Altersklasse"}
 
 // / Write [data] to the file specified by CsvWriter
 // / Will overwrite existing data in a file with the same name
-func (c *CsvWriter) Write(data []*Tournament) error {
+func (c *CsvWriter) Write(data []Tournament) error {
 	w := csv.NewWriter(c.destination)
 	defer w.Flush()
 

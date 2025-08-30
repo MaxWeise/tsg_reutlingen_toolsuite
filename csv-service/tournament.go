@@ -14,22 +14,23 @@ type Tournament struct {
 	FirstDay  time.Time `json:"first_day"`
 	SecondDay time.Time `json:"second_day"`
 	City      string    `json:"city"`
-	Category  string    `json:"category"`  // TODO: Add validation in constructor
-	AgeGroup  string    `json:"age_group"` // TODO: Add validation in constructor
+	Category  string    `json:"category"`
+	AgeGroup  string    `json:"age_group"`
 }
 
-// / Create a tournament object from a parameter list of strings and return the adress of the said object.
-func NewTournament(firstDay string, secondDay string, city string, category string, ageGroup string) (*Tournament, error) {
+// / Create a tournament object from a parameter list of strings and return it
+// / In case of an error, return a default object, which is not used.
+func NewTournament(firstDay string, secondDay string, city string, category string, ageGroup string) (Tournament, error) {
 	fd, err := time.Parse(DATE_FORMAT, firstDay)
 	if err != nil {
-		return nil, err
+		return Tournament{}, err
 	}
 
 	sd, err := time.Parse(DATE_FORMAT, secondDay)
 	if err != nil {
-		return nil, err
+		return Tournament{}, err
 	}
-	t := &Tournament{
+	t := Tournament{
 		FirstDay:  fd,
 		SecondDay: sd,
 		City:      city,
