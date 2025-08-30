@@ -39,7 +39,7 @@ func (c *CsvReader) Read() ([]Tournament, error) {
 
 		// construct tournament objects
 		t, err := NewTournament(firstDay, secondDay, city, category, ageGroup)
-		ret = append(ret, *t)
+		ret = append(ret, t)
 
 	}
 
@@ -47,9 +47,7 @@ func (c *CsvReader) Read() ([]Tournament, error) {
 	return ret, nil
 }
 
-// TODO: parse dd./DD.mm.yyyy to dd.mm.yyyy and DD.mm.yyyy
-//
-//	and parse dd.mm./DD.MM.yyyy to dd.mm.yyyy and DD.MM.yyyy formats
+// / Parse two separate date objects into a string representation.
 func parseDate(date string) (string, string, error) {
 	if len(date) < 14 {
 		return "", "", fmt.Errorf("wrong date-format recieved: %s.\nDate should follow either dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format", date)
