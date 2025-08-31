@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,8 @@ import (
 
 func main() {
 	router := gin.Default()
+
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	router.GET("/", healthCheck)
 	router.POST("/export-csv", exportCsv)
@@ -22,23 +25,31 @@ func healthCheck(c *gin.Context) {
 }
 
 func importCsv(c *gin.Context) {
+	log.Println("Importing csv file.")
 	file, err := c.FormFile("file")
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		errFormat := fmt.Sprintf("get form err: %s", err.Error())
+		c.String(http.StatusBadRequest, errFormat)
+		log.Println(errFormat)
 		return
 	}
 
 	f, err := file.Open()
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("open file err: %s", err.Error()))
+		errFormat := fmt.Sprintf("open file err: %s", err.Error())
+		c.String(http.StatusBadRequest, errFormat)
+		log.Println(errFormat)
 		return
 	}
 	defer f.Close()
 
+	log.Println("Sucessfully parsed csv file. Now reading file.")
 	csvReader := CsvReader{f}
 	records, err := csvReader.Read()
 	if err != nil {
-		c.String(http.StatusInternalServerError, fmt.Sprintf("read all err: %s", err.Error()))
+		errFormat := fmt.Sprintf("read all err: %s", err.Error())
+		c.String(http.StatusInternalServerError, errFormat)
+		log.Println(errFormat)
 		return
 	}
 
@@ -46,22 +57,27 @@ func importCsv(c *gin.Context) {
 }
 
 func exportCsv(c *gin.Context) {
+	log.Println("Receiving data from the client, now parsing")
 	var tournamentData []Tournament
 
 	if err := c.BindJSON(&tournamentData); err != nil {
-		// TODO: Log this
-		fmt.Printf("Error while parsing a list of tournaments from CURL-Post request: %s", err)
-		c.IndentedJSON(http.StatusBadRequest, err)
+		errFormat := fmt.Sprintf("Error while parsing a list of tournaments from CURL-Post request: %s", err)
+		c.IndentedJSON(http.StatusBadRequest, errFormat)
+		log.Println(errFormat)
 		return
 	}
 
+	log.Println("Now writing to csv file.")
 	cw := CsvWriter{c.Writer}
 
 	if err := cw.Write(tournamentData); err != nil {
-		fmt.Printf("Error while parsing tournament data from CURL-Post request: %s", err)
+		errFormat := fmt.Sprintf("Error while parsing tournament data from CURL-Post request: %s", err)
+		c.IndentedJSON(http.StatusInternalServerError, errFormat)
+		log.Println(errFormat)
 		return
 	}
 
+	log.Println("Sucessfully written to file. Serving to client.")
 	c.Header("Content-Disposition", "attachment; filename=tournaments.csv")
 	c.Header("Content-Type", "text/csv")
 }
