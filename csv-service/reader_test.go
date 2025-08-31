@@ -8,7 +8,7 @@ import (
 )
 
 func TestReadCsvFile(t *testing.T) {
-	p := "tournaments.csv"
+	p := "tournament.csv"
 	f, err := os.Open(p)
 	if err != nil {
 		log.Fatalf("Error occured while opening the file %s: %s", p, err)
