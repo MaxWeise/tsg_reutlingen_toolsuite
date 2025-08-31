@@ -39,12 +39,38 @@ func main() {
 	router.GET("/tournaments", getTournaments)
 	router.POST("/tournaments", postTournament)
 	router.POST("/export-csv", exportCsv)
+	router.POST("/import-csv", importCsv)
 
 	router.Run() // run app on default 8080 and map 7000 to 8080 in Dockerfile
 }
 
 func healthCheck(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, "API is live and healthy")
+}
+
+func importCsv(c *gin.Context) {
+	// single file
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		return
+	}
+
+	f, err := file.Open()
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("open file err: %s", err.Error()))
+		return
+	}
+	defer f.Close()
+
+	csvReader := CsvReader{f}
+	records, err := csvReader.Read()
+	if err != nil {
+		c.String(http.StatusInternalServerError, fmt.Sprintf("read all err: %s", err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, records)
 }
 
 func exportCsv(c *gin.Context) {

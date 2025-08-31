@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
-	"os"
+	"io"
 	"strings"
 )
 
@@ -12,7 +12,7 @@ type Reader interface {
 }
 
 type CsvReader struct {
-	source *os.File
+	source io.Reader
 }
 
 func (c *CsvReader) Read() ([]Tournament, error) {
