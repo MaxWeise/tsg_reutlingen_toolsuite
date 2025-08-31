@@ -33,14 +33,18 @@ var testData = []Tournament{
 }
 
 func main() {
-	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
+	router.GET("/", healthCheck)
 	router.GET("/tournaments", getTournaments)
 	router.POST("/tournaments", postTournament)
 	router.POST("/export-csv", exportCsv)
 
-	router.Run("localhost:7000")
+	router.Run() // run app on default 8080 and map 7000 to 8080 in Dockerfile
+}
+
+func healthCheck(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, "API is live and healthy")
 }
 
 func exportCsv(c *gin.Context) {
