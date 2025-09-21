@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"testing"
 	"time"
@@ -12,11 +11,9 @@ import (
 )
 
 func TestReadCsvFile(t *testing.T) {
-	p := "tournament.csv"
+	p := "test-assets/tournament.csv"
 	f, err := os.Open(p)
-	if err != nil {
-		log.Fatalf("Error occured while opening the file %s: %s", p, err)
-	}
+	assert.Nil(t, err, "Error occured while opening the file %s: %s")
 	c := CsvReader{source: f}
 
 	got, err := c.Read()
