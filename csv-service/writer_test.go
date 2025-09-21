@@ -5,10 +5,13 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestWriteCsvFile(t *testing.T) {
-	file, err := os.Create("tournaments.csv")
+	name := "tournaments.csv"
+	file, err := os.Create(name)
 	if err != nil {
 		log.Fatalf("Error occured while creating a file: %s", err)
 	}
@@ -38,4 +41,14 @@ func TestWriteCsvFile(t *testing.T) {
 	}
 
 	c.Write(data)
+	assert.FileExists(t, name, "The file that should be created does not exits.")
+
+	err = os.Remove(name)
+	if err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("Could not remove file, it does not exist.")
+		} else {
+			log.Fatalf("There has been an error removing the file %s: %s", name, err)
+		}
+	}
 }

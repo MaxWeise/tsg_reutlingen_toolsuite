@@ -5,6 +5,10 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReadCsvFile(t *testing.T) {
@@ -16,9 +20,7 @@ func TestReadCsvFile(t *testing.T) {
 	c := CsvReader{source: f}
 
 	got, err := c.Read()
-	if err != nil {
-		log.Fatalf("Error occured while reading the file %s: %s", p, err)
-	}
+	require.Nil(t, err)
 
 	want := []Tournament{
 		{
@@ -44,15 +46,6 @@ func TestReadCsvFile(t *testing.T) {
 		},
 	}
 
-	if got == nil {
-		t.Error("Return value is nil.")
-	}
-
-	for i, g := range got {
-		w := want[i]
-		if g != w {
-			t.Errorf("Difference at index %d\nExcpected: %s\nGot: %s", i, w, g)
-		}
-	}
-
+	require.NotNil(t, got)
+	assert.Equal(t, want, got)
 }
