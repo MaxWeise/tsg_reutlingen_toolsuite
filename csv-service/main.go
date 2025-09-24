@@ -5,11 +5,13 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
+	router.Use(cors.Default()) // allow all origins TODO: only allow a select range of origins.
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 

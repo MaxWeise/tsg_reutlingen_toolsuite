@@ -36,13 +36,6 @@ test:
 	@echo "Testing the package..."
 	go test ./...
 
-# Stop the running Docker container
-# `docker stop` sends a signal to the container to stop gracefully.
-stop:
-	@echo "Stopping Docker container..."
-	docker stop $(APP_NAME)-container
-	@echo "Container stopped."
-
 # Clean up by removing the Docker image
 # `docker rmi` removes the specified image.
 clean:
