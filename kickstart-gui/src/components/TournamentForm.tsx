@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import TournamentTable from "./TournamentTable";
 import axios from "axios";
@@ -95,29 +95,84 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         // TODO: Handle button click
     };
 
+    const exportDataAsCsv = (_: React.FormEvent<HTMLButtonElement>) => {
+        // Tournaments need to have the date in the following representation
+        // 2006-01-02T15:04:05Z07:00 (RFC3339)
+
+        let tournamentsWithNewDateFormat = tournaments.map((tournament: Tournament) => {
+            tournament.first_day = `${tournament.first_day}T00:00:00Z`
+            tournament.second_day = `${tournament.second_day}T00:00:00Z`
+            return tournament
+        });
+
+        const endpoint = "http://127.0.0.1:7000/export-csv";
+        const header = { 'Accept': 'text/csv' }
+        const responseType = "blob"
+
+        // Used for logging
+        const request = {
+            "Endpoint": endpoint,
+            "Header": header,
+            "responseType": responseType,
+            "Data": tournamentsWithNewDateFormat,
+            "IncludeOptional": includeOptional,
+        };
+        console.info(`Making the following request ${JSON.stringify(request)}`)
+
+        axios.post(
+            endpoint,
+            tournamentsWithNewDateFormat,
+            {
+                headers: header,
+                responseType: responseType
+            },
+        )
+            .then((response) => {
+                console.log(response)
+                const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                const url = window.URL.createObjectURL(blob);
+
+                // Construct a hidden link object and click it automatically
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', "tournaments.csv");
+                document.body.appendChild(link);
+                link.click();
+
+                // Clean up
+                link.parentNode?.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
+    };
+
+    const importDataFromCsv = (_: React.FormEvent<HTMLButtonElement>) => {
+        // TODO: Handle button click
+    };
+
     return (
         <>
             <h1>Input tournament data</h1>
             <Form onSubmit={handleAddTournament}>
-                <div className="container">
-                    <div className="row">
-                        <div className="col input-group m-2">
+                <div className="container" id="input-form-group">
+                    <div className="row my-2">
+                        <div className="col input-group">
                             <span className="input-group-text">Erster Tag</span>
                             <input type="date" className="form-control" value={first_day} onChange={(e) => { setFirstDay(e.target.value) }} />
                         </div>
-                        <div className="col input-group m-2">
+                        <div className="col input-group">
                             <span className="input-group-text">Zweiter Tag</span>
                             <input type="date" className="form-control" value={second_day} onChange={(e) => { setSecondDay(e.target.value) }} />
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col input-group m-2">
+                    <div className="row my-2">
+                        <div className="col input-group">
                             <span className="input-group-text">Stadt</span>
                             <input type="text" className="form-control" value={city} onChange={(e) => { setCity(e.target.value) }} />
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col input-group m-2">
+                    <div className="row my-2">
+                        <div className="col input-group">
                             <label className="input-group-text">Kategorie</label>
                             <select className="form-select" id="inputGroupSelect01" value={category} onChange={(e) => { setCategory(e.target.value) }}>
                                 <option selected>Kategorie</option>
@@ -127,7 +182,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                                 <option>DM</option>
                             </select>
                         </div>
-                        <div className="col input-group m-2">
+                        <div className="col input-group">
                             <label className="input-group-text">Altersklasse</label>
                             <select className="form-select" id="inputGroupSelect01" value={age_group} onChange={(e) => { setAgeGroup(e.target.value) }}>
                                 <option selected>Altersklasse</option>
@@ -141,22 +196,26 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                             </select>
                         </div>
                     </div>
-                    <div className="container row">
-                        <div className="col-6">
-                            <Button type="submit" className="btn-primary mb-2">Turnier Hinzufügen</Button>
-                            <Button className="btn-primary mb-2" onClick={handleCreateTournamentOverview}>Turnierübersicht erstellen</Button>
-                            <Button className="btn-primary mb-2" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
+                </div>
+                <div className="container" id="button-group">
+                    <div className="row my-2">
+                        <Button type="submit" className="btn-primary">Turnier Hinzufügen</Button>
+                        <Button className="btn-primary col" onClick={handleCreateTournamentOverview}>Turnierübersicht erstellen</Button>
+                        <Button className="btn-primary col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" checked={includeOptional} onChange={handleCheck} id="optional-checkbox" />
+                            <label className="form-check-label" htmlFor="optional-checkbox">Optionale Turniere einfügen</label>
                         </div>
-                        <div className="col-8">
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" checked={includeOptional} onChange={handleCheck} id="optional-checkbox" />
-                                <label className="form-check-label" htmlFor="optional-checkbox">Optionale Turniere einfügen</label>
-                            </div>
-                        </div>
+                    </div>
+                    <div className="row my-2" id="csv-import-export-button-group">
+                        <Button className="btn-primary col" onClick={exportDataAsCsv}>Daten exportieren</Button>
+                        <Button className="btn-primary col" onClick={importDataFromCsv}>Daten importieren</Button>
                     </div>
                 </div>
             </Form >
-            <TournamentTable tournaments={tournaments} />
+            <div className="container my-2" id="tournament-table">
+                <TournamentTable tournaments={tournaments} />
+            </div>
         </>
     );
 };
