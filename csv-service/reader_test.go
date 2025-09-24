@@ -58,6 +58,18 @@ func TestReadCsvFileMaleformedData(t *testing.T) {
 	c := CsvReader{source: mockReader}
 
 	_, err := c.Read()
-	errorMsg := fmt.Sprintf("There has been an error: %s", err)
-	assert.NotNil(t, err, errorMsg)
+	assert.NotNil(t, err, "Error value should not be nil.")
+	fmt.Println(err)
+}
+
+func TestReadCsvFileWrongDateFormat(t *testing.T) {
+	const mockData = `Datum,Ort,Kategorie,Altersklasse
+	01.01.2000,Reutlingen`
+
+	mockReader := strings.NewReader(mockData)
+	c := CsvReader{source: mockReader}
+
+	_, err := c.Read()
+	assert.NotNil(t, err, "Error value should not be nil.")
+
 }
