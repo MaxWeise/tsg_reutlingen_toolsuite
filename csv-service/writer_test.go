@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWriteCsvFile(t *testing.T) {
@@ -41,7 +41,7 @@ func TestWriteCsvFile(t *testing.T) {
 	}
 
 	c.Write(data)
-	assert.FileExists(t, name, "The file that should be created does not exits.")
+	require.FileExists(t, name, "The file that should be created does not exits.")
 
 	err = os.Remove(name)
 	if err != nil {

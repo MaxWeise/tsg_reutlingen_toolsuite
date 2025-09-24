@@ -62,9 +62,6 @@ func TestReadCsvFileMaleformedData(t *testing.T) {
 }
 
 func TestReadCsvFileWrongDateFormat(t *testing.T) {
-	// const mockData = `Datum,Ort,Kategorie,Altersklasse
-	// 01./02.01.2000,Reutlingen`
-
 	const mockData = `Datum,Ort,Kategorie,Altersklasse
 	01.01.2000,Reutlingen,RL,U11`
 

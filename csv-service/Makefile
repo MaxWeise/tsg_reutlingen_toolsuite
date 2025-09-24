@@ -34,7 +34,7 @@ run: build
 
 test:
 	@echo "Testing the package..."
-	go test -v ./...
+	go test ./...
 
 # Stop the running Docker container
 # `docker stop` sends a signal to the container to stop gracefully.
