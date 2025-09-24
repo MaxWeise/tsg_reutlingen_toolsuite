@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"strings"
 	"testing"
 	"time"
@@ -58,18 +58,20 @@ func TestReadCsvFileMaleformedData(t *testing.T) {
 	c := CsvReader{source: mockReader}
 
 	_, err := c.Read()
-	assert.NotNil(t, err, "Error value should not be nil.")
-	fmt.Println(err)
+	require.NotNil(t, err, "Error value should not be nil.")
 }
 
 func TestReadCsvFileWrongDateFormat(t *testing.T) {
+	// const mockData = `Datum,Ort,Kategorie,Altersklasse
+	// 01./02.01.2000,Reutlingen`
+
 	const mockData = `Datum,Ort,Kategorie,Altersklasse
-	01.01.2000,Reutlingen`
+	01.01.2000,Reutlingen,RL,U11`
 
 	mockReader := strings.NewReader(mockData)
 	c := CsvReader{source: mockReader}
 
 	_, err := c.Read()
-	assert.NotNil(t, err, "Error value should not be nil.")
+	assert.True(t, errors.Is(err, DateFormatError), "Raise an error that indicates a wrong date format.")
 
 }

@@ -15,6 +15,8 @@ type CsvReader struct {
 	source io.Reader
 }
 
+var DateFormatError = fmt.Errorf("The date must be in either dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy format.")
+
 func (c *CsvReader) Read() ([]Tournament, error) {
 	// Read csv file and get the raw data
 	r := csv.NewReader(c.source)
@@ -34,7 +36,7 @@ func (c *CsvReader) Read() ([]Tournament, error) {
 		firstDay, secondDay, err := parseDate(date)
 
 		if err != nil {
-			return nil, err
+			return nil, DateFormatError
 		}
 
 		// construct tournament objects
