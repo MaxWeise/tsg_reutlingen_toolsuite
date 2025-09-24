@@ -1,20 +1,22 @@
 package main
 
 import (
-	"os"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestReadCsvFile(t *testing.T) {
-	p := "test-assets/tournament.csv"
-	f, err := os.Open(p)
-	assert.Nil(t, err, "Error occured while opening the file %s: %s")
-	c := CsvReader{source: f}
+	const mockData = `Datum,Ort,Kategorie,Altersklasse
+01./02.01.2000,Reutlingen,RL,U11
+31.01./01.02.2000,Heidenheim,DM,U13
+01./02.03.2000,Leverkusen,QB,Senioren
+`
+	mockReader := strings.NewReader(mockData)
+	c := CsvReader{source: mockReader}
 
 	got, err := c.Read()
 	require.Nil(t, err)

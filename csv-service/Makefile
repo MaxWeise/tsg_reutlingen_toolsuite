@@ -32,6 +32,10 @@ run: build
 	@echo "Running Docker container..."
 	docker run --rm -p 7000:8080 --name $(APP_NAME)-container $(IMG_NAME):$(IMG_TAG)
 
+test:
+	@echo "Testing the package..."
+	go test -v ./...
+
 # Stop the running Docker container
 # `docker stop` sends a signal to the container to stop gracefully.
 stop:
