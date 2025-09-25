@@ -4,9 +4,9 @@ import axios from "axios";
 
 
 const App = () => {
-  const serverUrl: string = "http://127.0.0.1:8000"
+  const serverUrl: string = "http://127.0.0.1"
 
-  axios.get(`${serverUrl}/`)
+  axios.get(`${serverUrl}:8000/`)
     .then(() => {
       console.info("Health check was sucessfull");
     })

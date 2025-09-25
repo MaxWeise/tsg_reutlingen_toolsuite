@@ -11,6 +11,45 @@ export interface Tournament {
     age_group: string
 }
 
+interface RequestData {
+    endpoint: string,
+    header: any,
+    responseType: any,
+    data: Tournament[],
+    includeOptional?: boolean,
+}
+
+function makeFileDownloadRequest(requestData: RequestData, fileName: string): void {
+    console.info(`Making the following request ${JSON.stringify(requestData)}`)
+
+    axios.post(
+        requestData.endpoint,
+        requestData.data,
+        {
+            headers: requestData.header,
+            responseType: requestData.responseType
+        },
+    )
+        .then((response) => {
+            console.log(response)
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const url = window.URL.createObjectURL(blob);
+
+            // Construct a hidden link object and click it automatically
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
+
+}
+
 const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
     const [first_day, setFirstDay] = useState("");
@@ -44,46 +83,20 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
     const handleCreateTournamentOverview = (_: React.FormEvent<HTMLButtonElement>) => {
         const endpoint = includeOptional
-            ? `${serverUrl}/overview/tournament?include_optional=true`
-            : `${serverUrl}/overview/tournament`;
+            ? `${serverUrl}:8000/overview/tournament?include_optional=true`
+            : `${serverUrl}:8000/overview/tournament`;
         const header = { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
         const responseType = "blob"
 
         // Used for logging
-        const request = {
-            "Endpoint": endpoint,
-            "Header": header,
-            "responseType": responseType,
-            "Data": tournaments,
-            "IncludeOptional": includeOptional,
+        const request: RequestData = {
+            endpoint: endpoint,
+            header: header,
+            responseType: responseType,
+            data: tournaments,
+            includeOptional: includeOptional,
         };
-        console.info(`Making the following request ${JSON.stringify(request)}`)
-
-        axios.post(
-            endpoint,
-            tournaments,
-            {
-                headers: header,
-                responseType: responseType
-            },
-        )
-            .then((response) => {
-                console.log(response)
-                const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                const url = window.URL.createObjectURL(blob);
-
-                // Construct a hidden link object and click it automatically
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', "tournament_overview_file.xlsx");
-                document.body.appendChild(link);
-                link.click();
-
-                // Clean up
-                link.parentNode?.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            })
-            .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
+        makeFileDownloadRequest(request, "tournament_overview_file.xlsx");
     };
 
     const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,45 +118,18 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
             return tournament
         });
 
-        const endpoint = "http://127.0.0.1:7000/export-csv";
+        const endpoint = `${serverUrl}:7000/export-csv`;
         const header = { 'Accept': 'text/csv' }
         const responseType = "blob"
 
         // Used for logging
-        const request = {
-            "Endpoint": endpoint,
-            "Header": header,
-            "responseType": responseType,
-            "Data": tournamentsWithNewDateFormat,
-            "IncludeOptional": includeOptional,
+        const request: RequestData = {
+            endpoint: endpoint,
+            header: header,
+            responseType: responseType,
+            data: tournamentsWithNewDateFormat,
         };
-        console.info(`Making the following request ${JSON.stringify(request)}`)
-
-        axios.post(
-            endpoint,
-            tournamentsWithNewDateFormat,
-            {
-                headers: header,
-                responseType: responseType
-            },
-        )
-            .then((response) => {
-                console.log(response)
-                const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                const url = window.URL.createObjectURL(blob);
-
-                // Construct a hidden link object and click it automatically
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', "tournaments.csv");
-                document.body.appendChild(link);
-                link.click();
-
-                // Clean up
-                link.parentNode?.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            })
-            .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
+        makeFileDownloadRequest(request, "tournaments.csv");
     };
 
     const importDataFromCsv = (_: React.FormEvent<HTMLButtonElement>) => {
