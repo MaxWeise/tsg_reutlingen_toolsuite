@@ -15,11 +15,15 @@ const FileUpload = ({ setFile, handleCsvExport, handleCsvImport }: any) => {
 
     return (
         <>
-            <Form.Group controlId="formFile">
-                <Form.Control type="file" onChange={handleFileUpload} />
-            </Form.Group>
-            <Button className="btn-primary mx-2" onClick={handleCsvExport}>Daten exportieren</Button>
-            <Button className="btn-primary mx-2" onClick={handleCsvImport}>Daten importieren</Button>
+            <div className="container">
+                <Form.Group controlId="formFile" className="row">
+                    <Form.Control type="file" onChange={handleFileUpload} />
+                </Form.Group>
+                <div className="row">
+                    <Button className="btn-primary my-2 mx-2 col" onClick={handleCsvExport}>Daten exportieren</Button>
+                    <Button className="btn-primary my-2 mx-2 col" onClick={handleCsvImport}>Daten importieren</Button>
+                </div>
+            </div>
         </>
     );
 

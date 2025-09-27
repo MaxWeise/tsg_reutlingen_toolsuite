@@ -59,8 +59,6 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
     const [age_group, setAgeGroup] = useState("");
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
 
-    const [includeOptional, setIncludeOptional] = useState(false);
-
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
     const handleAddTournament = (event: React.FormEvent<HTMLFormElement>) => {
@@ -83,7 +81,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         }
     };
 
-    const handleCreateTournamentOverview = (_: React.FormEvent<HTMLButtonElement>) => {
+    const handleCreateTournamentOverview = (includeOptional: boolean) => {
         const endpoint = includeOptional
             ? `${serverUrl}:8000/overview/tournament?include_optional=true`
             : `${serverUrl}:8000/overview/tournament`;
@@ -101,7 +99,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         makeFileDownloadRequest(request, "tournament_overview_file.xlsx");
     };
 
-    const handleCreateRefereeOverview = (_: React.FormEvent<HTMLButtonElement>) => {
+    const handleCreateRefereeOverview = () => {
         // TODO: Handle button click
     };
 
@@ -207,23 +205,19 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                                 </select>
                             </div>
                         </div>
-                        <Button className="btn-primary my-2" type="submit" >Turnier Hinzufügen</Button>
+                        <div className="container row">
+                            <Button className="btn-primary my-2 mx-2 col" type="submit" >Turnier Hinzufügen</Button>
+                        </div>
                     </div>
                 </Form>
-                <div className="container" id="button-group">
-                    <div className="row">
-                        <div className="form-check">
-                            <input className="form-check-input" type="checkbox" checked={includeOptional} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                console.info(`Checkbox is now ${event.target.checked}`)
-                                setIncludeOptional(event.target.checked);
-                            }} id="optional-checkbox" />
-                            <label className="form-check-label" htmlFor="optional-checkbox">Optionale Turniere einfügen</label>
-                        </div>
-                        <Button className="btn-primary mx-2 col" onClick={handleCreateTournamentOverview}>Turnierübersicht erstellen</Button>
-                        <Button className="btn-primary mx-2 col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
-                    </div>
+                <div className="container row my-2">
+                    <Button className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(true)}>Turnierübersicht erstellen</Button>
+                    <Button className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(false)}>Turnierübersicht erstellen (optionale turniere)</Button>
                 </div>
-                <div className="container row">
+                <div className="container row my-2">
+                    <Button className="btn-primary mx-2 col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
+                </div>
+                <div className="container row my-2">
                     <FileUpload
                         setFile={setUploadedFile}
                         handleCsvExport={exportDataAsCsv}
