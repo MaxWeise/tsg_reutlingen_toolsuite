@@ -1,6 +1,17 @@
 import { Button, Form } from "react-bootstrap";
 
-const FileUpload = ({ handleFileUpload, handleCsvExport, handleCsvImport }: any) => {
+const FileUpload = ({ setFile, handleCsvExport, handleCsvImport }: any) => {
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) {
+            console.error("No File recieved. e.target.files is set to null.");
+            return;
+        }
+
+        const file = e.target.files[0];
+        setFile(file);
+        console.info(`Set uploaded file to ${file}`);
+    };
 
     return (
         <>

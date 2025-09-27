@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Button, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import TournamentTable from "./TournamentTable";
 import axios from "axios";
 import FileUpload from "./FileUpload";
@@ -159,17 +159,6 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
             });
     };
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files) {
-            console.error("No File recieved. e.target.files is set to null.");
-            return;
-        }
-
-        const file = e.target.files[0];
-        setUploadedFile(file);
-        console.info(`Set uploaded file to ${file}`);
-    };
-
     return (
         <>
             <h1>Input tournament data</h1>
@@ -235,7 +224,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                 </div>
                 <div className="container row">
                     <FileUpload
-                        handleFileUpload={handleFileUpload}
+                        setFile={setUploadedFile}
                         handleCsvExport={exportDataAsCsv}
                         handleCsvImport={importDataFromCsv} />
                 </div>
