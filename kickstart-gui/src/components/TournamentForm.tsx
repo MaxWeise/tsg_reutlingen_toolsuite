@@ -207,11 +207,11 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                                 </select>
                             </div>
                         </div>
+                        <Button className="btn-primary my-2" type="submit" >Turnier Hinzufügen</Button>
                     </div>
                 </Form>
                 <div className="container" id="button-group">
                     <div className="row">
-                        <Button className="btn-primary my-2" type="submit" >Turnier Hinzufügen</Button>
                         <div className="form-check">
                             <input className="form-check-input" type="checkbox" checked={includeOptional} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                 console.info(`Checkbox is now ${event.target.checked}`)
