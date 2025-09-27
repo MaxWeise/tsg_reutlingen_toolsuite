@@ -50,7 +50,7 @@ function makeFileDownloadRequest(requestData: RequestData, fileName: string): vo
         .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
 }
 
-const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
+const TournamentForm = (serverUrl: string, backendAvailable: boolean) => {
 
     const [first_day, setFirstDay] = useState("");
     const [second_day, setSecondDay] = useState("");
@@ -161,9 +161,9 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
     return (
         <>
             <h1>Input tournament data</h1>
-            <div className="container">
+            <div className="container-fluid">
                 <Form onSubmit={handleAddTournament} className="row">
-                    <div className="container" id="input-form-group">
+                    <div className="container-fluid" id="input-form-group">
                         <div className="row my-2">
                             <div className="col input-group">
                                 <span className="input-group-text">Erster Tag</span>
@@ -205,19 +205,19 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                                 </select>
                             </div>
                         </div>
-                        <div className="container row">
+                        <div className="container-fluid row">
                             <Button className="btn-primary my-2 mx-2 col" type="submit" >Turnier Hinzufügen</Button>
                         </div>
                     </div>
                 </Form>
-                <div className="container row my-2">
+                <div className="container-fluid row my-2">
                     <Button className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(true)}>Turnierübersicht erstellen</Button>
                     <Button className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(false)}>Turnierübersicht erstellen (optionale turniere)</Button>
                 </div>
-                <div className="container row my-2">
+                <div className="container-fluid row my-2">
                     <Button className="btn-primary mx-2 col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
                 </div>
-                <div className="container row my-2">
+                <div className="container-fluid row my-2">
                     <FileUpload
                         setFile={setUploadedFile}
                         handleCsvExport={exportDataAsCsv}
