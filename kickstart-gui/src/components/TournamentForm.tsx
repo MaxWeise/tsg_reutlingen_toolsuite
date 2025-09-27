@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "react-bootstrap";
 import TournamentTable from "./TournamentTable";
 import axios from "axios";
+import FileUpload from "./FileUpload";
 
 export interface Tournament {
     first_day: string
@@ -47,7 +48,6 @@ function makeFileDownloadRequest(requestData: RequestData, fileName: string): vo
             window.URL.revokeObjectURL(url);
         })
         .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
-
 }
 
 const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
@@ -60,6 +60,8 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
 
     const [includeOptional, setIncludeOptional] = useState(false);
+
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
     const handleAddTournament = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -99,18 +101,11 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         makeFileDownloadRequest(request, "tournament_overview_file.xlsx");
     };
 
-    const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.info(`Checkbox is now ${event.target.checked}`)
-        setIncludeOptional(event.target.checked);
-    };
-
     const handleCreateRefereeOverview = (_: React.FormEvent<HTMLButtonElement>) => {
         // TODO: Handle button click
     };
 
     const exportDataAsCsv = (_: React.FormEvent<HTMLButtonElement>) => {
-        // Tournaments need to have the date in the following representation
-        // 2006-01-02T15:04:05Z07:00 (RFC3339)
 
         let tournamentsWithNewDateFormat = tournaments.map((tournament: Tournament) => {
             tournament.first_day = `${tournament.first_day}T00:00:00Z`
@@ -133,74 +128,110 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
     };
 
     const importDataFromCsv = (_: React.FormEvent<HTMLButtonElement>) => {
-        // TODO: Handle button click
+        const formData = new FormData();
+
+        if (!uploadedFile) {
+            // TODO: Show an alert to the user
+            console.error("There is no file uploaded. Please first select a file.")
+            return;
+        }
+
+        formData.append("file", uploadedFile);
+        axios.post(`${serverUrl}:7000/import-csv`,
+            formData
+        )
+            .then((response) => {
+                console.info(response)
+                // TODO: The response contains the data stored in the CSV file.
+            })
+            .catch((error) => {
+                console.error(error)
+            });
+    };
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) {
+            console.error("No File recieved. e.target.files is set to null.");
+            return;
+        }
+
+        const file = e.target.files[0];
+        setUploadedFile(file);
+        console.info(`Set uploaded file to ${file}`);
     };
 
     return (
         <>
             <h1>Input tournament data</h1>
-            <Form onSubmit={handleAddTournament}>
-                <div className="container" id="input-form-group">
-                    <div className="row my-2">
-                        <div className="col input-group">
-                            <span className="input-group-text">Erster Tag</span>
-                            <input type="date" className="form-control" value={first_day} onChange={(e) => { setFirstDay(e.target.value) }} />
+            <div className="container">
+                <Form onSubmit={handleAddTournament} className="row">
+                    <div className="container" id="input-form-group">
+                        <div className="row my-2">
+                            <div className="col input-group">
+                                <span className="input-group-text">Erster Tag</span>
+                                <input type="date" className="form-control" value={first_day} onChange={(e) => { setFirstDay(e.target.value) }} />
+                            </div>
+                            <div className="col input-group">
+                                <span className="input-group-text">Zweiter Tag</span>
+                                <input type="date" className="form-control" value={second_day} onChange={(e) => { setSecondDay(e.target.value) }} />
+                            </div>
                         </div>
-                        <div className="col input-group">
-                            <span className="input-group-text">Zweiter Tag</span>
-                            <input type="date" className="form-control" value={second_day} onChange={(e) => { setSecondDay(e.target.value) }} />
+                        <div className="row my-2">
+                            <div className="col input-group">
+                                <span className="input-group-text">Stadt</span>
+                                <input type="text" className="form-control" value={city} onChange={(e) => { setCity(e.target.value) }} />
+                            </div>
+                        </div>
+                        <div className="row my-2">
+                            <div className="col input-group">
+                                <label className="input-group-text">Kategorie</label>
+                                <select className="form-select" id="inputGroupSelect01" value={category} onChange={(e) => { setCategory(e.target.value) }}>
+                                    <option selected>Kategorie</option>
+                                    <option>RL</option>
+                                    <option>QB</option>
+                                    <option>BNWM</option>
+                                    <option>DM</option>
+                                </select>
+                            </div>
+                            <div className="col input-group">
+                                <label className="input-group-text">Altersklasse</label>
+                                <select className="form-select" id="inputGroupSelect01" value={age_group} onChange={(e) => { setAgeGroup(e.target.value) }}>
+                                    <option selected>Altersklasse</option>
+                                    <option>U11</option>
+                                    <option>U13</option>
+                                    <option>U15</option>
+                                    <option>U17</option>
+                                    <option>U20</option>
+                                    <option>Senioren</option>
+                                    <option>Veteranen</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div className="row my-2">
-                        <div className="col input-group">
-                            <span className="input-group-text">Stadt</span>
-                            <input type="text" className="form-control" value={city} onChange={(e) => { setCity(e.target.value) }} />
-                        </div>
-                    </div>
-                    <div className="row my-2">
-                        <div className="col input-group">
-                            <label className="input-group-text">Kategorie</label>
-                            <select className="form-select" id="inputGroupSelect01" value={category} onChange={(e) => { setCategory(e.target.value) }}>
-                                <option selected>Kategorie</option>
-                                <option>RL</option>
-                                <option>QB</option>
-                                <option>BNWM</option>
-                                <option>DM</option>
-                            </select>
-                        </div>
-                        <div className="col input-group">
-                            <label className="input-group-text">Altersklasse</label>
-                            <select className="form-select" id="inputGroupSelect01" value={age_group} onChange={(e) => { setAgeGroup(e.target.value) }}>
-                                <option selected>Altersklasse</option>
-                                <option>U11</option>
-                                <option>U13</option>
-                                <option>U15</option>
-                                <option>U17</option>
-                                <option>U20</option>
-                                <option>Senioren</option>
-                                <option>Veteranen</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                </Form>
                 <div className="container" id="button-group">
-                    <div className="row my-2">
-                        <Button type="submit" className="btn-primary">Turnier Hinzufügen</Button>
-                        <Button className="btn-primary col" onClick={handleCreateTournamentOverview}>Turnierübersicht erstellen</Button>
-                        <Button className="btn-primary col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
+                    <div className="row">
+                        <Button className="btn-primary my-2" type="submit" >Turnier Hinzufügen</Button>
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" checked={includeOptional} onChange={handleCheck} id="optional-checkbox" />
+                            <input className="form-check-input" type="checkbox" checked={includeOptional} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                console.info(`Checkbox is now ${event.target.checked}`)
+                                setIncludeOptional(event.target.checked);
+                            }} id="optional-checkbox" />
                             <label className="form-check-label" htmlFor="optional-checkbox">Optionale Turniere einfügen</label>
                         </div>
-                    </div>
-                    <div className="row my-2" id="csv-import-export-button-group">
-                        <Button className="btn-primary col" onClick={exportDataAsCsv}>Daten exportieren</Button>
-                        <Button className="btn-primary col" onClick={importDataFromCsv}>Daten importieren</Button>
+                        <Button className="btn-primary mx-2 col" onClick={handleCreateTournamentOverview}>Turnierübersicht erstellen</Button>
+                        <Button className="btn-primary mx-2 col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
                     </div>
                 </div>
-            </Form >
-            <div className="container my-2" id="tournament-table">
-                <TournamentTable tournaments={tournaments} />
+                <div className="container row">
+                    <FileUpload
+                        handleFileUpload={handleFileUpload}
+                        handleCsvExport={exportDataAsCsv}
+                        handleCsvImport={importDataFromCsv} />
+                </div>
+                <div id="tournament-table">
+                    <TournamentTable tournaments={tournaments} />
+                </div>
             </div>
         </>
     );
