@@ -141,10 +141,20 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
             formData
         )
             .then((response) => {
-                console.info(response)
-                // TODO: The response contains the data stored in the CSV file.
+                console.info(response.data)
+                const tournaments: Tournament[] = response.data.map(function(item: any) {
+                    return ({
+                        first_day: item.first_day,
+                        second_day: item.second_day,
+                        city: item.city,
+                        category: item.category,
+                        age_group: item.age_group,
+                    });
+                });
+                setTournaments(tournaments)
             })
             .catch((error) => {
+                // TODO: Show an alert to the user
                 console.error(error)
             });
     };
