@@ -131,8 +131,9 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         const formData = new FormData();
 
         if (!uploadedFile) {
-            // TODO: Show an alert to the user
-            console.error("There is no file uploaded. Please first select a file.")
+            const msg = "There is no file uploaded. Please first select a file."
+            console.error(msg)
+            alert(msg)
             return;
         }
 
@@ -154,8 +155,8 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                 setTournaments(tournaments)
             })
             .catch((error) => {
-                // TODO: Show an alert to the user
                 console.error(error)
+                alert(error)
             });
     };
 
