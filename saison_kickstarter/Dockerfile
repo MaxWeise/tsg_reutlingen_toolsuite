@@ -9,4 +9,6 @@ RUN pip install --no-cache-dir --upgrade .
 
 COPY ./saison_kickstarter /code/saison_kickstarter
 
+EXPOSE 8000
+
 CMD ["fastapi", "run", "saison_kickstarter/api.py"]
