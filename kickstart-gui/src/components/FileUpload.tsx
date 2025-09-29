@@ -1,6 +1,19 @@
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 
-const FileUpload = ({ setFile, handleCsvExport, handleCsvImport }: any) => {
+const FileUpload = ({ serviceHealthCheck, setFile, handleCsvExport, handleCsvImport }: any) => {
+
+    const [isServiceAvailable, setIsBackendAvailable] = useState<boolean>(false)
+
+    useEffect(() => {
+        const backendIsHealthy = async () => {
+            const url: string = "http://127.0.0.1:7000/"
+            const healtyh = await serviceHealthCheck("csv-service", url)
+            setIsBackendAvailable(healtyh)
+        }
+
+        backendIsHealthy();
+    }, []);
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) {
@@ -20,8 +33,8 @@ const FileUpload = ({ setFile, handleCsvExport, handleCsvImport }: any) => {
                     <Form.Control type="file" onChange={handleFileUpload} />
                 </Form.Group>
                 <div className="row">
-                    <Button className="btn-secondary my-2 mx-2 col" onClick={handleCsvExport}>Daten exportieren</Button>
-                    <Button className="btn-secondary my-2 mx-2 col" onClick={handleCsvImport}>Daten importieren</Button>
+                    <Button disabled={!isServiceAvailable} className="btn-secondary my-2 mx-2 col" onClick={handleCsvExport}>Daten exportieren</Button>
+                    <Button disabled={!isServiceAvailable} className="btn-secondary my-2 mx-2 col" onClick={handleCsvImport}>Daten importieren</Button>
                 </div>
             </div>
         </>

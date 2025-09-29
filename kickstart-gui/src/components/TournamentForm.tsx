@@ -21,47 +21,6 @@ interface RequestData {
 }
 
 
-const checkBackendHealth = async (): Promise<boolean> => {
-    const url: string = "http://127.0.0.1:8000/"
-    try {
-        const response = await fetch(url)
-        return response.ok
-    } catch (error) {
-        console.error(`Health check failed. Backend is not available at ${url}`)
-        return false
-    }
-};
-
-function makeFileDownloadRequest(requestData: RequestData, fileName: string): void {
-    console.info(`Making the following request ${JSON.stringify(requestData)}`)
-
-    axios.post(
-        requestData.endpoint,
-        requestData.data,
-        {
-            headers: requestData.header,
-            responseType: requestData.responseType
-        },
-    )
-        .then((response) => {
-            console.log(response)
-            const blob = new Blob([response.data], { type: response.headers['content-type'] });
-            const url = window.URL.createObjectURL(blob);
-
-            // Construct a hidden link object and click it automatically
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-
-            // Clean up
-            link.parentNode?.removeChild(link);
-            window.URL.revokeObjectURL(url);
-        })
-        .catch((error) => { console.error(`There has been an error while sending a request: ${error} `) });
-}
-
 const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
     const [first_day, setFirstDay] = useState("");
@@ -77,7 +36,8 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
     useEffect(() => {
         const backendIsHealthy = async () => {
-            const healtyh = await checkBackendHealth()
+            const url: string = "http://127.0.0.1:8000/"
+            const healtyh = await checkServiceHealth("saison-kickstarter-backend", url)
             setIsBackendAvailable(healtyh)
         }
 
@@ -242,6 +202,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                 </div>
                 <div className="container-fluid row my-2">
                     <FileUpload
+                        serviceHealthCheck={checkServiceHealth}
                         setFile={setUploadedFile}
                         handleCsvExport={exportDataAsCsv}
                         handleCsvImport={importDataFromCsv} />
@@ -255,3 +216,47 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 };
 
 export default TournamentForm;
+
+const checkServiceHealth = async (serviceName: string, serviceUrl: string): Promise<boolean> => {
+    try {
+        console.info(`Checking health for ${serviceName}`)
+        const response = await fetch(serviceUrl)
+
+        console.info("Service is healthy. Eneabling buttons.")
+        return response.ok
+    } catch (error) {
+        console.error(`Health check failed for ${serviceName}. Backend is not available at ${serviceUrl}`)
+        return false
+    }
+};
+
+
+function makeFileDownloadRequest(requestData: RequestData, fileName: string): void {
+    console.info(`Making the following request ${JSON.stringify(requestData)}`)
+
+    axios.post(
+        requestData.endpoint,
+        requestData.data,
+        {
+            headers: requestData.header,
+            responseType: requestData.responseType
+        },
+    )
+        .then((response) => {
+            console.log(response)
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const url = window.URL.createObjectURL(blob);
+
+            // Construct a hidden link object and click it automatically
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => { console.error(`There has been an error while sending a request: ${error} `) });
+}
