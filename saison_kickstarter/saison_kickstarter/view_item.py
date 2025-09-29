@@ -76,6 +76,14 @@ class RefereeViewItem:
     city: str
     required_licence: Literal["E/D", "D"]
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, RefereeViewItem):
+            return NotImplemented
+        return self.day == other.day and self.city == other.city
+
+    def __hash__(self) -> int:
+        return hash((self.day, self.city))
+
     def to_tuple(self) -> tuple[str, str, str]:
         """Create a tuple representation of the object.
 

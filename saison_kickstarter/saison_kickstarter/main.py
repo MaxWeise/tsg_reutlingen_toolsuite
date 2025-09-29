@@ -12,6 +12,9 @@ import pathlib
 
 from saison_kickstarter import file_reader, file_writer, view_builder
 from saison_kickstarter.exceptions import FileEncodingError, WorkbookError
+from saison_kickstarter.file_reader import FileReader
+from saison_kickstarter.file_writer import ExcelFileWriter
+from saison_kickstarter.view_builder import ViewBuilder
 
 PROJECT_URL: str = r"https://github.com/MaxWeise/tsg_reutlingen_toolsuite"
 PROGRAMM_NAME: str = "saison-kickstarter"
@@ -86,9 +89,9 @@ def _create_tournament_overview(data_file: str, out_file: pathlib.Path, include_
     """Define the workflow to create an overview over all tournaments."""
     suffix = pathlib.Path(data_file).suffix
 
-    reader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)
-    builder = view_builder.TournamentViewBuilder(include_optional)
-    writer = file_writer.ExcelFileWriter(out_file)
+    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)
+    builder: ViewBuilder = view_builder.TournamentViewBuilder(include_optional)
+    writer: ExcelFileWriter = file_writer.ExcelFileWriter(out_file)
 
     try:
         tournaments = reader.read_data()
@@ -109,9 +112,9 @@ def _create_referee_overview(data_file: str, out_file: pathlib.Path) -> None:
     """Define the workflow to create an overview over all needed referees."""
     suffix = pathlib.Path(data_file).suffix
 
-    reader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)
-    builder = view_builder.RefereeViewBuilder()
-    writer = file_writer.ExcelFileWriter(out_file)
+    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)
+    builder: ViewBuilder = view_builder.RefereeViewBuilder()
+    writer: ExcelFileWriter = file_writer.ExcelFileWriter(out_file)
 
     try:
         tournaments = reader.read_data()

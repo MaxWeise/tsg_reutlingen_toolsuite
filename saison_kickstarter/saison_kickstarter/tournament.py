@@ -8,6 +8,8 @@ import dataclasses
 import datetime
 import enum
 
+import pydantic
+
 
 class Category(enum.Enum):
     """Different kinds of tournaments.
@@ -32,12 +34,11 @@ class AgeGroup(enum.Enum):
     U15 = "U15"
     U17 = "U17"
     U20 = "U20"
-    SENIOR = "Senior"
-    VETERAN = "Veteran"
+    SENIOR = "Senioren"
+    VETERAN = "Veteranen"
 
 
-@dataclasses.dataclass(order=True, kw_only=True)
-class Tournament:
+class Tournament(pydantic.BaseModel):
     """Representation of a tournament in the database."""
 
     first_day: datetime.date
@@ -80,35 +81,6 @@ class Tournament:
         )
 
 
-# TODO: Remove unnecessary constructor function
-def category_from_string(category: str) -> Category:
-    categories = {
-        "BNWM": Category.BNWM,
-        "DM": Category.DM,
-        "RL": Category.RL,
-        "QB": Category.QB,
-    }
-
-    return categories[category]
-
-
-# TODO: Remove unnecessary constructor function
-def age_group_from_string(age_group: str) -> AgeGroup:
-    age_groups = {
-        "u11": AgeGroup.U11,
-        "u13": AgeGroup.U13,
-        "u15": AgeGroup.U15,
-        "u17": AgeGroup.U17,
-        "u20": AgeGroup.U20,
-        "senior": AgeGroup.SENIOR,
-        "senioren": AgeGroup.SENIOR,
-        "veteran": AgeGroup.VETERAN,
-        "veteranen": AgeGroup.VETERAN,
-    }
-
-    return age_groups[age_group.lower()]
-
-
 def date_from_string(date: str) -> datetime.date:
     """Construct a datetime object from a string.
 
@@ -141,7 +113,7 @@ def _get_two_dates_from_string(date: str) -> tuple[str, str]:
             dd.mm/dd.mm.yyyy format.
 
     Returns:
-        A tuple containing the two date entrys.
+        A tuple containing the two date entrys in dd.mm.yyyy format.
 
     Raises:
         ValueError: The date is in the wrong format.
@@ -191,8 +163,8 @@ def tournament_from_tuple(data: tuple[str, str, str, str]) -> Tournament:
     fd = date_from_string(dates[0])
     sd = date_from_string(dates[1])
 
-    cat = category_from_string(category)
-    age = age_group_from_string(age_group)
+    cat = Category(category)
+    age = AgeGroup(age_group)
 
     return Tournament(
         first_day=fd,
@@ -200,47 +172,4 @@ def tournament_from_tuple(data: tuple[str, str, str, str]) -> Tournament:
         city=city,
         category=cat,
         age_group=age,
-    )
-
-
-def tournament_from_dict(entries: dict[str, str]) -> Tournament:
-    """Construct a tournament object from a dictionary of entries.
-
-    Args:
-        entries: A dictionary of data that will be converted
-            into a tournament object.
-        sql_data_format (bool, optional): If the dateformat is yyyy-mm-dd.
-            Defaults to False
-
-    Returns:
-        A tournament containing the data from entries.
-    """
-    first_date_from_dict = entries.get("first_day")
-    second_date_from_dict = entries.get("second_day")
-    city_from_dict = entries.get("city")
-    category_from_dict = entries.get("category")
-    age_group_from_dict = entries.get("age_group")
-
-    if not all(
-        (
-            first_date_from_dict,
-            second_date_from_dict,
-            city_from_dict,
-            category_from_dict,
-            age_group_from_dict,
-        )
-    ):
-        raise ValueError("All entries must have a value!")
-
-    first_day = date_from_string(str(first_date_from_dict))
-    second_day = date_from_string(str(second_date_from_dict))
-    category = category_from_string(str(category_from_dict))
-    age_group = age_group_from_string(str(age_group_from_dict))
-
-    return Tournament(
-        first_day=first_day,
-        second_day=second_day,
-        city=str(city_from_dict),
-        category=category,
-        age_group=age_group,
     )

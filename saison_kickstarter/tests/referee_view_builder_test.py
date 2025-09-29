@@ -8,9 +8,8 @@ Created: 27.01.2024
 
 import datetime
 
-from saison_kickstarter.view_item import RefereeViewItem
-
 from saison_kickstarter import tournament, view_builder
+from saison_kickstarter.view_item import RefereeViewItem
 
 
 def test_build_referee_overview() -> None:
@@ -30,6 +29,20 @@ def test_build_referee_overview() -> None:
             city="Heidenheim",
             category=tournament.Category.RL,
             age_group=tournament.AgeGroup.U11,
+        ),
+        tournament.Tournament(
+            first_day=datetime.date(2000, 1, 1),
+            second_day=datetime.date(2000, 1, 2),
+            city="Heidenheim",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U13,
+        ),
+        tournament.Tournament(
+            first_day=datetime.date(2000, 1, 1),
+            second_day=datetime.date(2000, 1, 2),
+            city="Heidenheim",
+            category=tournament.Category.RL,
+            age_group=tournament.AgeGroup.U15,
         ),
         tournament.Tournament(
             first_day=datetime.date(2000, 2, 1),
