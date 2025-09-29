@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import TournamentTable from "./TournamentTable";
 import axios from "axios";
@@ -19,6 +19,18 @@ interface RequestData {
     data: Tournament[],
     includeOptional?: boolean,
 }
+
+
+const checkBackendHealth = async (): Promise<boolean> => {
+    const url: string = "http://127.0.0.1:8000/"
+    try {
+        const response = await fetch(url)
+        return response.ok
+    } catch (error) {
+        console.error(`Health check failed. Backend is not available at ${url}`)
+        return false
+    }
+};
 
 function makeFileDownloadRequest(requestData: RequestData, fileName: string): void {
     console.info(`Making the following request ${JSON.stringify(requestData)}`)
@@ -47,10 +59,10 @@ function makeFileDownloadRequest(requestData: RequestData, fileName: string): vo
             link.parentNode?.removeChild(link);
             window.URL.revokeObjectURL(url);
         })
-        .catch((error) => { console.error(`There has been an error while sending a request: ${error}`) });
+        .catch((error) => { console.error(`There has been an error while sending a request: ${error} `) });
 }
 
-const TournamentForm = (serverUrl: string, backendAvailable: boolean) => {
+const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
     const [first_day, setFirstDay] = useState("");
     const [second_day, setSecondDay] = useState("");
@@ -60,6 +72,17 @@ const TournamentForm = (serverUrl: string, backendAvailable: boolean) => {
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
 
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+
+    const [isBackendAvailable, setIsBackendAvailable] = useState<boolean>(false)
+
+    useEffect(() => {
+        const backendIsHealthy = async () => {
+            const healtyh = await checkBackendHealth()
+            setIsBackendAvailable(healtyh)
+        }
+
+        backendIsHealthy();
+    }, []);
 
     const handleAddTournament = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -83,8 +106,8 @@ const TournamentForm = (serverUrl: string, backendAvailable: boolean) => {
 
     const handleCreateTournamentOverview = (includeOptional: boolean) => {
         const endpoint = includeOptional
-            ? `${serverUrl}:8000/overview/tournament?include_optional=true`
-            : `${serverUrl}:8000/overview/tournament`;
+            ? `${serverUrl}: 8000 / overview / tournament ? include_optional = true`
+            : `${serverUrl}: 8000 / overview / tournament`;
         const header = { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
         const responseType = "blob"
 
@@ -106,12 +129,12 @@ const TournamentForm = (serverUrl: string, backendAvailable: boolean) => {
     const exportDataAsCsv = (_: React.FormEvent<HTMLButtonElement>) => {
 
         let tournamentsWithNewDateFormat = tournaments.map((tournament: Tournament) => {
-            tournament.first_day = `${tournament.first_day}T00:00:00Z`
-            tournament.second_day = `${tournament.second_day}T00:00:00Z`
+            tournament.first_day = `${tournament.first_day} T00:00:00Z`
+            tournament.second_day = `${tournament.second_day} T00:00:00Z`
             return tournament
         });
 
-        const endpoint = `${serverUrl}:7000/export-csv`;
+        const endpoint = `${serverUrl}: 7000 /export -csv`;
         const header = { 'Accept': 'text/csv' }
         const responseType = "blob"
 
@@ -136,7 +159,7 @@ const TournamentForm = (serverUrl: string, backendAvailable: boolean) => {
         }
 
         formData.append("file", uploadedFile);
-        axios.post(`${serverUrl}:7000/import-csv`,
+        axios.post(`${serverUrl}: 7000 /import -csv`,
             formData
         )
             .then((response) => {
@@ -211,11 +234,11 @@ const TournamentForm = (serverUrl: string, backendAvailable: boolean) => {
                     </div>
                 </Form>
                 <div className="container-fluid row my-2">
-                    <Button className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(true)}>Turnierübersicht erstellen</Button>
-                    <Button className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(false)}>Turnierübersicht erstellen (optionale turniere)</Button>
+                    <Button disabled={!isBackendAvailable} className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(true)}>Turnierübersicht erstellen</Button>
+                    <Button disabled={!isBackendAvailable} className="btn-primary mx-2 col" onClick={() => handleCreateTournamentOverview(false)}>Turnierübersicht erstellen (optionale turniere)</Button>
                 </div>
                 <div className="container-fluid row my-2">
-                    <Button className="btn-primary mx-2 col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
+                    <Button disabled={!isBackendAvailable} className="btn-primary mx-2 col" onClick={handleCreateRefereeOverview}>Kampfrichterübersicht erstellen</Button>
                 </div>
                 <div className="container-fluid row my-2">
                     <FileUpload
