@@ -4,6 +4,15 @@ import TournamentTable from "./TournamentTable";
 import axios from "axios";
 import FileUpload from "./FileUpload";
 
+/**
+ * Represents a single tournament event.
+ *
+ * @param {string} first_day - The start date of the tournament in YYYY-MM-DD format.
+ * @param {string} second_day - The end date of the tournament in YYYY-MM-DD format. Can be the same as the first day.
+ * @param {string} city - The city where the tournament takes place.
+ * @param {string} category - The category of the tournament (e.g., RL for 'Rangliste', DM for 'Deutsche Meisterschaft').
+ * @param {string} age_group - The age group for which the tournament is held (e.g., U13, U17, Senioren).
+ */
 export interface Tournament {
     first_day: string
     second_day: string
@@ -12,6 +21,15 @@ export interface Tournament {
     age_group: string
 }
 
+/**
+ * Bundle data used to make a request in an object. This is primarily used for logging.
+ *
+ * @param {string} endpoint - The endpoint to send the request to.
+ * @param {any} header - The header to send with the request.
+ * @param {any} responseType - The type of the response.
+ * @param {Tournament[]} data - The data contained in the request.
+ * @param {boolean | void} includeOptional - Wheather to include optional tournaments in the overview. Only used for Tournament Overview.
+ */
 interface RequestData {
     endpoint: string,
     header: any,
@@ -34,6 +52,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
     const [isBackendAvailable, setIsBackendAvailable] = useState<boolean>(false)
 
+    /* Check the health of saison-kickstarter backend */
     useEffect(() => {
         const backendIsHealthy = async () => {
             const url: string = "http://127.0.0.1:8000/"
@@ -64,10 +83,11 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         }
     };
 
+    /* make a request to the backend to create a tournament overview */
     const handleCreateTournamentOverview = (includeOptional: boolean) => {
         const endpoint = includeOptional
-            ? `${serverUrl}: 8000 / overview / tournament ? include_optional = true`
-            : `${serverUrl}: 8000 / overview / tournament`;
+            ? `${serverUrl}:8000/overview/tournament?include_optional=true`
+            : `${serverUrl}:8000/overview/tournament`;
         const header = { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
         const responseType = "blob"
 
@@ -82,19 +102,31 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         makeFileDownloadRequest(request, "tournament_overview_file.xlsx");
     };
 
+    /* make a request to the backend to create a referee overview */
     const handleCreateRefereeOverview = () => {
-        // TODO: Handle button click
+        const endpoint = `${serverUrl}:8000/overview/referee`;
+        const header = { 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+        const responseType = "blob"
+
+        const request: RequestData = {
+            endpoint: endpoint,
+            header: header,
+            responseType: responseType,
+            data: tournaments,
+        };
+        makeFileDownloadRequest(request, "referee_overview_file.xlsx");
     };
 
+    /* Take the tournament data from the table and export it into a csv file */
     const exportDataAsCsv = (_: React.FormEvent<HTMLButtonElement>) => {
 
         let tournamentsWithNewDateFormat = tournaments.map((tournament: Tournament) => {
-            tournament.first_day = `${tournament.first_day} T00:00:00Z`
-            tournament.second_day = `${tournament.second_day} T00:00:00Z`
+            tournament.first_day = `${tournament.first_day}T00:00:00Z`
+            tournament.second_day = `${tournament.second_day}T00:00:00Z`
             return tournament
         });
 
-        const endpoint = `${serverUrl}: 7000 /export -csv`;
+        const endpoint = `${serverUrl}:7000/export-csv`;
         const header = { 'Accept': 'text/csv' }
         const responseType = "blob"
 
@@ -108,6 +140,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
         makeFileDownloadRequest(request, "tournaments.csv");
     };
 
+    /* Take the tournament data from a csv file and import them into the programm */
     const importDataFromCsv = (_: React.FormEvent<HTMLButtonElement>) => {
         const formData = new FormData();
 
@@ -118,16 +151,17 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
             return;
         }
 
+        // TODO: Parse date to dd.mm.yyyy format.
         formData.append("file", uploadedFile);
-        axios.post(`${serverUrl}: 7000 /import -csv`,
+        axios.post(`${serverUrl}:7000/import-csv`,
             formData
         )
             .then((response) => {
                 console.info(response.data)
                 const tournaments: Tournament[] = response.data.map(function(item: any) {
                     return ({
-                        first_day: item.first_day,
-                        second_day: item.second_day,
+                        first_day: parseDate(item.first_day),
+                        second_day: parseDate(item.second_day),
                         city: item.city,
                         category: item.category,
                         age_group: item.age_group,
@@ -217,6 +251,13 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
 
 export default TournamentForm;
 
+/** 
+ * Make a request to the specified server to determines it's availability.
+ * 
+ * @param {string} serviceName - The name of the service. Primarily used for logging.
+ * @param {string} serviceUrl - The url which is used to contact the service. Expects that the root endpoint is used for health checking.
+ * @returns {boolean} True if the server returns a response code in the 2xx range. False otherwise
+ * */
 const checkServiceHealth = async (serviceName: string, serviceUrl: string): Promise<boolean> => {
     try {
         console.info(`Checking health for ${serviceName}`)
@@ -230,7 +271,13 @@ const checkServiceHealth = async (serviceName: string, serviceUrl: string): Prom
     }
 };
 
-
+/** 
+ * Make a post request to the backend api.
+ * When status code is 2xx a hidden link is created and clicked which will download the excel file with the given name.
+ *
+ * @param {RequestData} requestData - An object that holds the data to make the request.
+ * @param {string} fileName - The name of the file that get's downloaded.
+ */
 function makeFileDownloadRequest(requestData: RequestData, fileName: string): void {
     console.info(`Making the following request ${JSON.stringify(requestData)}`)
 
@@ -259,4 +306,15 @@ function makeFileDownloadRequest(requestData: RequestData, fileName: string): vo
             window.URL.revokeObjectURL(url);
         })
         .catch((error) => { console.error(`There has been an error while sending a request: ${error} `) });
-}
+};
+
+/**
+ * Parse a data from the go format (RF3339 with timestamp) to YYYY-MM-DD format
+ *
+ * @param {string} date - The date given from the api in RF3339 format. 
+ * @returns {string} - The date in YYYY-MM-DD format.
+ */
+function parseDate(date: string): string {
+    const parts = date.split("T");
+    return parts[0];
+};
