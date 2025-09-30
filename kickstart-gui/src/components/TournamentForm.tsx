@@ -118,11 +118,14 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
     };
 
     /* Take the tournament data from the table and export it into a csv file */
-    const exportDataAsCsv = (_: React.FormEvent<HTMLButtonElement>) => {
+    const exportDataAsCsv = () => {
 
         let tournamentsWithNewDateFormat = tournaments.map((tournament: Tournament) => {
             tournament.first_day = `${tournament.first_day}T00:00:00Z`
             tournament.second_day = `${tournament.second_day}T00:00:00Z`
+            tournament.city = tournament.city.trim()
+            tournament.age_group = tournament.age_group.trim()
+            tournament.category = tournament.category.trim()
             return tournament
         });
 
@@ -151,7 +154,6 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
             return;
         }
 
-        // TODO: Parse date to dd.mm.yyyy format.
         formData.append("file", uploadedFile);
         axios.post(`${serverUrl}:7000/import-csv`,
             formData
@@ -162,9 +164,9 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                     return ({
                         first_day: parseDate(item.first_day),
                         second_day: parseDate(item.second_day),
-                        city: item.city,
-                        category: item.category,
-                        age_group: item.age_group,
+                        city: item.city.trim(),
+                        category: item.category.trim(),
+                        age_group: item.age_group.trim(),
                     });
                 });
                 setTournaments(tournaments)
