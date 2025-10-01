@@ -17,10 +17,12 @@ from saison_kickstarter import file_writer, tournament, view_builder
 app = fastapi.FastAPI()
 
 origins = [
-    "http://localhost:5173",    # Allow requests from dev server
-    "http://127.0.0.1:5173",    # Allow requests from dev server
-    "http://localhost:8080",    # Allow requests from prod server
-    "http://127.0.0.1:8080",    # Allow requests from prod server
+    "http://localhost:5173",  # Allow requests from dev server
+    "http://127.0.0.1:5173",  # Allow requests from dev server
+    "http://localhost:8080",  # Allow requests from prod server
+    "http://127.0.0.1:8080",  # Allow requests from prod server
+    "http://localhost:9000",  # Allow requests from docker container
+    "http://127.0.0.1:9000",  # Allow requests from docker container
 ]
 
 app.add_middleware(
@@ -39,8 +41,12 @@ def root():
 
 
 @app.post("/overview/tournament")
-def create_tournament_overview(items: list[tournament.Tournament], include_optional: bool | None = None, file_name: str | None = None) -> Any:
-    """ ## Create an overview for all tournaments for the season in an excel file.
+def create_tournament_overview(
+    items: list[tournament.Tournament],
+    include_optional: bool | None = None,
+    file_name: str | None = None,
+) -> Any:
+    """## Create an overview for all tournaments for the season in an excel file.
 
     ### Args:
     - **items** _(list[tournament.Tournament])_: A list of tournament items that
@@ -60,7 +66,9 @@ def create_tournament_overview(items: list[tournament.Tournament], include_optio
     """
     io_buffer = io.BytesIO()
 
-    builder = view_builder.TournamentViewBuilder(include_optional if include_optional else False)
+    builder = view_builder.TournamentViewBuilder(
+        include_optional if include_optional else False
+    )
     writer = file_writer.ExcelFileWriter(io_buffer)
 
     view = builder.build_view(items)
@@ -73,17 +81,23 @@ def create_tournament_overview(items: list[tournament.Tournament], include_optio
         raise fastapi.HTTPException(status_code=500, detail=e)
 
     # Return the file as a StreamingResponse
-    media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    media_type = (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     fn = file_name if file_name else "user_overview.xlsx"
     headers = {
-        "Content-Disposition": "attachment; filename={}".format(fn), 
+        "Content-Disposition": "attachment; filename={}".format(fn),
     }
-    return starlette.responses.StreamingResponse(io_buffer, media_type=media_type, headers=headers)
+    return starlette.responses.StreamingResponse(
+        io_buffer, media_type=media_type, headers=headers
+    )
 
 
 @app.post("/overview/referee")
-def create_referee_overview(items: list[tournament.Tournament], file_name: str | None = None) -> Any:
-    """ ## Create an overview over all tournaments that need referee coverage in an excel file.
+def create_referee_overview(
+    items: list[tournament.Tournament], file_name: str | None = None
+) -> Any:
+    """## Create an overview over all tournaments that need referee coverage in an excel file.
 
     ### Args:
     - **items** _(list[tournament.Tournament])_: A list of tournament items that
@@ -113,9 +127,13 @@ def create_referee_overview(items: list[tournament.Tournament], file_name: str |
         raise fastapi.HTTPException(status_code=500, detail=e)
 
     # Return the file as a StreamingResponse
-    media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    media_type = (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     fn = file_name if file_name else "user_overview.xlsx"
     headers = {
-        "Content-Disposition": "attachment; filename={}".format(fn), 
+        "Content-Disposition": "attachment; filename={}".format(fn),
     }
-    return starlette.responses.StreamingResponse(io_buffer, media_type=media_type, headers=headers)
+    return starlette.responses.StreamingResponse(
+        io_buffer, media_type=media_type, headers=headers
+    )

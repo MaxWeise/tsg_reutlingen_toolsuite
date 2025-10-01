@@ -14,7 +14,7 @@ build:
 
 run: build
 	@echo "Running Docker container..."
-	docker run --rm -p 7000:8080 --name $(APP_NAME)-container $(IMG_NAME):$(IMG_TAG)
+	docker run --rm -p 8000:8080 --name $(APP_NAME)-container $(IMG_NAME):$(IMG_TAG)
 
 clean:
 	@echo "Removing Docker image..."
