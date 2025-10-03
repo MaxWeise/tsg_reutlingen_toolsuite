@@ -177,6 +177,10 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
             });
     };
 
+    const handleDeleteTournament = (index: number) => {
+        setTournaments(tournaments.filter((_, i) => i !== index));
+    };
+
     return (
         <>
             <h1>Input tournament data</h1>
@@ -244,7 +248,7 @@ const TournamentForm = ({ serverUrl }: { serverUrl: string }) => {
                         handleCsvImport={importDataFromCsv} />
                 </div>
                 <div id="tournament-table">
-                    <TournamentTable tournaments={tournaments} />
+                    <TournamentTable tournaments={tournaments} onDelete={handleDeleteTournament} />
                 </div>
             </div>
         </>
