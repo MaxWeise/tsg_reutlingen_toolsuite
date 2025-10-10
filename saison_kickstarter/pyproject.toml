@@ -10,7 +10,7 @@ maintainers = [
 requires-python = ">=3.10"
 
 dependencies = [
-    "fastapi[standard]>=0.116.1",
+    "fastapi[standard]>=0.118.1",
     "pandas>=2.2.0",
     "XlsxWriter == 3.1.9",
 ]
@@ -21,10 +21,6 @@ requires = [
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
-
-[project.optional-dependencies]
-development = [
-]
 
 [project.scripts]
 saison-kickstarter = "saison_kickstarter.main:main"
@@ -48,7 +44,6 @@ dev = [
     "tox>=4.12",
     "pandas==2.2.0",
     "openpyxl==3.1.2",
-    "pyarrow==15.0.0",
     "pytest-sugar>=1.0.0",
     "numpy>=1.26.4",
 ]
