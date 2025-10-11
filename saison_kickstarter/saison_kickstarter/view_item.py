@@ -1,4 +1,13 @@
-# TODO: Include docstring for the file
+"""Defines data classes for different views of tournament information.
+
+This module provides data structures for representing items in various "views"
+of the tournament schedule. Each class is designed to hold formatted data
+ready for display or output, for example, in a spreadsheet.
+
+The `ViewItem` protocol establishes a common interface, ensuring that all view
+item classes can be in turn converted to a tuple for easy serialization into a
+tabular format.
+"""
 
 import dataclasses
 import datetime
@@ -14,7 +23,7 @@ class ViewItem(typing.Protocol):
 
 
 @dataclasses.dataclass(order=True, frozen=True)
-class TournamentViewItem:
+class TournamentViewItem:   # pylint: disable=missing-class-docstring
     first_day: datetime.date
     second_day: datetime.date
     title: str
@@ -27,7 +36,7 @@ class TournamentViewItem:
         tabular form.
 
         The information is structured as follows:
-            Date of the competition (format: dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy)
+            Date of the competition, format: dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy
             Title of the competition (example "RL-U13 City")
             If the tournament is optional for the age_group.
 
@@ -41,7 +50,9 @@ class TournamentViewItem:
         )
 
 
-    def _parse_date(self, first_day: datetime.date, second_day: datetime.date) -> str:
+    def _parse_date(
+            self, first_day: datetime.date, second_day: datetime.date
+    ) -> str:
         """Parse the combined day format from two seperate date entries.
 
         Use this function to set the date format for a tournament view item
@@ -52,8 +63,8 @@ class TournamentViewItem:
             second_day (datetime.date): The second day of the date.
 
         Returns:
-            A string in the format dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy if the datum
-            spans the last and first day of consecutive months.
+            A string in the format dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy if the
+            datum spans the last and first day of consecutive months.
         """
         day_one = f"{first_day.day:02d}"
         month_one = f"{first_day.month:02d}"
@@ -71,7 +82,7 @@ class TournamentViewItem:
 
 
 @dataclasses.dataclass(order=True, frozen=True)
-class RefereeViewItem:
+class RefereeViewItem:   # pylint: disable=missing-class-docstring
     day: datetime.date
     city: str
     required_licence: Literal["E/D", "D"]

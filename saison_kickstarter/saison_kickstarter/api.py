@@ -46,7 +46,7 @@ def create_tournament_overview(
     include_optional: bool | None = None,
     file_name: str | None = None,
 ) -> Any:
-    """## Create an overview for all tournaments for the season in an excel file.
+    """## Create an overview for all tournaments for the season.
 
     ### Args:
     - **items** _(list[tournament.Tournament])_: A list of tournament items that
@@ -86,7 +86,7 @@ def create_tournament_overview(
     )
     fn = file_name if file_name else "user_overview.xlsx"
     headers = {
-        "Content-Disposition": "attachment; filename={}".format(fn),
+        "Content-Disposition": f"attachment; filename={fn}",
     }
     return starlette.responses.StreamingResponse(
         io_buffer, media_type=media_type, headers=headers
@@ -97,7 +97,7 @@ def create_tournament_overview(
 def create_referee_overview(
     items: list[tournament.Tournament], file_name: str | None = None
 ) -> Any:
-    """## Create an overview over all tournaments that need referee coverage in an excel file.
+    """## Create an overview over all tournaments that need referee coverage.
 
     ### Args:
     - **items** _(list[tournament.Tournament])_: A list of tournament items that
@@ -132,7 +132,7 @@ def create_referee_overview(
     )
     fn = file_name if file_name else "user_overview.xlsx"
     headers = {
-        "Content-Disposition": "attachment; filename={}".format(fn),
+        "Content-Disposition": f"attachment; filename={fn}",
     }
     return starlette.responses.StreamingResponse(
         io_buffer, media_type=media_type, headers=headers

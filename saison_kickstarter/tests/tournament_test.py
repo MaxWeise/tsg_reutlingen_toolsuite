@@ -10,7 +10,6 @@ from datetime import date
 
 import pytest
 
-from saison_kickstarter import tournament
 from saison_kickstarter.tournament import (AgeGroup, Category, Tournament,
                                            tournament_from_tuple)
 

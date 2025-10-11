@@ -67,8 +67,10 @@ def test_write_tournament_overview(testfile, test_tournament_view_items):
     assert len(table.index) == len(test_tournament_view_items)
 
 
-def test_write_tournament_overview_with_buffer_object(test_tournament_view_items) -> None:
-    """Test the functionality of the method when passing a buffer object to the class.
+def test_write_tournament_overview_with_buffer_object(
+        test_tournament_view_items
+) -> None:
+    """Test the functionality of the method when passing a buffer object.
 
     To be 100 % sure of the correctness of the data in the buffer, it would be
     necessary to convert the expected contents of the buffer to a bytes
@@ -81,7 +83,7 @@ def test_write_tournament_overview_with_buffer_object(test_tournament_view_items
     with io.BytesIO() as test_buffer:
         under_test = file_writer.ExcelFileWriter(test_buffer)
         under_test.write_tournament_data(test_tournament_view_items)
-        assert test_buffer.getvalue() 
+        assert test_buffer.getvalue()
 
 
 @pytest.fixture
@@ -107,8 +109,22 @@ def test_write_referee_overview(testfile, test_referee_view_items):
     assert testfile.exists()
 
     expected = pd.DataFrame(data={
-        "Datum": ["01.01.2000", "02.01.2000", "01.03.2000","02.03.2000","01.04.2000","02.04.2000"],
-        "Turnier": ["Heidenheim", "Heidenheim", "Backnang", "Backnang", "Heidelberg", "Heidelberg"],
+        "Datum": [
+            "01.01.2000",
+            "02.01.2000",
+            "01.03.2000",
+            "02.03.2000",
+            "01.04.2000",
+            "02.04.2000"
+        ],
+        "Turnier": [
+            "Heidenheim",
+            "Heidenheim",
+            "Backnang",
+            "Backnang",
+            "Heidelberg",
+            "Heidelberg"
+        ],
         "Lizenz": ["E/D", "E/D", "D", "D", "E/D", "E/D"],
         "1": [numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan],
         "2": [numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan],

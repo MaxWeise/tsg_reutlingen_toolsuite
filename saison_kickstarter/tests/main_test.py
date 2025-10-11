@@ -8,9 +8,9 @@ Created: 20.04.2025
 """
 
 # pylint: disable=redefined-outer-name
+# pylint: disable=protected-access
 
 import logging
-import os
 import pathlib
 from unittest import mock
 
@@ -19,7 +19,6 @@ import pandas as pd
 import pytest
 
 from saison_kickstarter import main
-from saison_kickstarter.main import SupportedCommands
 
 
 @pytest.fixture
@@ -53,7 +52,9 @@ def file_wrong_encoding(tmp_path):
     return tmp_file
 
 
-def test_main_create_tournament_overview_from_csv(mock_data, test_file, tmp_path) -> None:
+def test_main_create_tournament_overview_from_csv(
+        mock_data, test_file, tmp_path
+) -> None:
     """Test the main function.
 
     Given a file with csv values,

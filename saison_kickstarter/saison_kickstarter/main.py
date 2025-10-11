@@ -85,11 +85,13 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _create_tournament_overview(data_file: str, out_file: pathlib.Path, include_optional: bool = False) -> None:
+def _create_tournament_overview(
+        data_file: str, out_file: pathlib.Path, include_optional: bool = False
+) -> None:
     """Define the workflow to create an overview over all tournaments."""
     suffix = pathlib.Path(data_file).suffix
 
-    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)
+    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)  # pylint: disable=line-too-long
     builder: ViewBuilder = view_builder.TournamentViewBuilder(include_optional)
     writer: ExcelFileWriter = file_writer.ExcelFileWriter(out_file)
 
@@ -104,7 +106,9 @@ def _create_tournament_overview(data_file: str, out_file: pathlib.Path, include_
     try:
         writer.write_tournament_data(view)
     except WorkbookError as e:
-        logger.error("An exception occured while writing data to the excel file: %s", e)
+        logger.error(
+            "An exception occured while writing data to the excel file: %s", e
+        )
         return
 
 
@@ -112,7 +116,7 @@ def _create_referee_overview(data_file: str, out_file: pathlib.Path) -> None:
     """Define the workflow to create an overview over all needed referees."""
     suffix = pathlib.Path(data_file).suffix
 
-    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)
+    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)  # pylint: disable=line-too-long
     builder: ViewBuilder = view_builder.RefereeViewBuilder()
     writer: ExcelFileWriter = file_writer.ExcelFileWriter(out_file)
 
@@ -127,7 +131,9 @@ def _create_referee_overview(data_file: str, out_file: pathlib.Path) -> None:
     try:
         writer.write_referee_data(view)
     except WorkbookError as e:
-        logger.error("An exception occured while writing data to the excel file: %s", e)
+        logger.error(
+            "An exception occured while writing data to the excel file: %s", e
+        )
         return
 
 def main() -> None:
@@ -136,7 +142,7 @@ def main() -> None:
     command = SupportedCommands(arguments.command)
 
     if command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW:
-        logger.info(f"Selected command: {command}")
+        logger.info("Selected command: %s", command)
         _create_tournament_overview(
             arguments.file,
             pathlib.Path("turnierübersicht.xlsx"),
@@ -144,7 +150,7 @@ def main() -> None:
         )
 
     if command == SupportedCommands.CREATE_REFEREE_OVERVIEW:
-        logger.info(f"Selected command: {command}")
+        logger.info("Selected command: %s", command)
         _create_referee_overview(
             arguments.file,
             pathlib.Path("kampfrichterübersicht.xlsx"),

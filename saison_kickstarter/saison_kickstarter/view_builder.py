@@ -109,15 +109,15 @@ class TournamentViewBuilder:
         )
 
         for ag in tournament.AgeGroup:
-            vi: list[view_item.TournamentViewItem] = [
+            vi: list[view_item.TournamentViewItem] = [  # type: ignore
                 view_item.TournamentViewItem(
                     t.first_day,
                     t.second_day,
                     t.title,
                     False if ag == t.age_group else True,
                 )
-                for t in list(
-                    filter(lambda t: t.age_group in age_group_lut[ag], data)
+                for t in filter(
+                    lambda t, current_ag=ag: t.age_group in age_group_lut[current_ag], data     # pylint: disable=line-too-long
                 )
             ]
             ret.append(sorted(vi))
@@ -126,6 +126,29 @@ class TournamentViewBuilder:
 
 
 class RefereeViewBuilder:
+    """Create an overview for referees to plan their appointments."""
+
+    def _filter_condition(self, t: tournament.Tournament) -> bool:
+        """Filter out tournaments that meet specific criteria:
+
+        Tournaments are not included if they:
+            - Take place in Reutlingen, as referees get appointed seperately
+            - Have a category of QB or DM, as those require another type of
+                licence. Referees also get appointed seperately.
+
+        Args:
+            t: A tournament that gets checked for the criteria.
+
+        Returns:
+            True, if a tournament is to be included in the overview.
+            False otherwise.
+        """
+        return not (
+            t.city == "Reutlingen"
+            or t.category == tournament.Category.QB
+            or t.category == tournament.Category.DM
+        )
+
     def build_view(
         self, data: list[tournament.Tournament]
     ) -> Sequence[view_item.ViewItem]:
@@ -141,14 +164,8 @@ class RefereeViewBuilder:
             A list of structured tournament data.
         """
 
-        filter_condition = lambda t: not (
-            t.city == "Reutlingen"
-            or t.category == tournament.Category.QB
-            or t.category == tournament.Category.DM
-        )
-
         ret = []
-        for t in filter(filter_condition, data):
+        for t in filter(self._filter_condition, data):
             required_licence: Literal["D", "E/D"] = (
                 "E/D"
                 if t.age_group

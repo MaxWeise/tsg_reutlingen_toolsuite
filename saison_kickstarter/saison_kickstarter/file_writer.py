@@ -24,7 +24,7 @@ class FileWriter(Protocol):
     def write_tournament_data(
         self, data: Sequence[view_item.ViewItem], row: int = 0, col: int = 0
     ) -> None:
-        """Create a structured tournament overview in a (temporary) file object."""
+        """Create a structured tournament overview in a (temporary) file."""
         raise NotImplementedError(
             f"The method is not implemented for type {self}"
         )
