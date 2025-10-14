@@ -12,6 +12,7 @@ requires-python = ">=3.10"
 dependencies = [
     "fastapi[standard]>=0.118.1",
     "pandas>=2.2.0",
+    "pyarrow>=21.0.0",
     "XlsxWriter == 3.1.9",
 ]
 
