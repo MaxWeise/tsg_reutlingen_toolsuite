@@ -12,24 +12,47 @@ tabular format.
 import dataclasses
 import datetime
 import typing
-from typing import Any, Literal
+from typing import Iterable, Literal
 
 
 class ViewItem(typing.Protocol):
     """A protocoll to make a reference point for ViewItem classes."""
 
-    def to_tuple(self) -> tuple[str, str, Any]:
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
         raise NotImplementedError()
 
+    def to_tuple(self) -> tuple[str, ...]:
+        """Return the data in the object as an iterable tuple."""
+        raise NotImplementedError()
+
+
+@dataclasses.dataclass(order=True, frozen=True)
+class HeaderViewItem:
+    _header_cols: Iterable[str]
+
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
+        return False
+
+    def to_tuple(self) -> tuple[str, ...]:
+        return tuple(self._header_cols)
 
 @dataclasses.dataclass(order=True, frozen=True)
 class TournamentViewItem:   # pylint: disable=missing-class-docstring
     first_day: datetime.date
     second_day: datetime.date
     title: str
-    is_optional: bool
+    _is_optional: bool
 
-    def to_tuple(self) -> tuple[str, str, bool]:
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
+        return self._is_optional
+
+    def to_tuple(self) -> tuple[str, str]:
         """Create a tuple representation of the object.
 
         The tuple is in the format the information will be written in a
@@ -46,7 +69,6 @@ class TournamentViewItem:   # pylint: disable=missing-class-docstring
         return (
             self._parse_date(self.first_day, self.second_day),
             self.title,
-            self.is_optional
         )
 
 
@@ -86,6 +108,11 @@ class RefereeViewItem:   # pylint: disable=missing-class-docstring
     day: datetime.date
     city: str
     required_licence: Literal["E/D", "D"]
+
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
+        return False
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, RefereeViewItem):

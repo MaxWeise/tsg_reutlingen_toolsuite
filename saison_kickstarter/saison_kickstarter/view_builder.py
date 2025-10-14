@@ -102,7 +102,9 @@ class TournamentViewBuilder:
             A structured output format.
         """
         ret = []
-        age_group_lut = (
+        age_group_lut: dict[
+            tournament.AgeGroup, tuple[tournament.AgeGroup, ...]
+        ] = (
             self._inclusion_criteria_optional
             if self._include_optonal
             else self._inclusion_criteria_nonoptional
@@ -164,7 +166,7 @@ class RefereeViewBuilder:
             A list of structured tournament data.
         """
 
-        ret = []
+        ret: list[view_item.RefereeViewItem] = []
         for t in filter(self._filter_condition, data):
             required_licence: Literal["D", "E/D"] = (
                 "E/D"

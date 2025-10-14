@@ -14,7 +14,8 @@ import pandas as pd
 import pytest
 
 from saison_kickstarter import file_writer
-from saison_kickstarter.view_item import RefereeViewItem, TournamentViewItem
+from saison_kickstarter.view_item import (HeaderViewItem, RefereeViewItem,
+                                          TournamentViewItem)
 
 
 @pytest.fixture
@@ -32,25 +33,25 @@ def test_tournament_view_items() -> list[TournamentViewItem]:
             date(2000, 1, 1),
             date(2000, 1, 2),
             "RL-U13 Reutlingen",
-            False
+            False,
         ),
         TournamentViewItem(
             date(2000, 1, 1),
             date(2000, 1, 2),
-            "RL-U13 Reutlingen",
-            False
+            "RL-U15 Reutlingen",
+            False,
         ),
         TournamentViewItem(
             date(2000, 1, 1),
             date(2000, 1, 2),
-            "RL-U13 Reutlingen",
-            False
+            "RL-U17 Reutlingen",
+            False,
         ),
         TournamentViewItem(
             date(2000, 1, 1),
             date(2000, 1, 2),
-            "RL-U13 Reutlingen",
-            True
+            "RL-U20 Reutlingen",
+            True,
         ),
     ]
 
@@ -59,10 +60,11 @@ def test_write_tournament_overview(testfile, test_tournament_view_items):
     """Test that an excel file is written to disk."""
     under_test = file_writer.ExcelFileWriter(testfile)
 
-    under_test.write_tournament_data(test_tournament_view_items)
+    under_test.write_overview([HeaderViewItem(["Datum", "Ort"])], test_tournament_view_items)
 
     assert testfile.exists()
 
+    # The header is not counted in the len() method. Only the contents of a table get counted.
     table = pd.read_excel(testfile)
     assert len(table.index) == len(test_tournament_view_items)
 
@@ -82,7 +84,10 @@ def test_write_tournament_overview_with_buffer_object(
     """
     with io.BytesIO() as test_buffer:
         under_test = file_writer.ExcelFileWriter(test_buffer)
-        under_test.write_tournament_data(test_tournament_view_items)
+        under_test.write_overview(
+            [HeaderViewItem(["Datum", "Ort"])],
+            test_tournament_view_items
+        )
         assert test_buffer.getvalue()
 
 
@@ -104,7 +109,8 @@ def test_write_referee_overview(testfile, test_referee_view_items):
     test_data = test_referee_view_items
     under_test = file_writer.ExcelFileWriter(testfile)
 
-    under_test.write_referee_data(test_data)
+    header = HeaderViewItem(["Datum", "Turnier", "Lizenz", "1", "2", "3"])
+    under_test.write_overview([header], test_data)
 
     assert testfile.exists()
 

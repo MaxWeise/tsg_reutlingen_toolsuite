@@ -34,16 +34,16 @@ def test_order_tournament_view_item() -> None:
                 "RL-U11 Reutlingen",
                 False
             ),
-            ("01./02.01.2000", "RL-U11 Reutlingen", False)
+            ("01./02.01.2000", "RL-U11 Reutlingen")
         ),
         (
             view_item.TournamentViewItem(
                 datetime(2000, 1, 31),
                 datetime(2000, 2, 1),
                 "RL-U11 Reutlingen",
-                False
+                True
             ),
-            ("31.01./01.02.2000", "RL-U11 Reutlingen", False)
+            ("31.01./01.02.2000", "RL-U11 Reutlingen")
         ),
     ]
 )
