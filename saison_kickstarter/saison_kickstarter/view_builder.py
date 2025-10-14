@@ -4,6 +4,7 @@ Created: 18.02.2024
 @author: Max Weise
 """
 
+import functools
 import itertools
 from typing import Literal, Protocol, Sequence
 
@@ -83,6 +84,25 @@ class TournamentViewBuilder:
             tournament.AgeGroup.VETERAN: (tournament.AgeGroup.VETERAN,),
         }
 
+    def _filter_for_age_group(self,
+                              t: tournament.Tournament,
+                              lut: dict,
+                              ag: tournament.AgeGroup) -> bool:
+        """Define the filter criterium for ViewItems.
+
+        This function is intended to be used in a filter.
+
+        Args:
+            t: A tournament object.
+            lut: A lookup-table that maps an AgeGroup to a tuple of AgeGroups
+                that may start at a competition under the given AgeGroup.
+            ag: The specific AgeGrop to filter for.
+
+        Returns:
+            Whether or not a tournament is in the range of given AgeGroups.
+        """
+        return t.age_group in lut[ag]
+
     def build_view(
         self,
         data: list[tournament.Tournament],
@@ -110,17 +130,20 @@ class TournamentViewBuilder:
             else self._inclusion_criteria_nonoptional
         )
 
+        filter_func = functools.partial(
+            self._filter_for_age_group,
+            lut=age_group_lut
+        )
+
         for ag in tournament.AgeGroup:
+            filter_func = functools.partial(filter_func, ag=ag)
             vi: list[view_item.TournamentViewItem] = [  # type: ignore
                 view_item.TournamentViewItem(
                     t.first_day,
                     t.second_day,
                     t.title,
                     False if ag == t.age_group else True,
-                )
-                for t in filter(
-                    lambda t, current_ag=ag: t.age_group in age_group_lut[current_ag], data     # pylint: disable=line-too-long
-                )
+                ) for t in filter(filter_func, data)
             ]
             ret.append(sorted(vi))
 

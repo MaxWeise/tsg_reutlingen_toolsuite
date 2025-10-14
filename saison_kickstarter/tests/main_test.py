@@ -9,7 +9,6 @@ Created: 20.04.2025
 
 # pylint: disable=redefined-outer-name
 
-import logging
 import pathlib
 from unittest import mock
 
@@ -229,7 +228,10 @@ def test_main_wrong_file_encoding(file_wrong_encoding) -> None:
     Then the function should raise a FileEncodingError.
     """
     test_file = file_wrong_encoding
-    with pytest.raises(FileEncodingError, match="The file is not in UTF-8 encoding:"):
+    with pytest.raises(
+        FileEncodingError,
+        match="The file is not in UTF-8 encoding:"
+    ):
         main.create_overview(
             main.OverviewType.TOURNAMENT,
             test_file,

@@ -60,11 +60,15 @@ def test_write_tournament_overview(testfile, test_tournament_view_items):
     """Test that an excel file is written to disk."""
     under_test = file_writer.ExcelFileWriter(testfile)
 
-    under_test.write_overview([HeaderViewItem(["Datum", "Ort"])], test_tournament_view_items)
+    under_test.write_overview(
+        [HeaderViewItem(["Datum", "Ort"])],
+        test_tournament_view_items
+    )
 
     assert testfile.exists()
 
-    # The header is not counted in the len() method. Only the contents of a table get counted.
+    # The header is not counted in the len() method.
+    # Only the contents of a table get counted.
     table = pd.read_excel(testfile)
     assert len(table.index) == len(test_tournament_view_items)
 

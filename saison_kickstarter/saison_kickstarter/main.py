@@ -94,7 +94,7 @@ def create_overview(
         raise FileNotFoundError(f"The file {data_file} does not exist!")
 
     suffix: str = data_file.suffix
-    supported_readers = {
+    supported_readers: dict[str, FileReader] = {
         ".csv": file_reader.CsvFileReader(data_source),
         ".xlsx": file_reader.ExcelFileReader(data_source),
     }
@@ -102,7 +102,7 @@ def create_overview(
     if not reader:
         raise ValueError(f"{suffix} is not supported.")
 
-    supported_builders = {
+    supported_builders: dict[OverviewType, ViewBuilder] = {
         OverviewType.REFEREE: view_builder.RefereeViewBuilder(),
         OverviewType.TOURNAMENT: view_builder.TournamentViewBuilder(
             include_optional
@@ -115,12 +115,12 @@ def create_overview(
 
     try:
         data = reader.read_data()
-    except FileEncodingError:
+    except FileEncodingError as e:
         raise FileEncodingError(
             f"The file is not in UTF-8 encoding: {data_file}"
-        )
+        ) from e
 
-    view = builder.build_view(data)
+    view: list[ViewItem] = list(builder.build_view(data))
 
     supported_headers: dict[OverviewType, list[ViewItem]] = {
         OverviewType.REFEREE: [
@@ -150,7 +150,7 @@ def main() -> None:
             out_file_name
         )
     except (FileNotFoundError, ValueError, FileEncodingError) as e:
-            logger.error(e)
+        logger.error(e)
 
     logger.info("Execution finished")
 

@@ -12,7 +12,7 @@ import starlette.responses
 from fastapi.middleware.cors import CORSMiddleware
 
 import saison_kickstarter.exceptions
-from saison_kickstarter import file_writer, tournament, view_builder
+from saison_kickstarter import file_writer, tournament, view_builder, view_item
 
 app = fastapi.FastAPI()
 
@@ -75,7 +75,10 @@ def create_tournament_overview(
 
     # Buffer object gets modified
     try:
-        writer.write_tournament_data(view)
+        writer.write_overview(
+            [view_item.HeaderViewItem(["Datum", "Ort"])],
+            view    # type: ignore
+        )
         io_buffer.seek(0)
     except saison_kickstarter.exceptions.WorkbookError as e:
         raise fastapi.HTTPException(status_code=500, detail=e)
@@ -121,7 +124,14 @@ def create_referee_overview(
     view = builder.build_view(items)
 
     try:
-        writer.write_referee_data(view)
+        writer.write_overview(
+            [
+                view_item.HeaderViewItem(
+                    ["Datum", "Turnier", "Lizenz", "1", "2", "3"]
+                )
+            ],
+            view,   # type: ignore
+        )
         io_buffer.seek(0)
     except saison_kickstarter.exceptions.WorkbookError as e:
         raise fastapi.HTTPException(status_code=500, detail=e)
