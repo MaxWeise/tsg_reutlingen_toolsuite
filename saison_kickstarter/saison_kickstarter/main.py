@@ -10,7 +10,8 @@ import logging
 import logging.config
 import pathlib
 
-from saison_kickstarter import file_reader, file_writer, view_builder
+from saison_kickstarter import (file_reader, file_writer, view_builder,
+                                view_item)
 from saison_kickstarter.exceptions import FileEncodingError, WorkbookError
 from saison_kickstarter.file_reader import FileReader
 from saison_kickstarter.file_writer import ExcelFileWriter
@@ -101,10 +102,13 @@ def _create_tournament_overview(
         logger.error("An exception occured while reading the given file: %s", e)
         return
 
-    view = builder.build_view(tournaments)
+    view = list(builder.build_view(tournaments))
 
     try:
-        writer.write_tournament_data(view)
+        writer.write_overview(
+            [view_item.HeaderViewItem(["Datum", "Ort"])],
+            view
+        )
     except WorkbookError as e:
         logger.error(
             "An exception occured while writing data to the excel file: %s", e
@@ -126,10 +130,13 @@ def _create_referee_overview(data_file: str, out_file: pathlib.Path) -> None:
         logger.error("An exception occured while reading the given file: %s", e)
         return
 
-    view = builder.build_view(tournaments)
+    view = list(builder.build_view(tournaments))
 
     try:
-        writer.write_referee_data(view)
+        writer.write_overview(
+            [view_item.HeaderViewItem(["Datum", "Turnier", "Lizenz", "1", "2", "3"])],
+            view,
+        )
     except WorkbookError as e:
         logger.error(
             "An exception occured while writing data to the excel file: %s", e
