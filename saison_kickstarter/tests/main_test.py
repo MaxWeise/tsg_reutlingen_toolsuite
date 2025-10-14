@@ -8,7 +8,6 @@ Created: 20.04.2025
 """
 
 # pylint: disable=redefined-outer-name
-# pylint: disable=protected-access
 
 import logging
 import pathlib
@@ -19,6 +18,7 @@ import pandas as pd
 import pytest
 
 from saison_kickstarter import main
+from saison_kickstarter.exceptions import FileEncodingError
 
 
 @pytest.fixture
@@ -68,8 +68,10 @@ def test_main_create_tournament_overview_from_csv(
     ) as mock_csv_reader:
         mock_csv_reader.reader.return_value = mock_data
         # Run the test
-        main._create_tournament_overview(
+        main.create_overview(
+            main.OverviewType.TOURNAMENT,
             test_file,
+            False,
             tmp_out_file,
         )
 
@@ -147,8 +149,10 @@ def test_main_create_tournament_overview_from_xlsx(
     ) as mock_excel_reader:
         mock_excel_reader.read_excel.return_value = mock_data_xlsx
         # Run the test
-        main._create_tournament_overview(
+        main.create_overview(
+            main.OverviewType.TOURNAMENT,
             test_file_xlsx,
+            False,
             tmp_out_file,
         )
 
@@ -183,61 +187,55 @@ def test_main_create_tournament_overview_from_xlsx(
     assert table.equals(expected_df)
 
 
-def test_main_file_not_found(caplog) -> None:
+def test_main_file_not_found() -> None:
     """Test the main function.
 
     Given a path that points to a non-existent file,
     When calling the main function with this argument,
-    Then the programm should exit and a log message should be displayed.
+    Then the function should raise a FileNotFound error.
     """
     test_file = "./path/does/not/exist.csv"
-    caplog.set_level(logging.INFO)
-    main._create_tournament_overview(
-        test_file,
-        pathlib.Path("out_file.xlsx")
-    )
-
-    _, level, message = caplog.record_tuples[0]
-    assert level == logging.ERROR
-    assert "does not exist!" in message
+    with pytest.raises(FileNotFoundError, match="does not exist!"):
+        main.create_overview(
+            main.OverviewType.TOURNAMENT,
+            test_file,
+            False,
+            pathlib.Path("out_file.xlsx")
+        )
 
 
-def test_main_wrong_file_type(caplog) -> None:
+def test_main_wrong_file_type() -> None:
     """Test the main function.
 
     Given a path that points to a non-csv file,
     When calling the main function with this argument,
-    Then the programm should exit and a log message should be displayed.
+    Then the function should raise a ValueError.
     """
     test_file = "./pyproject.toml"
-    caplog.set_level(logging.INFO)
-    main._create_tournament_overview(
-        test_file,
-        pathlib.Path("out_file.xlsx")
-    )
-
-    _, level, message = caplog.record_tuples[0]
-    assert level == logging.ERROR
-    assert "Filetype not supported" in message
+    with pytest.raises(ValueError, match="is not supported"):
+        main.create_overview(
+            main.OverviewType.TOURNAMENT,
+            test_file,
+            False,
+            pathlib.Path("out_file.xlsx")
+        )
 
 
-def test_main_wrong_file_encoding(caplog, file_wrong_encoding) -> None:
+def test_main_wrong_file_encoding(file_wrong_encoding) -> None:
     """Test the main function.
 
     Given a path that points to a csv-file with non utf8 encoding,
     When calling the main function with this argument,
-    Then the programm should exit and a log message should be displayed.
+    Then the function should raise a FileEncodingError.
     """
     test_file = file_wrong_encoding
-    caplog.set_level(logging.INFO)
-    main._create_tournament_overview(
-        test_file,
-        pathlib.Path("out_file.xlsx")
-    )
-
-    _, level, message = caplog.record_tuples[0]
-    assert level == logging.ERROR
-    assert "The file is not in UTF-8 encoding:" in message
+    with pytest.raises(FileEncodingError, match="The file is not in UTF-8 encoding:"):
+        main.create_overview(
+            main.OverviewType.TOURNAMENT,
+            test_file,
+            False,
+            pathlib.Path("out_file.xlsx")
+        )
 
 
 def test_main_create_referee_overview(mock_data, test_file, tmp_path) -> None:
@@ -254,8 +252,10 @@ def test_main_create_referee_overview(mock_data, test_file, tmp_path) -> None:
     ) as mock_csv_reader:
         mock_csv_reader.reader.return_value = mock_data
         # Run the test
-        main._create_referee_overview(
+        main.create_overview(
+            main.OverviewType.REFEREE,
             test_file,
+            False,
             tmp_out_file,
         )
 

@@ -12,10 +12,10 @@ import pathlib
 
 from saison_kickstarter import (file_reader, file_writer, view_builder,
                                 view_item)
-from saison_kickstarter.exceptions import FileEncodingError, WorkbookError
+from saison_kickstarter.exceptions import FileEncodingError
 from saison_kickstarter.file_reader import FileReader
-from saison_kickstarter.file_writer import ExcelFileWriter
 from saison_kickstarter.view_builder import ViewBuilder
+from saison_kickstarter.view_item import ViewItem
 
 PROJECT_URL: str = r"https://github.com/MaxWeise/tsg_reutlingen_toolsuite"
 PROGRAMM_NAME: str = "saison-kickstarter"
@@ -24,13 +24,10 @@ EPILOG: str = (
     f"Project lives on {PROJECT_URL}"
 )
 
-OUT_EXCEL_FILE: pathlib.Path = pathlib.Path("./overview-file.xlsx")
 
-
-class SupportedCommands(enum.Enum):
-    CREATE_TOURNAMENT_OVERVIEW = "create-overview-tournament"
-    CREATE_REFEREE_OVERVIEW = "create-overview-referee"
-
+class OverviewType(enum.StrEnum):
+    REFEREE = enum.auto()
+    TOURNAMENT = enum.auto()
 
 # Logging config goes here
 logging_config = {
@@ -65,7 +62,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "command",
-        choices=[command.value for command in SupportedCommands],
+        choices=[command.value for command in OverviewType],
         help="Create an overview from a specified file.",
     )
 
@@ -86,82 +83,74 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _create_tournament_overview(
-        data_file: str, out_file: pathlib.Path, include_optional: bool = False
+def create_overview(
+        overview: OverviewType,
+        data_source: str,
+        include_optional: bool,
+        out_file_name: pathlib.Path,
 ) -> None:
-    """Define the workflow to create an overview over all tournaments."""
-    suffix = pathlib.Path(data_file).suffix
+    data_file = pathlib.Path(data_source)
+    if not data_file.exists():
+        raise FileNotFoundError(f"The file {data_file} does not exist!")
 
-    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)  # pylint: disable=line-too-long
-    builder: ViewBuilder = view_builder.TournamentViewBuilder(include_optional)
-    writer: ExcelFileWriter = file_writer.ExcelFileWriter(out_file)
+    suffix: str = data_file.suffix
+    supported_readers = {
+        ".csv": file_reader.CsvFileReader(data_source),
+        ".xlsx": file_reader.ExcelFileReader(data_source),
+    }
+    reader: FileReader | None = supported_readers.get(suffix)
+    if not reader:
+        raise ValueError(f"{suffix} is not supported.")
 
-    try:
-        tournaments = reader.read_data()
-    except (FileNotFoundError, ValueError, FileEncodingError) as e:
-        logger.error("An exception occured while reading the given file: %s", e)
-        return
-
-    view = list(builder.build_view(tournaments))
-
-    try:
-        writer.write_overview(
-            [view_item.HeaderViewItem(["Datum", "Ort"])],
-            view
-        )
-    except WorkbookError as e:
-        logger.error(
-            "An exception occured while writing data to the excel file: %s", e
-        )
-        return
-
-
-def _create_referee_overview(data_file: str, out_file: pathlib.Path) -> None:
-    """Define the workflow to create an overview over all needed referees."""
-    suffix = pathlib.Path(data_file).suffix
-
-    reader: FileReader = file_reader.ExcelFileReader(data_file) if suffix == ".xlsx" else file_reader.CsvFileReader(data_file)  # pylint: disable=line-too-long
-    builder: ViewBuilder = view_builder.RefereeViewBuilder()
-    writer: ExcelFileWriter = file_writer.ExcelFileWriter(out_file)
+    supported_builders = {
+        OverviewType.REFEREE: view_builder.RefereeViewBuilder(),
+        OverviewType.TOURNAMENT: view_builder.TournamentViewBuilder(
+            include_optional
+        ),
+    }
+    builder: ViewBuilder | None = supported_builders.get(overview)
+    if not builder:
+        raise ValueError(f"{overview} is not supported in the builder map.")
+    writer = file_writer.ExcelFileWriter(out_file_name)
 
     try:
-        tournaments = reader.read_data()
-    except (FileNotFoundError, ValueError, FileEncodingError) as e:
-        logger.error("An exception occured while reading the given file: %s", e)
-        return
-
-    view = list(builder.build_view(tournaments))
-
-    try:
-        writer.write_overview(
-            [view_item.HeaderViewItem(["Datum", "Turnier", "Lizenz", "1", "2", "3"])],
-            view,
+        data = reader.read_data()
+    except FileEncodingError:
+        raise FileEncodingError(
+            f"The file is not in UTF-8 encoding: {data_file}"
         )
-    except WorkbookError as e:
-        logger.error(
-            "An exception occured while writing data to the excel file: %s", e
-        )
-        return
+
+    view = builder.build_view(data)
+
+    supported_headers: dict[OverviewType, list[ViewItem]] = {
+        OverviewType.REFEREE: [
+            view_item.HeaderViewItem(
+                ["Datum", "Turnier", "Lizenz", "1", "2", "3"]
+            )
+        ],
+        OverviewType.TOURNAMENT: [view_item.HeaderViewItem(["Datum", "Ort"])],
+    }
+    header = supported_headers.get(overview)
+    if not header:
+        raise ValueError(f"{overview} is not supported in the builder map.")
+    writer.write_overview(header, view)
+
 
 def main() -> None:
     """Run the main function."""
     arguments = parse_args()
-    command = SupportedCommands(arguments.command)
+    command = OverviewType(arguments.command)
+    out_file_name = pathlib.Path("overview.xlsx")
 
-    if command == SupportedCommands.CREATE_TOURNAMENT_OVERVIEW:
-        logger.info("Selected command: %s", command)
-        _create_tournament_overview(
+    try:
+        create_overview(
+            command,
             arguments.file,
-            pathlib.Path("turnierübersicht.xlsx"),
-            arguments.include_optional
+            arguments.inlcude_optional,
+            out_file_name
         )
-
-    if command == SupportedCommands.CREATE_REFEREE_OVERVIEW:
-        logger.info("Selected command: %s", command)
-        _create_referee_overview(
-            arguments.file,
-            pathlib.Path("kampfrichterübersicht.xlsx"),
-        )
+    except (FileNotFoundError, ValueError, FileEncodingError) as e:
+            logger.error(e)
 
     logger.info("Execution finished")
 
