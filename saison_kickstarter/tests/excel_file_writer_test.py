@@ -14,7 +14,8 @@ import pandas as pd
 import pytest
 
 from saison_kickstarter import file_writer
-from saison_kickstarter.view_item import RefereeViewItem, TournamentViewItem
+from saison_kickstarter.view_item import (HeaderViewItem, RefereeViewItem,
+                                          TournamentViewItem)
 
 
 @pytest.fixture
@@ -32,25 +33,25 @@ def test_tournament_view_items() -> list[TournamentViewItem]:
             date(2000, 1, 1),
             date(2000, 1, 2),
             "RL-U13 Reutlingen",
-            False
+            False,
         ),
         TournamentViewItem(
             date(2000, 1, 1),
             date(2000, 1, 2),
-            "RL-U13 Reutlingen",
-            False
+            "RL-U15 Reutlingen",
+            False,
         ),
         TournamentViewItem(
             date(2000, 1, 1),
             date(2000, 1, 2),
-            "RL-U13 Reutlingen",
-            False
+            "RL-U17 Reutlingen",
+            False,
         ),
         TournamentViewItem(
             date(2000, 1, 1),
             date(2000, 1, 2),
-            "RL-U13 Reutlingen",
-            True
+            "RL-U20 Reutlingen",
+            True,
         ),
     ]
 
@@ -59,16 +60,23 @@ def test_write_tournament_overview(testfile, test_tournament_view_items):
     """Test that an excel file is written to disk."""
     under_test = file_writer.ExcelFileWriter(testfile)
 
-    under_test.write_tournament_data(test_tournament_view_items)
+    under_test.write_overview(
+        [HeaderViewItem(["Datum", "Ort"])],
+        test_tournament_view_items
+    )
 
     assert testfile.exists()
 
+    # The header is not counted in the len() method.
+    # Only the contents of a table get counted.
     table = pd.read_excel(testfile)
     assert len(table.index) == len(test_tournament_view_items)
 
 
-def test_write_tournament_overview_with_buffer_object(test_tournament_view_items) -> None:
-    """Test the functionality of the method when passing a buffer object to the class.
+def test_write_tournament_overview_with_buffer_object(
+        test_tournament_view_items
+) -> None:
+    """Test the functionality of the method when passing a buffer object.
 
     To be 100 % sure of the correctness of the data in the buffer, it would be
     necessary to convert the expected contents of the buffer to a bytes
@@ -80,8 +88,11 @@ def test_write_tournament_overview_with_buffer_object(test_tournament_view_items
     """
     with io.BytesIO() as test_buffer:
         under_test = file_writer.ExcelFileWriter(test_buffer)
-        under_test.write_tournament_data(test_tournament_view_items)
-        assert test_buffer.getvalue() 
+        under_test.write_overview(
+            [HeaderViewItem(["Datum", "Ort"])],
+            test_tournament_view_items
+        )
+        assert test_buffer.getvalue()
 
 
 @pytest.fixture
@@ -102,13 +113,28 @@ def test_write_referee_overview(testfile, test_referee_view_items):
     test_data = test_referee_view_items
     under_test = file_writer.ExcelFileWriter(testfile)
 
-    under_test.write_referee_data(test_data)
+    header = HeaderViewItem(["Datum", "Turnier", "Lizenz", "1", "2", "3"])
+    under_test.write_overview([header], test_data)
 
     assert testfile.exists()
 
     expected = pd.DataFrame(data={
-        "Datum": ["01.01.2000", "02.01.2000", "01.03.2000","02.03.2000","01.04.2000","02.04.2000"],
-        "Turnier": ["Heidenheim", "Heidenheim", "Backnang", "Backnang", "Heidelberg", "Heidelberg"],
+        "Datum": [
+            "01.01.2000",
+            "02.01.2000",
+            "01.03.2000",
+            "02.03.2000",
+            "01.04.2000",
+            "02.04.2000"
+        ],
+        "Turnier": [
+            "Heidenheim",
+            "Heidenheim",
+            "Backnang",
+            "Backnang",
+            "Heidelberg",
+            "Heidelberg"
+        ],
         "Lizenz": ["E/D", "E/D", "D", "D", "E/D", "E/D"],
         "1": [numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan],
         "2": [numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan, numpy.nan],

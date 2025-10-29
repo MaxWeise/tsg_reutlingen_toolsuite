@@ -1,33 +1,66 @@
-# TODO: Include docstring for the file
+"""Defines data classes for different views of tournament information.
+
+This module provides data structures for representing items in various "views"
+of the tournament schedule. Each class is designed to hold formatted data
+ready for display or output, for example, in a spreadsheet.
+
+The `ViewItem` protocol establishes a common interface, ensuring that all view
+item classes can be in turn converted to a tuple for easy serialization into a
+tabular format.
+"""
 
 import dataclasses
 import datetime
 import typing
-from typing import Any, Literal
+from typing import Iterable, Literal
 
 
 class ViewItem(typing.Protocol):
     """A protocoll to make a reference point for ViewItem classes."""
 
-    def to_tuple(self) -> tuple[str, str, Any]:
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
+        raise NotImplementedError()
+
+    def to_tuple(self) -> tuple[str, ...]:
+        """Return the data in the object as an iterable tuple."""
         raise NotImplementedError()
 
 
 @dataclasses.dataclass(order=True, frozen=True)
+class HeaderViewItem:
+    _header_cols: Iterable[str]
+
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
+        return False
+
+    def to_tuple(self) -> tuple[str, ...]:
+        return tuple(self._header_cols)
+
+@dataclasses.dataclass(order=True, frozen=True)
 class TournamentViewItem:
+    """Define the structure of an entry in the output format."""
     first_day: datetime.date
     second_day: datetime.date
     title: str
-    is_optional: bool
+    _is_optional: bool
 
-    def to_tuple(self) -> tuple[str, str, bool]:
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
+        return self._is_optional
+
+    def to_tuple(self) -> tuple[str, str]:
         """Create a tuple representation of the object.
 
         The tuple is in the format the information will be written in a
         tabular form.
 
         The information is structured as follows:
-            Date of the competition (format: dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy)
+            Date of the competition, format: dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy
             Title of the competition (example "RL-U13 City")
             If the tournament is optional for the age_group.
 
@@ -37,11 +70,12 @@ class TournamentViewItem:
         return (
             self._parse_date(self.first_day, self.second_day),
             self.title,
-            self.is_optional
         )
 
 
-    def _parse_date(self, first_day: datetime.date, second_day: datetime.date) -> str:
+    def _parse_date(
+            self, first_day: datetime.date, second_day: datetime.date
+    ) -> str:
         """Parse the combined day format from two seperate date entries.
 
         Use this function to set the date format for a tournament view item
@@ -52,8 +86,8 @@ class TournamentViewItem:
             second_day (datetime.date): The second day of the date.
 
         Returns:
-            A string in the format dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy if the datum
-            spans the last and first day of consecutive months.
+            A string in the format dd./dd.mm.yyyy or dd.mm./dd.mm.yyyy if the
+            datum spans the last and first day of consecutive months.
         """
         day_one = f"{first_day.day:02d}"
         month_one = f"{first_day.month:02d}"
@@ -72,9 +106,15 @@ class TournamentViewItem:
 
 @dataclasses.dataclass(order=True, frozen=True)
 class RefereeViewItem:
+    """Define the structure of an entry in the output format."""
     day: datetime.date
     city: str
     required_licence: Literal["E/D", "D"]
+
+    @property
+    def is_optional(self) -> bool:
+        """Denote if an entry is optional or not."""
+        return False
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, RefereeViewItem):

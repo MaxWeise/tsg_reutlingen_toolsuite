@@ -4,7 +4,6 @@ Created: 14.01.2024
 @author: Max Weise
 """
 
-import dataclasses
 import datetime
 import enum
 

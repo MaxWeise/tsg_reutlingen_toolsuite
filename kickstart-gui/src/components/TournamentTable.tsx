@@ -1,21 +1,24 @@
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import type { Tournament } from "./TournamentForm";
 
 
 interface TournamentTableProps {
     tournaments: Tournament[];
+    onDelete: (index: number) => void;
 }
 
-const TournamentTable = ({ tournaments }: TournamentTableProps) => {
+const TournamentTable = ({ tournaments, onDelete }: TournamentTableProps) => {
+
     return (
         <Table striped bordered hover>
             <thead>
                 <tr>
-                    <th>First Day</th>
-                    <th>Second Day</th>
-                    <th>City</th>
-                    <th>Category</th>
-                    <th>Age Group</th>
+                    <th>Erster Tag</th>
+                    <th>Zweiter Tag</th>
+                    <th>Stadt</th>
+                    <th>Kategorie</th>
+                    <th>Altersklasse</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +29,9 @@ const TournamentTable = ({ tournaments }: TournamentTableProps) => {
                         <td>{tournament.city}</td>
                         <td>{tournament.category}</td>
                         <td>{tournament.age_group}</td>
+                        <td>
+                            <Button className="btn btn-danger" onClick={() => onDelete(index)}>Delete Tournament</Button>
+                        </td>
                     </tr>
                 ))}
             </tbody>

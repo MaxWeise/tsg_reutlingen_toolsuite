@@ -1,3 +1,12 @@
+"""This module contains tests for the TournamentViewBuilder.
+
+It verifies that the builder correctly transforms a list of tournaments
+into a sorted and grouped list of view items, handling both mandatory
+and optional tournaments.
+"""
+
+# pylint: disable=redefined-outer-name
+
 import datetime
 
 import pytest

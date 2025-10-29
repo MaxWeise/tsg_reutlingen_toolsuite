@@ -4,6 +4,7 @@ Created: 18.02.2024
 @author: Max Weise
 """
 
+import functools
 import itertools
 from typing import Literal, Protocol, Sequence
 
@@ -83,6 +84,25 @@ class TournamentViewBuilder:
             tournament.AgeGroup.VETERAN: (tournament.AgeGroup.VETERAN,),
         }
 
+    def _filter_for_age_group(self,
+                              t: tournament.Tournament,
+                              lut: dict,
+                              ag: tournament.AgeGroup) -> bool:
+        """Define the filter criterium for ViewItems.
+
+        This function is intended to be used in a filter.
+
+        Args:
+            t: A tournament object.
+            lut: A lookup-table that maps an AgeGroup to a tuple of AgeGroups
+                that may start at a competition under the given AgeGroup.
+            ag: The specific AgeGrop to filter for.
+
+        Returns:
+            Whether or not a tournament is in the range of given AgeGroups.
+        """
+        return t.age_group in lut[ag]
+
     def build_view(
         self,
         data: list[tournament.Tournament],
@@ -102,23 +122,28 @@ class TournamentViewBuilder:
             A structured output format.
         """
         ret = []
-        age_group_lut = (
+        age_group_lut: dict[
+            tournament.AgeGroup, tuple[tournament.AgeGroup, ...]
+        ] = (
             self._inclusion_criteria_optional
             if self._include_optonal
             else self._inclusion_criteria_nonoptional
         )
 
+        filter_func = functools.partial(
+            self._filter_for_age_group,
+            lut=age_group_lut
+        )
+
         for ag in tournament.AgeGroup:
-            vi: list[view_item.TournamentViewItem] = [
+            filter_func = functools.partial(filter_func, ag=ag)
+            vi: list[view_item.TournamentViewItem] = [  # type: ignore
                 view_item.TournamentViewItem(
                     t.first_day,
                     t.second_day,
                     t.title,
                     False if ag == t.age_group else True,
-                )
-                for t in list(
-                    filter(lambda t: t.age_group in age_group_lut[ag], data)
-                )
+                ) for t in filter(filter_func, data)
             ]
             ret.append(sorted(vi))
 
@@ -126,6 +151,29 @@ class TournamentViewBuilder:
 
 
 class RefereeViewBuilder:
+    """Create an overview for referees to plan their appointments."""
+
+    def _filter_condition(self, t: tournament.Tournament) -> bool:
+        """Filter out tournaments that meet specific criteria:
+
+        Tournaments are not included if they:
+            - Take place in Reutlingen, as referees get appointed seperately
+            - Have a category of QB or DM, as those require another type of
+                licence. Referees also get appointed seperately.
+
+        Args:
+            t: A tournament that gets checked for the criteria.
+
+        Returns:
+            True, if a tournament is to be included in the overview.
+            False otherwise.
+        """
+        return not (
+            t.city == "Reutlingen"
+            or t.category == tournament.Category.QB
+            or t.category == tournament.Category.DM
+        )
+
     def build_view(
         self, data: list[tournament.Tournament]
     ) -> Sequence[view_item.ViewItem]:
@@ -141,14 +189,8 @@ class RefereeViewBuilder:
             A list of structured tournament data.
         """
 
-        filter_condition = lambda t: not (
-            t.city == "Reutlingen"
-            or t.category == tournament.Category.QB
-            or t.category == tournament.Category.DM
-        )
-
-        ret = []
-        for t in filter(filter_condition, data):
+        ret: list[view_item.RefereeViewItem] = []
+        for t in filter(self._filter_condition, data):
             required_licence: Literal["D", "E/D"] = (
                 "E/D"
                 if t.age_group

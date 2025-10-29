@@ -1,3 +1,10 @@
+"""This module defines tests for the ViewItem classes.
+
+It verifies the correct implementation of ordering and tuple conversion
+for both TournamentViewItem and RefereeViewItem.
+"""
+# pylint: disable=redefined-outer-name
+
 from datetime import datetime
 
 import pytest
@@ -22,15 +29,21 @@ def test_order_tournament_view_item() -> None:
     [
         (
             view_item.TournamentViewItem(
-                datetime(2000, 1, 1), datetime(2000, 1, 2), "RL-U11 Reutlingen", False
+                datetime(2000, 1, 1),
+                datetime(2000, 1, 2),
+                "RL-U11 Reutlingen",
+                False
             ),
-            ("01./02.01.2000", "RL-U11 Reutlingen", False)
+            ("01./02.01.2000", "RL-U11 Reutlingen")
         ),
         (
             view_item.TournamentViewItem(
-                datetime(2000, 1, 31), datetime(2000, 2, 1), "RL-U11 Reutlingen", False
+                datetime(2000, 1, 31),
+                datetime(2000, 2, 1),
+                "RL-U11 Reutlingen",
+                True
             ),
-            ("31.01./01.02.2000", "RL-U11 Reutlingen", False)
+            ("31.01./01.02.2000", "RL-U11 Reutlingen")
         ),
     ]
 )
@@ -57,9 +70,7 @@ def test_order_referee_view_item() -> None:
 
 def test_referee_view_item_to_tuple() -> None:
     """Test the correct tuple representation of an object."""
-    under_test = view_item.RefereeViewItem(datetime(2000, 1,1), "Reutlingen", "E/D")
+    under_test = view_item.RefereeViewItem(
+        datetime(2000, 1,1), "Reutlingen", "E/D"
+    )
     assert under_test.to_tuple() == ("01.01.2000", "Reutlingen", "E/D")
-
-
-
-
