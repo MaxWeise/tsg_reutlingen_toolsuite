@@ -21,7 +21,14 @@ from saison_kickstarter import exceptions, view_item
 class FileWriter(Protocol):
     """Write content to files."""
 
-    def write_overview(self) -> None:
+    def write_overview(
+        self,
+        header: list[view_item.ViewItem],
+        data: list[view_item.ViewItem],
+        sheet_name: str | None = None,
+        row_offset: int = 0,
+        col_offset: int = 0,
+    ) -> None:
         raise NotImplementedError(
             f"The method is not implemented for type {self}"
         )

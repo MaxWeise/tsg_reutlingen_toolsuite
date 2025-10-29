@@ -41,7 +41,8 @@ class HeaderViewItem:
         return tuple(self._header_cols)
 
 @dataclasses.dataclass(order=True, frozen=True)
-class TournamentViewItem:   # pylint: disable=missing-class-docstring
+class TournamentViewItem:
+    """Define the structure of an entry in the output format."""
     first_day: datetime.date
     second_day: datetime.date
     title: str
@@ -104,7 +105,8 @@ class TournamentViewItem:   # pylint: disable=missing-class-docstring
 
 
 @dataclasses.dataclass(order=True, frozen=True)
-class RefereeViewItem:   # pylint: disable=missing-class-docstring
+class RefereeViewItem:
+    """Define the structure of an entry in the output format."""
     day: datetime.date
     city: str
     required_licence: Literal["E/D", "D"]
