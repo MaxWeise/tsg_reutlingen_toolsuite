@@ -34,13 +34,13 @@ jobs:
         uv-version: latests
 
     - name: Install dependencies
-      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      working-directory: ./saison_kickstarter
       run: |
         uv pip install --upgrade pip
         uv pip install tox tox-gh-actions
 
     - name: Run pytest tests
-      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      working-directory: ./saison_kickstarter
       run: tox -e test
 
   type-checks:
@@ -64,13 +64,13 @@ jobs:
         uv-version: latests
 
     - name: Install dependencies
-      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      working-directory: ./saison_kickstarter
       run: |
         uv pip install --upgrade pip
         uv pip install tox tox-gh-actions
 
     - name: Run mypy type checks
-      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      working-directory: ./saison_kickstarter
       run: tox -e type
 
   linter:
@@ -94,13 +94,13 @@ jobs:
         uv-version: latests
 
     - name: Install dependencies
-      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      working-directory: ./saison_kickstarter
       run: |
         uv pip install --upgrade pip
         uv pip install tox tox-gh-actions
 
     - name: Run pylint quality
-      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      working-directory: ./saison_kickstarter
       run: tox -e lint
 
 
