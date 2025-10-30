@@ -24,3 +24,6 @@ runs:
       uses: astral-sh/setup-uv@v1
       with:
         uv-version: ${{ inputs.uv-version }}
+
+    - name: Set up virtual environment
+      run: uv venv
