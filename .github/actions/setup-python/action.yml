@@ -26,4 +26,5 @@ runs:
         uv-version: ${{ inputs.uv-version }}
 
     - name: Set up virtual environment
+      shell: bash
       run: uv venv
