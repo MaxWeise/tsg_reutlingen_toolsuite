@@ -26,6 +26,7 @@ jobs:
 
     - name: Setup Python Environment
       uses: ./.github/actions/setup-python
+      shell: bash
       with:
         python-version: ${{ matrix.python-version }}
 
