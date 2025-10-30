@@ -30,9 +30,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./saison_kickstarter
-      run: |
-        uv pip install --upgrade pip
-        uv pip install tox tox-gh-actions
+      run: uv sync --locked --all-extras --dev
 
     - name: Run pytest tests
       working-directory: ./saison_kickstarter
@@ -60,9 +58,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./saison_kickstarter
-      run: |
-        uv pip install --upgrade pip
-        uv pip install tox tox-gh-actions
+      run: uv sync --locked --all-extras --dev
 
     - name: Run mypy type checks
       working-directory: ./saison_kickstarter
@@ -90,9 +86,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./saison_kickstarter
-      run: |
-        uv pip install --upgrade pip
-        uv pip install tox tox-gh-actions
+      run: uv sync --locked --all-extras --dev
 
     - name: Run pylint quality
       working-directory: ./saison_kickstarter
