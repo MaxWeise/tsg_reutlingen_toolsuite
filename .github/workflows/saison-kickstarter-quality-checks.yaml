@@ -1,0 +1,106 @@
+
+name: Quality checks for saison-kickstarter
+
+on:
+  push:
+    branches: [ "production", "development" ]
+  pull_request:
+    branches: [ "production", "development", "saison-kickstarter/**"]
+
+x-python-versions:  &python-versions
+  - "3.11"
+  - "3.12"
+  - "3.13"
+
+jobs:
+  unit-test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: *python-versions
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v1
+      with:
+        uv-version: latests
+
+    - name: Install dependencies
+      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      run: |
+        uv pip install --upgrade pip
+        uv pip install tox tox-gh-actions
+
+    - name: Run pytest tests
+      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      run: tox -e test
+
+  type-checks:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: *python-versions
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v1
+      with:
+        uv-version: latests
+
+    - name: Install dependencies
+      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      run: |
+        uv pip install --upgrade pip
+        uv pip install tox tox-gh-actions
+
+    - name: Run mypy type checks
+      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      run: tox -e type
+
+  linter:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: *python-versions
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v1
+      with:
+        uv-version: latests
+
+    - name: Install dependencies
+      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      run: |
+        uv pip install --upgrade pip
+        uv pip install tox tox-gh-actions
+
+    - name: Run pylint quality
+      working-directory: $GITHUB_WORKSPACE/saison_kickstarter
+      run: tox -e lint
+
+
