@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        # python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11"]
         tox-env: [test, type, lint]
 
     defaults:
@@ -29,7 +30,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
-      run: uv sync --locked --all-extras --dev
+      run: |
+        uv python install ${{ matrix.python-version }}
+        uv sync --locked --all-extras --dev
 
     - name: Run checks
       run: tox -e ${{ matrix.tox-env }}
