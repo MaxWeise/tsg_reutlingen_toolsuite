@@ -5,9 +5,6 @@ on:
   push:
     branches: [ "production", "ref-list/**", "ophardt-to-excel/**"]
 
-x-python-versions:  &python-versions
-  - "3.10"
-
 jobs:
   unit-test:
 
@@ -15,13 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: *python-versions
+        python-version: ["3.10"]
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: $SETUP_PYTHON_VERSION
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -46,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: *python-versions
+        python-version: ["3.10"]
 
     steps:
     - uses: actions/checkout@v4
