@@ -1,0 +1,28 @@
+# .github/actions/setup-python/action.yml
+
+name: 'Setup Python Environment'
+description: 'Sets up Python, uv, and caches dependencies'
+
+inputs:
+  python-version:
+    description: 'The Python version to set up'
+    required: true
+  uv-version:
+    description: 'The uv version to set up'
+    required: false
+    default: 'latest'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: 'uv'
+        cache-dependency-path: '**/pyproject.toml'
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v1
+      with:
+        uv-version: ${{ inputs.uv-version }}
