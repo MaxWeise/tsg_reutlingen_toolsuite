@@ -21,7 +21,7 @@ runs:
         python-version: ${{ inputs.python-version }}
 
     - name: Set up uv
-      uses: astral-sh/setup-uv@v1
+      uses: astral-sh/setup-uv@v2
       with:
         uv-version: ${{ inputs.uv-version }}
 
