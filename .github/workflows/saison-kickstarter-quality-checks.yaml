@@ -32,7 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
         uv python install ${{ matrix.python-version }}
-        uv sync --locked --all-extras --dev
+        uv sync --all-extras --dev
 
     - name: Run checks
       run: tox -e ${{ matrix.tox-env }}
