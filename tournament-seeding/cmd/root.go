@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -22,41 +23,67 @@ var rootCmd = &cobra.Command{
 var seedingRoundRobin = &cobra.Command{
 	Use:   "round-robin",
 	Short: "Seeding like round robin",
-	Long:  "Create pools acording to the specified arguments. Supply in this order: number of pools, pool size.",
-	Args:  cobra.ExactArgs(2),
+	Long:  "Create pools acording to the specified arguments. Supply in this order: ranking-file, number of pools, pool size.",
+	Args:  cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
-		nameList, err := getNamesFromExcel("test-rangliste.xlsx")
+		r := algorithms.RoundRobin{}
+		err := runCommand(args[0], args[1], args[2], r)
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Print("Error: ", err)
 			return
 		}
-
-		r := algorithms.RoundRobin{}
-		runSeedingLogic(args[0], args[1], nameList, r)
 	},
 }
 
 var seedingBlockwise = &cobra.Command{
 	Use:   "blockwise",
 	Short: "Seeding in blocks.",
-	Long:  "Create pools acording to the specified arguments. Supply in this order: number of pools, pool size.",
-	Args:  cobra.ExactArgs(2),
+	Long:  "Create pools acording to the specified arguments. Supply in this order: ranking-file, number of pools, pool size.",
+	Args:  cobra.ExactArgs(3),
 	Run: func(cmd *cobra.Command, args []string) {
-		nameList, err := getNamesFromExcel("test-rangliste.xlsx")
+		r := algorithms.BlockwiseSeeding{}
+		err := runCommand(args[0], args[1], args[2], r)
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Print("Error: ", err)
 			return
 		}
-
-		r := algorithms.BlockwiseSeeding{}
-		runSeedingLogic(args[0], args[1], nameList, r)
 	},
 }
 
-func runSeedingLogic(numOfPools string, size string, nameList []string, strategy algorithms.Strategy) error {
-	numberOfPools, poolSize, err := validateSeedingArgs(numOfPools, size, len(nameList))
+// Define the flow of seeding. Provide an abstraction to handle different seeding algorithms in the same sequence of steps
+func runCommand(filePath string, numberOfPools string, size string, seedingAlgorithm algorithms.Strategy) error {
+	file, err := excelize.OpenFile(filePath)
 	if err != nil {
 		return err
+	}
+
+	sheetName, err := selectSheetName(file)
+	if err != nil {
+		return err
+	}
+
+	nameList, err := getNamesFromExcel(file, sheetName)
+	fmt.Println(nameList)
+	if err != nil {
+		return err
+	}
+
+	pools, err := runSeedingLogic(numberOfPools, size, nameList, seedingAlgorithm)
+	if err != nil {
+		return err
+	}
+
+	for index, pool := range pools {
+		fmt.Printf("Runde %d: %v\n", index, pool)
+	}
+
+	return nil
+}
+
+func runSeedingLogic(numOfPools string, size string, nameList []string, strategy algorithms.Strategy) (map[int][]string, error) {
+	numberOfPools, poolSize, err := validateSeedingArgs(numOfPools, size, len(nameList))
+	if err != nil {
+		return nil, err
 	}
 
 	pools := make(map[int][]string)
@@ -68,20 +95,12 @@ func runSeedingLogic(numOfPools string, size string, nameList []string, strategy
 
 	strategy.Seeding(numberOfPools, poolSize, &pools, &nameList)
 
-	for index, pool := range pools {
-		fmt.Printf("Runde %d: %v\n", index, pool)
-	}
-
-	return nil
+	return pools, err
 }
 
-func getNamesFromExcel(fileName string) ([]string, error) {
-	file, err := excelize.OpenFile(fileName)
-	if err != nil {
-		return nil, err
-	}
+func getNamesFromExcel(file *excelize.File, sheetName string) ([]string, error) {
 
-	rows, err := file.GetRows("Tabelle1")
+	rows, err := file.GetRows(sheetName)
 	if err != nil {
 		return nil, err
 	}
@@ -98,6 +117,33 @@ func getNamesFromExcel(fileName string) ([]string, error) {
 	// Remove header from list
 	names = names[1:]
 	return names, nil
+}
+
+// Prompts the user to select a sheet from the workbook
+// If only one sheet is available, the function will automatically select this sheet.
+func selectSheetName(file *excelize.File) (string, error) {
+
+	sheetNames := file.GetSheetList()
+
+	// If only one element exists then return this single element
+	if len(sheetNames) == 1 {
+		return sheetNames[0], nil
+	}
+
+	for index, n := range sheetNames {
+		fmt.Println(index, "---", n)
+
+	}
+	var i int
+	fmt.Println("Please select a worksheet")
+	fmt.Scan(&i)
+
+	if i >= len(sheetNames) {
+		return "", errors.New("Entered a number that is too large.")
+	}
+
+	return sheetNames[i], nil
+
 }
 
 func validateSeedingArgs(numberOfPools string, poolSize string, lenTestList int) (int, int, error) {
