@@ -30,6 +30,7 @@ func (a AgeGroup) String() string {
 	return string(a)
 }
 
+// AgeGroupFromString validates and parses a string
 func AgeGroupFromString(s string) (AgeGroup, error) {
 	ag := AgeGroup(s)
 	if !ag.IsValid() {
