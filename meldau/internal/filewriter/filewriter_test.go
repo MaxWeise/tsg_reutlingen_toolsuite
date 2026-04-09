@@ -25,6 +25,7 @@ func TestExcelFileWriter_WriteInformationToFile(t *testing.T) {
 	members := []domain.Member{
 		{Name: "Max Mustermann", AgeGroup: domain.AgeGroupU15},
 		{Name: "Erika Mustermann", AgeGroup: domain.AgeGroupU17},
+		{Name: "John Doe", AgeGroup: domain.AgeGroupU15},
 	}
 	tournamentInfo := domain.Tournament{
 		Title:    "Test Tournament",
@@ -33,12 +34,11 @@ func TestExcelFileWriter_WriteInformationToFile(t *testing.T) {
 
 	outputPath := filepath.Join(tempDir, "output.xlsx")
 
-	t.Run("should replace placeholders and write member list", func(t *testing.T) {
+	t.Run("should replace placeholders and generate dynamic columns for members", func(t *testing.T) {
 		// Prepare template with placeholders
 		fPlaceholder := excelize.NewFile()
 		fPlaceholder.SetCellValue("Sheet1", "A1", "{{TournamentTitle}}")
-		fPlaceholder.SetCellValue("Sheet1", "B1", "{{TournamentAgeGroup}}")
-		fPlaceholder.SetCellValue("Sheet1", "A3", "{{MemberName}}")
+		fPlaceholder.SetCellValue("Sheet1", "B2", "{{Members}}")
 		if err := fPlaceholder.SaveAs(templatePath); err != nil {
 			t.Fatalf("failed to update template file: %v", err)
 		}
@@ -55,14 +55,24 @@ func TestExcelFileWriter_WriteInformationToFile(t *testing.T) {
 		valTitle, _ := fOutput.GetCellValue("Sheet1", "A1")
 		assert.Equal(t, tournamentInfo.Title, valTitle)
 
-		// Member list check
-		// Member 1 should be at A3 (where the placeholder was)
-		valMember1, _ := fOutput.GetCellValue("Sheet1", "A3")
-		assert.Equal(t, members[0].Name, valMember1)
+		// Member columns check
+		// U15 should be at B2 (Header)
+		valHeaderU15, _ := fOutput.GetCellValue("Sheet1", "B2")
+		assert.Equal(t, domain.AgeGroupU15.String(), valHeaderU15)
 
-		// Member 2 should be at A4 (one row below)
-		valMember2, _ := fOutput.GetCellValue("Sheet1", "A4")
-		assert.Equal(t, members[1].Name, valMember2)
+		// U15 Members at B3, B4
+		valU15_1, _ := fOutput.GetCellValue("Sheet1", "B3")
+		valU15_2, _ := fOutput.GetCellValue("Sheet1", "B4")
+		assert.Contains(t, []string{"Max Mustermann", "John Doe"}, valU15_1)
+		assert.Contains(t, []string{"Max Mustermann", "John Doe"}, valU15_2)
+
+		// U17 should be at C2 (Next column)
+		valHeaderU17, _ := fOutput.GetCellValue("Sheet1", "C2")
+		assert.Equal(t, domain.AgeGroupU17.String(), valHeaderU17)
+
+		// U17 Member at C3
+		valU17_1, _ := fOutput.GetCellValue("Sheet1", "C3")
+		assert.Equal(t, "Erika Mustermann", valU17_1)
 	})
 
 	t.Run("should return error if template file does not exist", func(t *testing.T) {
