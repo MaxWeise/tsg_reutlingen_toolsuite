@@ -14,7 +14,7 @@ func TestExcelMemberRepository_GetAllMembers(t *testing.T) {
 	// 1. Wir erstellen eine echte (temporäre) Excel-Datei im Speicher mit excelize
 	f := excelize.NewFile()
 	defer f.Close()
-	
+
 	sheetName := "Sheet1"
 	f.SetCellValue(sheetName, "A1", "Name")
 	f.SetCellValue(sheetName, "B1", "AgeGroup")
@@ -41,11 +41,12 @@ func TestExcelMemberRepository_GetAllMembers(t *testing.T) {
 	}
 
 	repo := ExcelMemberRepository{
-		Filepath: mockFS,
+		filepath: mockFS,
+		filename: "test_members.xlsx",
 	}
 
 	// 3. Ausführung
-	members, err := repo.GetAllMembers("test_members.xlsx")
+	members, err := repo.GetAllMembers()
 
 	// 4. Prüfungen
 	assert.NoError(t, err)

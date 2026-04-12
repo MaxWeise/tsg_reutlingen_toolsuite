@@ -10,17 +10,18 @@ import (
 
 // MemberRepository provides an abstraction to read member data
 type MemberRepository interface {
-	GetAllMembers(filename string) ([]domain.Member, error)
+	GetAllMembers() ([]domain.Member, error)
 }
 
 // ExcelMemberRepository provides read access to a list of
 type ExcelMemberRepository struct {
-	Filepath fs.FS
+	filepath fs.FS
+	filename string
 }
 
 // GetAllMembers gets the information about all members in an excel db-file.
-func (r ExcelMemberRepository) GetAllMembers(filename string) ([]domain.Member, error) {
-	file, err := r.Filepath.Open(filename)
+func (r ExcelMemberRepository) GetAllMembers() ([]domain.Member, error) {
+	file, err := r.filepath.Open(r.filename)
 	if err != nil {
 		return nil, err
 	}
