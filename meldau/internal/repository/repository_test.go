@@ -2,11 +2,13 @@ package repository
 
 import (
 	"bytes"
+	"io/fs"
 	"testing"
 	"testing/fstest"
 	"tsg_reutlingen_toolsuite/maxweise/meldau/internal/domain"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -41,8 +43,8 @@ func TestExcelMemberRepository_GetAllMembers(t *testing.T) {
 	}
 
 	repo := ExcelMemberRepository{
-		filepath: mockFS,
-		filename: "test_members.xlsx",
+		filesystem: mockFS,
+		filename:   "test_members.xlsx",
 	}
 
 	// 3. Ausführung
@@ -58,4 +60,32 @@ func TestExcelMemberRepository_GetAllMembers(t *testing.T) {
 
 	assert.Equal(t, "Erika Musterfrau", members[1].Name)
 	assert.Equal(t, domain.AgeGroupSeniors, members[1].AgeGroup)
+}
+
+func TestExcelMemberRepository_GetAllMembers_FileNotFound(t *testing.T) {
+	mockFS := fstest.MapFS{}
+	repo := ExcelMemberRepository{
+		filesystem: mockFS,
+		filename:   "file_does_not_exist.xlsx",
+	}
+
+	_, err := repo.GetAllMembers()
+	require.Error(t, err)
+	assert.ErrorIs(t, err, fs.ErrNotExist)
+}
+
+func TestExcelMemberRepository_GetAllMembers_NotAnExcelFile(t *testing.T) {
+	var buf bytes.Buffer
+	mockFS := fstest.MapFS{
+		"test_members.csv": &fstest.MapFile{
+			Data: buf.Bytes(),
+		},
+	}
+	repo := ExcelMemberRepository{
+		filesystem: mockFS,
+		filename:   "test_members.csv",
+	}
+
+	_, err := repo.GetAllMembers()
+	require.Error(t, err)
 }

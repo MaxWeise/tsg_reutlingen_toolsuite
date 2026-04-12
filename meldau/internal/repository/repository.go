@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
 	"tsg_reutlingen_toolsuite/maxweise/meldau/internal/domain"
@@ -15,13 +16,13 @@ type MemberRepository interface {
 
 // ExcelMemberRepository provides read access to a list of
 type ExcelMemberRepository struct {
-	filepath fs.FS
-	filename string
+	filesystem fs.FS
+	filename   string
 }
 
 // GetAllMembers gets the information about all members in an excel db-file.
 func (r ExcelMemberRepository) GetAllMembers() ([]domain.Member, error) {
-	file, err := r.filepath.Open(r.filename)
+	file, err := r.filesystem.Open(r.filename)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +30,7 @@ func (r ExcelMemberRepository) GetAllMembers() ([]domain.Member, error) {
 
 	workbook, err := excelize.OpenReader(file)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Invalid or corrupted file: %s. %v", r.filename, err)
 	}
 	defer workbook.Close()
 
