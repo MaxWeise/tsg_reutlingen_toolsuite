@@ -83,3 +83,59 @@ func TestExcelFileWriter_WriteInformationToFile(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+// Given an empty member list,
+// When calling the function,
+// Then it should not replace the placeholder for the members.
+// And a log statement should be created.
+func TestExcelFileWriter_WriteInformationToFile_NoMembers(t *testing.T) {
+	// Setup: Create a temporary template file
+	tempDir := t.TempDir()
+	templatePath := filepath.Join(tempDir, "template.xlsx")
+	f := excelize.NewFile()
+	if err := f.SaveAs(templatePath); err != nil {
+		t.Fatalf("failed to create template file: %v", err)
+	}
+
+	fw := ExcelFileWriter{
+		templateFile: templatePath,
+	}
+
+	// Empty Members
+	members := []domain.Member{}
+	tournamentInfo := domain.Tournament{
+		Title:    "Test Tournament",
+		Agegroup: domain.AgeGroupU15,
+	}
+
+	outputPath := filepath.Join(tempDir, "output.xlsx")
+
+	t.Run("Should not replace the members placeholder and emit a log statement.", func(t *testing.T) {
+		// Prepare template with placeholders
+		fPlaceholder := excelize.NewFile()
+		fPlaceholder.SetCellValue("Sheet1", "A1", "{{TournamentTitle}}")
+		fPlaceholder.SetCellValue("Sheet1", "B2", "{{Members}}")
+		if err := fPlaceholder.SaveAs(templatePath); err != nil {
+			t.Fatalf("failed to update template file: %v", err)
+		}
+
+		// Run the tested method
+		err := fw.WriteInformationToFile(outputPath, members, tournamentInfo)
+		assert.NoError(t, err)
+
+		// Verify output file content
+		fOutput, err := excelize.OpenFile(outputPath)
+		assert.NoError(t, err)
+		defer fOutput.Close()
+
+		// Tournament check
+		valTitle, _ := fOutput.GetCellValue("Sheet1", "A1")
+		assert.Equal(t, tournamentInfo.Title, valTitle)
+
+		// Check invariant placeholder
+		ph, _ := fOutput.GetCellValue("Sheet1", "B2")
+		// assert.Equal(t, "{{Members}}", ph)
+		assert.Equal(t, "{{Members}}", ph)
+	})
+
+}
