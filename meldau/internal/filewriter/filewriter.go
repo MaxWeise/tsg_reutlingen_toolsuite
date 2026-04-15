@@ -12,6 +12,7 @@ type FileWriter interface {
 
 type ExcelFileWriter struct {
 	templateFile string
+	logger       Logger
 }
 
 // WriteInformationToFile write names of members and the tournament data inside a template file.
@@ -49,6 +50,12 @@ func (fw ExcelFileWriter) WriteInformationToFile(fileName string, members []doma
 			f.SetCellValue(sheet, cell, tournamentInfo.Agegroup.String())
 		},
 		"{{Members}}": func(f *excelize.File, sheet string, col, row int) {
+
+			if len(members) <= 0 {
+				fw.logger.Warn("No membes could be accessed!")
+				return
+			}
+
 			currentCol := col
 			for _, group := range orderedGroups {
 				mList, exists := membersByGroup[group]

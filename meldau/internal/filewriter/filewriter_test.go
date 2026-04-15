@@ -1,6 +1,8 @@
 package filewriter
 
 import (
+	"bytes"
+	"log/slog"
 	"path/filepath"
 	"testing"
 	"tsg_reutlingen_toolsuite/maxweise/meldau/internal/domain"
@@ -97,8 +99,12 @@ func TestExcelFileWriter_WriteInformationToFile_NoMembers(t *testing.T) {
 		t.Fatalf("failed to create template file: %v", err)
 	}
 
+	var buff bytes.Buffer
+	h := slog.NewTextHandler(&buff, nil)
+	testLogger := slog.New(h)
 	fw := ExcelFileWriter{
 		templateFile: templatePath,
+		logger:       testLogger,
 	}
 
 	// Empty Members
@@ -136,6 +142,9 @@ func TestExcelFileWriter_WriteInformationToFile_NoMembers(t *testing.T) {
 		ph, _ := fOutput.GetCellValue("Sheet1", "B2")
 		// assert.Equal(t, "{{Members}}", ph)
 		assert.Equal(t, "{{Members}}", ph)
+
+		// Check Logger message with level WARN or higher
+		assert.Contains(t, buff.String(), "level=WARN")
 	})
 
 }
